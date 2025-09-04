@@ -1,0 +1,20 @@
+.sidebar {
+  background-color: blue; 
+}
+
+.header {
+  background-color: red; 
+  color: white;
+}
+
+.breadcrumb-container {
+  background-color: #e9ecef; 
+}
+
+.main {
+  background-color: black;
+}
+
+.footer {
+  background-color: gray; 
+}
