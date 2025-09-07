@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-breadcrumb-component',
@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrl: './breadcrumb-component.css'
 })
 export class BreadcrumbComponent {
-
+  @Input() role: string = ''; // nombre del rol
+  @Input() breadcrumbs: { label: string, url?: string }[] = [];
 }

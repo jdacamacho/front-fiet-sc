@@ -1,0 +1,10 @@
+.navbar-custom {
+  background-color: white;
+}
+
+
+.navbar-custom .navbar-brand {
+  color: #1E257B;
+  font-weight: bold;
+}
+

@@ -1,0 +1,9 @@
+<button type="button" class="btn  custom-btn d-flex align-items-center">
+  @if (imgUrl) {
+    <img [src]="imgUrl"
+         alt="icon"
+         class="me-2"
+         style="width: 20px; height: 20px;">
+  }
+  <span>{{ label }}</span>
+</button>

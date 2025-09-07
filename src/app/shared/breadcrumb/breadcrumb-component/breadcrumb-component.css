@@ -1,0 +1,11 @@
+.breadcrumb {
+  --bs-breadcrumb-divider: '>'; 
+  color: #928F9A; 
+  font-size: 14px;
+  height: 0px;
+}
+
+
+.breadcrumb-item + .breadcrumb-item::before {
+  color: red;
+}

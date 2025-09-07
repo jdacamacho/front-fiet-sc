@@ -1,0 +1,12 @@
+.title {
+  font-size: 18px;         
+  font-weight: bold;        
+  color: #1E257B;         
+}
+
+.line {
+  height: 3px;             
+  background-color: #E52724;   
+  width: 100%;              
+  margin: 1rem 0;          
+}
