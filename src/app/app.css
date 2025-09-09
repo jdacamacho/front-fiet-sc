@@ -5,3 +5,10 @@ html, body, app-root {
   padding: 0;
   display: block;
 }
+
+.avatar-custom {
+    background-color: #ece9fc !important;
+    color: #2a1261 !important;
+    border: 2px solid red !important;
+    border-radius: 50%; /* opcional, para asegurar que sea circular */
+}

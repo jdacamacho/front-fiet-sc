@@ -1,0 +1,27 @@
+.avatar-custom {
+    width: 60px;            
+    height: 60px;           
+    border: 2px solid #1E257B; 
+    border-radius: 50%;
+    background-color: white; 
+    color: #1E257B;   
+    font-weight: 500;         
+}
+
+.user-name {
+    font-size: 1rem;        
+    font-weight: 500;       
+    color: #1E257B;            
+}
+
+.dropdown-custom {
+    font-size: 0.85rem;  
+    padding: 0.25rem 0.5rem;
+    background-color: #fff !important; 
+    color: #1E257B !important; 
+    border-color: white;    
+}
+
+.dropdown-menu-white {
+    background-color: #fff !important;
+}
