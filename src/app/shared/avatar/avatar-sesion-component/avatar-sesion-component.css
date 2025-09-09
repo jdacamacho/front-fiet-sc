@@ -1,17 +1,22 @@
 .avatar-custom {
-    width: 60px;            
-    height: 60px;           
+    width: 55px;            
+    height: 55px;           
     border: 2px solid #1E257B; 
     border-radius: 50%;
     background-color: white; 
     color: #1E257B;   
-    font-weight: 500;         
+    font-family: 'Titillium Web', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0.35;     
 }
 
 .user-name {
-    font-size: 1rem;        
-    font-weight: 500;       
-    color: #1E257B;            
+    font-size: 1rem;           
+    color: #1E257B;    
+    font-family: 'Titillium Web', sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.35;         
 }
 
 .dropdown-custom {
@@ -22,6 +27,14 @@
     border-color: white;    
 }
 
-.dropdown-menu-white {
+.dropdown-menu-white .dropdown-item{
     background-color: #fff !important;
+    color: #454444 !important;
+}
+
+.dropdown-menu-white .dropdown-item:hover,
+.dropdown-menu-white .dropdown-item:focus,
+.dropdown-menu-white .dropdown-item:active {
+  background-color: #1E257B !important;
+  color: #fff !important;
 }

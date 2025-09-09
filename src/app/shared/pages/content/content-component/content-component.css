@@ -1,12 +1,19 @@
-.title {
-  font-size: 18px;         
-  font-weight: bold;        
-  color: #1E257B;         
+.title-wrapper {
+  display: inline-block;  /* 🔹 se ajusta al ancho del título */
+}
+
+.title {    
+  color: #1E257B;      
+  font-family: 'Titillium Web', sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 0.35px;    
+  margin: 0;  
 }
 
 .line {
   height: 3px;             
-  background-color: #E52724;   
+  background-color: #DB141C;   
   width: 100%;              
-  margin: 1rem 0;          
+  margin-top: 0.25rem;   
 }

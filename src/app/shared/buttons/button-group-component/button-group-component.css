@@ -5,8 +5,12 @@
   padding: 8px 12px;
   border-radius: 6px;
   transition: background 0.3s;
+  font-family: 'Titillium Web', sans-serif;
+  font-size: large;
+  font-weight: semi-bold;
+  letter-spacing: 0.35;
 }
 
 .custom-btn:hover {
-  background-color: #2E3ABF; /* verde más oscuro */
+  background-color: #07184A; 
 }

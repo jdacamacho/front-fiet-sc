@@ -1,5 +1,8 @@
 .custom-footer {
   color: #928F9A;
-  font-size: 14px;
   width: 100%;
+  font-family: 'Titillium Web', sans-serif;
+  font-size:small;
+  font-weight:regular;
+  letter-spacing: 0.15;
 }
