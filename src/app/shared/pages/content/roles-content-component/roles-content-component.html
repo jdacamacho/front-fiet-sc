@@ -1,0 +1,14 @@
+<app-card-main-component
+  [preTitleComponent]="buttonComponent"
+  [preTitleInputs]="{ imgUrl: 'buttons/roles.svg' }"
+  [title]="'Gestión de Roles'"
+  [bodyComponent]="tableComponent"
+  [bodyInputs]="{ headers: headers, data: paginatedData, actionButtons: actionButtons }"
+  [buttons]="buttons">
+</app-card-main-component>
+
+<app-paginator
+  [totalPages]="totalPages"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChange($event)">
+</app-paginator>

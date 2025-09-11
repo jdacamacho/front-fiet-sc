@@ -1,10 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SecretarioGeneralHomeComponent } from './core/secretario-general/pages/secretario-general-home-component/secretario-general-home-component';
+import { SecretarioGeneralRolesComponent } from './core/secretario-general/pages/secretario-general-roles-component/secretario-general-roles-component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SecretarioGeneralHomeComponent],
+  imports: [RouterOutlet, SecretarioGeneralRolesComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

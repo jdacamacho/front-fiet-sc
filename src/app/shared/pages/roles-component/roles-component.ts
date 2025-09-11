@@ -4,11 +4,11 @@ import { CommonModule } from '@angular/common';
 import { RolesContentComponent } from '../content/roles-content-component/roles-content-component';
 
 @Component({
-  selector: 'app-info-usuario-component',
+  selector: 'app-roles-component',
   imports: [CommonModule, ContentComponent],
-  templateUrl: './info-usuario-component.html',
-  styleUrl: './info-usuario-component.css'
+  templateUrl: './roles-component.html',
+  styleUrl: './roles-component.css'
 })
-export class InfoUsuarioComponent {
+export class RolesComponent {
   content = RolesContentComponent; 
 }
