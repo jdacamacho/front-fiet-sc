@@ -1,15 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter} from '@angular/core';
-
 @Component({
-  selector: 'app-button-component',
+  selector: 'app-simple-button-component',
   imports: [CommonModule],
-  templateUrl: './button-component.html',
-  styleUrl: './button-component.css'
+  templateUrl: './simple-button-component.html',
+  styleUrl: './simple-button-component.css'
 })
-export class ButtonComponent {
-  @Input() imgUrl: string = '';
-  @Input() color: string = '';   
+export class SimpleButtonComponent {
+  @Input() label: string = '';
+  @Input() color: string = '#1E257B';   
   @Input() width: string = '';    
   @Input() height: string = '';
 

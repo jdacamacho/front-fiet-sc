@@ -1,14 +1,41 @@
 <app-card-main-component
-  [preTitleComponent]="buttonComponent"
+  [preTitleComponent]="pretitleComponentComponent"
   [preTitleInputs]="{ imgUrl: 'buttons/roles.svg' }"
   [title]="'Gestión de Roles'"
   [bodyComponent]="tableComponent"
-  [bodyInputs]="{ headers: headers, data: paginatedData, actionButtons: actionButtons }"
+  [bodyInputs]="{ headers: headers, data: paginatedData, actionTemplate: actionTemplate }"
   [buttons]="buttons">
 </app-card-main-component>
+
+<ng-template #actionTemplate let-row>
+  <div class="d-flex gap-2">
+    <app-button-component
+      imgUrl="buttons/edit.svg"
+      color="white"
+      width="18px"
+      height="18px"
+      (clicked)="abrirModalActualizarRol(row)">
+    </app-button-component>
+
+    <app-button-component
+      imgUrl="buttons/eye.svg"
+      color="white"
+      width="18px"
+      height="18px"
+      (clicked)="verMasInfo(row)">
+    </app-button-component>
+  </div>
+</ng-template>
 
 <app-paginator
   [totalPages]="totalPages"
   [currentPage]="currentPage"
   (pageChange)="onPageChange($event)">
 </app-paginator>
+
+<app-generic-dialog-info-component
+  [visible]="rolInfoDialogVisible"
+  (visibleChange)="rolInfoDialogVisible = $event"
+  [title]="'Información del Rol'"
+  [data]="selectedRolInfo">
+</app-generic-dialog-info-component>

@@ -1,21 +1,16 @@
 <table class="table table-bordered">
-    <thead>
-        <tr>
-            <th *ngFor="let header of headers">{{ header }}</th>
-            <th *ngIf="actionButtons?.length">Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let row of data; let i = index">
-            <td *ngFor="let header of headers">{{ row[header] }}</td>
-
-            <td *ngIf="actionButtons?.length">
-                <div class="d-flex gap-2">
-                    <ng-container *ngFor="let btn of actionButtons?.[i] ?? []">
-                        <ng-container *ngComponentOutlet="btn"></ng-container>
-                    </ng-container>
-                </div>
-            </td>
-        </tr>
-    </tbody>
+  <thead>
+    <tr>
+      <th *ngFor="let header of headers">{{ header }}</th>
+      <th *ngIf="actionTemplate">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of data">
+      <td *ngFor="let header of headers">{{ row[header] }}</td>
+      <td *ngIf="actionTemplate">
+        <ng-container *ngTemplateOutlet="actionTemplate; context: { $implicit: row }"></ng-container>
+      </td>
+    </tr>
+  </tbody>
 </table>

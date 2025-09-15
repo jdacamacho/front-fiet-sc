@@ -1,0 +1,22 @@
+<p-dialog [(visible)]="visible" [modal]="true" [closable]="false" styleClass="custom-dialog">
+  <ng-template pTemplate="header">
+    <div class="custom-dialog-header">
+      {{ title }}
+      <button type="button" class="close-btn" (click)="close()">X</button>
+    </div>
+  </ng-template>
+
+  <div *ngIf="data" class="dialog-content">
+    <div *ngFor="let key of objectKeys(data)" class="dialog-row">
+      <span class="field-name">{{ key }}: </span>
+      <span class="field-value">{{ data[key] }}</span>
+    </div>
+  </div>
+
+  <app-simple-button-component
+      label="OK"
+      width="50px"
+      height="30px"
+      (clicked)="close()">
+  </app-simple-button-component>
+</p-dialog>

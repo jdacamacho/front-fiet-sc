@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Type } from '@angular/core';
+import { Component, Input, Type, TemplateRef  } from '@angular/core';
+
+export interface ActionButtonConfig {
+  component: Type<any>;
+  inputs: { [key: string]: any };
+}
 
 @Component({
   selector: 'app-table-generic-component',
@@ -10,5 +15,5 @@ import { Component, Input, Type } from '@angular/core';
 export class TableGenericComponent {
   @Input() headers: string[] = [];
   @Input() data: any[] = [];
-  @Input() actionButtons?: Type<any>[][] | null = null;
+  @Input() actionTemplate!: TemplateRef<any>; 
 }

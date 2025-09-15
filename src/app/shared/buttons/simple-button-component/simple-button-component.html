@@ -1,0 +1,10 @@
+<button type="button"
+        class="btn custom-btn"
+        [ngStyle]="{ 
+          'background-color': color,
+          'width': width,
+          'height': height
+        }"
+        (click)="onClick()">
+  {{ label }}
+</button>

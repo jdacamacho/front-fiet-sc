@@ -1,4 +1,4 @@
-import { Component, OnInit, Type  } from '@angular/core';
+import { Component, OnInit  } from '@angular/core';
 import { TableGenericComponent } from '../../../table-generic-component/table-generic-component';
 import { CommonModule } from '@angular/common';
 import { CardMainComponent } from '../../../card-main-component/card-main-component';
@@ -6,10 +6,11 @@ import { ButtonComponent } from '../../../buttons/button-component/button-compon
 import { RolesService } from '../../../../core/services/roles-service';
 import { RolDTORespuesta } from '../../../../core/models/Rol/DTOResponse/RolDTORespuesta';
 import { Paginator } from "../../../paginator/paginator";
+import { GenericDialogInfoComponent } from '../../../generic-dialog-info-component/generic-dialog-info-component';
 
 @Component({
   selector: 'app-roles-content-component',
-  imports: [CommonModule, CardMainComponent, Paginator],
+  imports: [CommonModule, CardMainComponent, Paginator, ButtonComponent, GenericDialogInfoComponent],
   templateUrl: './roles-content-component.html',
   styleUrl: './roles-content-component.css'
 })
@@ -17,12 +18,12 @@ export class RolesContentComponent implements OnInit {
   currentPage = 1;
   pageSize = 10;
   tableComponent = TableGenericComponent;
-  buttonComponent = ButtonComponent;
+  pretitleComponentComponent = ButtonComponent;
   buttons = []; 
-  actionButtons: Type<any>[][] = [];
-
   headers = ['nombre', 'descripcion', 'estado'];
   data: any[] = [];
+  rolInfoDialogVisible = false;
+  selectedRolInfo: any = null;
 
   constructor(private rolesService: RolesService) {}
 
@@ -39,12 +40,20 @@ export class RolesContentComponent implements OnInit {
             ? '✅ Activo' 
             : '❌ Inactivo'
         }));
-        this.actionButtons = this.data.map(() => [ButtonComponent, ButtonComponent]);
       },
       error: (err) => {
         console.error('Error cargando roles', err);
       }
     });
+  }
+
+  protected abrirModalActualizarRol(rol: any): void {
+    console.log('Abrir modal para actualizar rol:', rol);
+  }
+
+  protected verMasInfo(rol: any): void {
+    this.selectedRolInfo = rol;
+    this.rolInfoDialogVisible = true;
   }
 
   get totalPages(): number {

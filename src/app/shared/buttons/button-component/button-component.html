@@ -1,7 +1,12 @@
-<button type="button" class="btn  custom-btn d-flex align-items-center">
+<button type="button"
+        class="btn custom-btn d-flex align-items-center"
+        [ngStyle]="{ 'background-color': color }"
+        (click)="onClick()">
+
   @if (imgUrl) {
     <img [src]="imgUrl"
-        alt="icon"
-        style="width: 15px; height: 15px;">
+         alt="icon"
+         [style.width]="width"
+         [style.height]="height">
   }
 </button>
