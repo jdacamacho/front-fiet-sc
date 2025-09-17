@@ -4,23 +4,22 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { SimpleButtonComponent } from '../buttons/simple-button-component/simple-button-component';
 @Component({
-  selector: 'app-generic-dialog-info-component',
+  selector: 'app-generic-dialog-form-component',
   imports: [CommonModule, DialogModule, ButtonModule, SimpleButtonComponent],
-  templateUrl: './generic-dialog-info-component.html',
-  styleUrl: './generic-dialog-info-component.css'
+  templateUrl: './generic-dialog-form-component.html',
+  styleUrl: './generic-dialog-form-component.css'
 })
-export class GenericDialogInfoComponent {
-  @Input() visible: boolean = false;       
-  @Input() title: string = ''; 
-  @Input() data: Record<string, any> = {};
-
-  @Output() visibleChange = new EventEmitter<boolean>(); 
+export class GenericDialogFormComponent {
+  @Input() visible: boolean = false;
+  @Input() title: string = '';
+  @Output() visibleChange = new EventEmitter<boolean>();
+  @Output() save = new EventEmitter<void>();
 
   close() {
     this.visibleChange.emit(false);
   }
 
-  objectKeys(obj: any): string[] {
-    return obj ? Object.keys(obj) : [];
+  onSave() {
+    this.save.emit(); 
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit  } from '@angular/core';
+import { Component, OnInit, ViewChild   } from '@angular/core';
 import { TableGenericComponent } from '../../../table-generic-component/table-generic-component';
 import { CommonModule } from '@angular/common';
 import { CardMainComponent } from '../../../card-main-component/card-main-component';
@@ -7,14 +7,21 @@ import { RolesService } from '../../../../core/services/roles-service';
 import { RolDTORespuesta } from '../../../../core/models/Rol/DTOResponse/RolDTORespuesta';
 import { Paginator } from "../../../paginator/paginator";
 import { GenericDialogInfoComponent } from '../../../generic-dialog-info-component/generic-dialog-info-component';
+import { GenericDialogFormComponent } from '../../../generic-dialog-form-component/generic-dialog-form-component';
+import { InputTextComponent } from '../../../inputs/input-text-component/input-text-component';
+import { InputSelectComponent } from '../../../inputs/input-select-component/input-select-component';
+import { RolDTOPeticion } from '../../../../core/models/Rol/DTORequest/RolDTOPeticion';
 
 @Component({
   selector: 'app-roles-content-component',
-  imports: [CommonModule, CardMainComponent, Paginator, ButtonComponent, GenericDialogInfoComponent],
+  imports: [CommonModule, CardMainComponent, Paginator, ButtonComponent,
+     GenericDialogInfoComponent, GenericDialogFormComponent, InputTextComponent, InputSelectComponent],
   templateUrl: './roles-content-component.html',
   styleUrl: './roles-content-component.css'
 })
 export class RolesContentComponent implements OnInit {
+  rolFormDialogVisible = false;
+  selectedRolForm: any = {};
   currentPage = 1;
   pageSize = 10;
   tableComponent = TableGenericComponent;
@@ -24,6 +31,8 @@ export class RolesContentComponent implements OnInit {
   data: any[] = [];
   rolInfoDialogVisible = false;
   selectedRolInfo: any = null;
+  @ViewChild('inputDescripcion') inputDescripcion!: InputTextComponent;
+  @ViewChild('inputEstado') inputEstado!: InputSelectComponent;
 
   constructor(private rolesService: RolesService) {}
 
@@ -48,7 +57,46 @@ export class RolesContentComponent implements OnInit {
   }
 
   protected abrirModalActualizarRol(rol: any): void {
-    console.log('Abrir modal para actualizar rol:', rol);
+    this.selectedRolForm = { ...rol };
+    this.rolFormDialogVisible = true;
+  }
+
+  guardarRolActualizado(): void {
+    if (!this.selectedRolForm.uuidRol) {
+      return;
+    }
+
+    this.inputDescripcion.touched = true;
+    this.inputEstado.touched = true;
+
+    if (this.inputDescripcion.isInvalid() || this.inputEstado.isInvalid()) {
+      return; 
+    }
+
+
+    console.log('Guardando rol actualizado:', this.selectedRolForm);
+    const rolActualizado: RolDTOPeticion = {
+      descripcion: this.selectedRolForm.descripcion,
+      estado: this.selectedRolForm.estado === '✅ Activo' ? true : false
+    };
+
+    console.log('Datos a enviar para actualización:', rolActualizado);
+
+    this.rolesService.actualizarRol(this.selectedRolForm.uuidRol, rolActualizado).subscribe({
+      next: (updatedRol) => {
+        const index = this.data.findIndex(r => r.uuidRol === updatedRol.uuidRol);
+        if (index !== -1) {
+          this.data[index] = {
+            ...updatedRol,
+            estado: updatedRol.estado ? '✅ Activo' : '❌ Inactivo'
+          };
+        }
+        this.rolFormDialogVisible = false;
+      },
+      error: (err) => {
+        console.error('Error actualizando rol', err);
+      }
+    });
   }
 
   protected verMasInfo(rol: any): void {

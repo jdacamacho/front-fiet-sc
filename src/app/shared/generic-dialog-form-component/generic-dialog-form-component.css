@@ -35,22 +35,19 @@
     border-top: 1px solid #CFCDD4 !important;
 }
 
-.dialog-row {
-    margin-top: 10px;
-    margin-bottom: 10px;
+.custom-dialog .dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
 }
 
-.field-name {
-    color: #1E257B;
-    font-family: 'Titillium Web', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.35px;
+.custom-dialog .dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem 1rem;
 }
 
-.field-value {
-    color: #454444;
-}
 
 .close-btn {
     background-color: white;
@@ -62,4 +59,5 @@
     font-weight: semi-bold;
     letter-spacing: 0.35px;
 }
+
 

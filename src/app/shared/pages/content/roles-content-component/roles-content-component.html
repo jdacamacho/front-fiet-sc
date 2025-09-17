@@ -39,3 +39,29 @@
   [title]="'Información del Rol'"
   [data]="selectedRolInfo">
 </app-generic-dialog-info-component>
+
+<app-generic-dialog-form-component
+  [visible]="rolFormDialogVisible"
+  (visibleChange)="rolFormDialogVisible = $event"
+  [title]="'Actualizar Rol'"
+  (save)="guardarRolActualizado()">
+
+  <app-input-text-component
+    #inputDescripcion
+    [(value)]="selectedRolForm.descripcion"
+    [label]="'Descripción'"
+    [required]="true">
+  </app-input-text-component>
+
+  <app-input-select-component
+    #inputEstado
+    [(value)]="selectedRolForm.estado"
+    [label]="'Estado'"
+    [options]="[
+      { label: '✅ Activo', value: '✅ Activo' },
+      { label: '❌ Inactivo', value: '❌ Inactivo' }
+    ]"
+    [required]="true">
+  </app-input-select-component>
+
+</app-generic-dialog-form-component>
