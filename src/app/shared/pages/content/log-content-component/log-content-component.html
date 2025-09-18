@@ -3,9 +3,22 @@
   [preTitleInputs]="{ imgUrl: 'buttons/historial.svg' }"
   [title]="'Historial'"
   [bodyComponent]="tableComponent"
-  [bodyInputs]="{ headers: headers, data: paginatedData}"
-  [buttons]="buttons">
+  [bodyInputs]="{ headers: headers, data: paginatedData }">
 </app-card-main-component>
+
+<ng-template #busquedaResponsable>
+  <app-barra-busqueda-component
+    [placeholder]="'Buscar Responsable'"
+    (valueChange)="filtrarData('Responsable', $event)">
+  </app-barra-busqueda-component>
+</ng-template>
+
+<ng-template #busquedaFecha>
+  <app-barra-busqueda-component
+    [placeholder]="'Buscar Fecha'"
+    (valueChange)="filtrarData('Fecha', $event)">
+  </app-barra-busqueda-component>
+</ng-template>
 
 <app-paginator
   [totalPages]="totalPages"

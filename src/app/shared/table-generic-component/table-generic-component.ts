@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Type, TemplateRef  } from '@angular/core';
 
-export interface ActionButtonConfig {
-  component: Type<any>;
-  inputs: { [key: string]: any };
+export interface TableHeader {
+  title: string;
+  headerTemplate?: TemplateRef<any>;
 }
 
 @Component({
@@ -13,7 +13,7 @@ export interface ActionButtonConfig {
   styleUrl: './table-generic-component.css'
 })
 export class TableGenericComponent {
-  @Input() headers: string[] = [];
+  @Input() headers: TableHeader[] = [];
   @Input() data: any[] = [];
   @Input() actionTemplate!: TemplateRef<any>; 
 }

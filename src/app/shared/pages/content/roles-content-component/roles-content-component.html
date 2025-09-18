@@ -7,6 +7,26 @@
   [buttons]="buttons">
 </app-card-main-component>
 
+<ng-template #botonNombre>
+  <app-button-component
+    imgUrl="buttons/ordenar.svg"
+    color="white"
+    width="18px"
+    height="18px"
+    (clicked)="ordenarPorNombre()">
+  </app-button-component>
+</ng-template>
+
+<ng-template #botonDescripcion>
+  <app-button-component
+    imgUrl="buttons/ordenar.svg"
+    color="white"
+    width="18px"
+    height="18px"
+    (clicked)="ordenarPorDescripcion()">
+  </app-button-component>
+</ng-template>
+
 <ng-template #actionTemplate let-row>
   <div class="d-flex gap-2">
     <app-button-component

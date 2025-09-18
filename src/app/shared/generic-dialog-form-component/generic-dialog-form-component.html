@@ -1,4 +1,4 @@
-<p-dialog [(visible)]="visible" [modal]="true" [closable]="false" styleClass="custom-dialog" >
+<p-dialog [(visible)]="visible" [modal]="true" [closable]="false" styleClass="custom-dialog">
   
   <ng-template pTemplate="header">
     <div class="custom-dialog-header">
@@ -7,12 +7,9 @@
     </div>
   </ng-template>
 
-  
-  <div class="dialog-content">
+  <div class="dialog-content" *ngIf="visible">
     <ng-content></ng-content>
   </div>
-
-  
   <div class="dialog-footer">
     <app-simple-button-component
       label="Guardar"
