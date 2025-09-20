@@ -27,7 +27,7 @@ export class RolesService {
   }
 
   actualizarRol(uuidRol: string, rol: RolDTOPeticion): Observable<RolDTORespuesta> {
-    const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqcGVyZXoiLCJpYXQiOjE3NTgwNzE4NDQsImV4cCI6MTc1ODA4MjY0NH0.vtsnQyxA4HDgJpycr0d_9W9tic85Z2fipYy4mxX6L74'; 
+    const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqcGVyZXoiLCJpYXQiOjE3NTgzOTQ2NTQsImV4cCI6MTc1ODQwNTQ1NH0.u1V7ST1_8Eo54frqB9D5C_WIe5rEH8_w5DrOBG_k1UU'; 
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
