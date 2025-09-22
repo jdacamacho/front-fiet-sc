@@ -63,3 +63,6 @@
     letter-spacing: 0.35px;
 }
 
+:host ::ng-deep .p-dialog .p-dialog-footer app-simple-button-component {
+  margin-top: 20px; 
+}

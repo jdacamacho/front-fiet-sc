@@ -1,16 +1,23 @@
 <div class="form-floating mb-3 small-input mt-3">
-  <select 
+  <select
     class="form-select"
     [class.is-invalid]="isInvalid()"
-    [id]="label" 
-    [value]="value" 
+    [id]="label"
+    [ngModel]="value"
+    (ngModelChange)="onValueChange($event)"
+    [compareWith]="compareFn"
     [required]="required"
-    (change)="onValueChange($event)"
-    aria-label="{{label}}">
-    <option value="">Seleccione una opción</option>
-    <option *ngFor="let opt of options" [value]="opt.value">{{ opt.label }}</option>
+    (blur)="touched = true"
+    aria-label="{{label}}"
+  >
+    <option [ngValue]="null">Seleccione una opción</option>
+    <option *ngFor="let opt of options" [ngValue]="opt.value">
+      {{ opt.label }}
+    </option>
   </select>
-  <label [for]="label">{{ label }}</label>
+  <label [for]="label">
+    {{ label }} <span *ngIf="required" style="color:red">*</span>
+  </label>
   <div class="invalid-feedback" *ngIf="isInvalid()">
     {{ label }} es obligatorio
   </div>

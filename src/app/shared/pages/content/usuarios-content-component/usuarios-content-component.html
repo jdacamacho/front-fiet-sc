@@ -1,0 +1,134 @@
+<app-card-main-component
+  [preTitleComponent]="pretitleComponentComponent"
+  [preTitleInputs]="{ imgUrl: 'buttons/usuarios.svg' }"
+  [title]="'Gestión de Usuarios'"
+  [bodyComponent]="tableComponent"
+  [bodyInputs]="{ headers: headers, data: paginatedData, actionTemplate: actionTemplate }"
+  [buttons]="buttonsCard">
+</app-card-main-component>
+
+<ng-template #actionTemplate let-row>
+  <div class="d-flex gap-2">
+    <app-button-component
+      imgUrl="buttons/edit.svg"
+      color="white"
+      width="18px"
+      height="18px"
+      (clicked)="abrirModalActualizarUsuario(row)">
+    </app-button-component>
+
+    <app-button-component
+      imgUrl="buttons/eye.svg"
+      color="white"
+      width="18px"
+      height="18px"
+      (clicked)="verMasInfo(row)">
+    </app-button-component>
+  </div>
+</ng-template>
+
+<app-paginator
+  [totalPages]="totalPages"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChange($event)">
+</app-paginator>
+
+<ng-template #busquedaNombre>
+  <app-barra-busqueda-component
+    [placeholder]="'Buscar Usuario'"
+    (valueChange)="filtrarData('nombre', $event)">
+  </app-barra-busqueda-component>
+</ng-template>
+
+<app-generic-dialog-info-component
+  [visible]="usuarioInfoDialogVisible"
+  (visibleChange)="usuarioInfoDialogVisible = $event"
+  [title]="'Información del Rol'"
+  [data]="selectedUsuarioInfo">
+</app-generic-dialog-info-component>
+
+<app-generic-dialog-form-component
+  [visible]="usuarioFormActualizarDialogVisible"
+  (visibleChange)="usuarioFormActualizarDialogVisible = $event"
+  [title]="'Actualizar Usuario'"
+  (save)="guardarUsuarioActualizado()">
+
+  <app-input-text-component
+    #inputNombresActualizar
+    [(value)]="selectedUsuarioActualizarForm.nombres"
+    [label]="'Nombres'"
+    [required]="true">
+  </app-input-text-component>
+
+  <app-input-text-component
+    #inputApellidosActualizar
+    [(value)]="selectedUsuarioActualizarForm.apellidos"
+    [label]="'Apellidos'"
+    [required]="true">
+  </app-input-text-component>
+
+  <app-input-select-component
+    #inputTipoDocumentoActualizar
+    [(value)]="selectedUsuarioActualizarForm.tipoDocumento"
+    [label]="'Tipo Documento'"
+    [options]="[
+      { label: 'Cédula de ciudadanía', value: 'Cédula de ciudadanía' },
+      { label: 'Tarjeta de identidad', value: 'Tarjeta de identidad' },
+      { label: 'Cédula de extranjería', value: 'Cédula de extranjería' },
+      { label: 'Pasaporte', value: 'Pasaporte' },
+      { label: 'Registro civil de nacimiento', value: 'Registro civil de nacimiento' },
+      { label: 'Permiso especial de permanencia', value: 'Permiso especial de permanencia' },
+      { label: 'Carné diplomático', value: 'Carné diplomático' }
+    ]"
+    [required]="true">
+  </app-input-select-component>
+
+  
+  <app-input-text-component
+    #inputNumeroDocumentoActualizar
+    [(value)]="selectedUsuarioActualizarForm.numeroDocumento"
+    [label]="'Número Documento'"
+    [required]="true">  
+  </app-input-text-component>
+
+  <app-input-text-component
+    #inputTelefonoActualizar
+    [(value)]="selectedUsuarioActualizarForm.telefono"
+    [label]="'Teléfono'"
+    [required]="true">
+  </app-input-text-component>
+
+  <app-input-text-component
+    #inputCorreoElectronicoActualizar
+    [(value)]="selectedUsuarioActualizarForm.correoElectronico"
+    [label]="'Correo Electrónico'"
+    [required]="true">
+  </app-input-text-component>
+
+  <app-input-text-component
+    #inputUsernameActualizar
+    [(value)]="selectedUsuarioActualizarForm.username"
+    [label]="'Username'"
+    [required]="true">  
+  </app-input-text-component>
+  
+  <app-input-select-component
+    #inputTipoUsuarioActualizar
+    [(value)]="selectedUsuarioActualizarForm.objTipoUsuario"
+    [label]="'Tipo Usuario'"
+    [options]="tiposUsuarioOptions"
+    [required]="true">
+  </app-input-select-component>
+
+  <app-input-select-component
+    #inputEstadoActualizar
+    [(value)]="selectedUsuarioActualizarForm.estado"
+    [label]="'Estado'"
+    [options]="[
+      { label: '✅ Activo', value: '✅ Activo' },
+      { label: '❌ Inactivo', value: '❌ Inactivo' }
+    ]"
+    [required]="true">
+  </app-input-select-component>
+
+</app-generic-dialog-form-component>

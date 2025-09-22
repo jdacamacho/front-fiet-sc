@@ -8,9 +8,14 @@
     </div>
 
     <div class="d-flex gap-2">
-      <ng-container *ngFor="let btn of buttons">
-        <ng-container *ngComponentOutlet="btn"></ng-container>
-      </ng-container>
+      <app-button-component
+        *ngFor="let btn of buttons"
+        [imgUrl]="btn.imgUrl"
+        [color]="btn.color"
+        [width]="btn.width"
+        [height]="btn.height"
+        (clicked)="btn.onClick()">
+      </app-button-component>
     </div>
   </div>
 

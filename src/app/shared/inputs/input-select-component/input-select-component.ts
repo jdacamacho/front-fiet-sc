@@ -16,13 +16,16 @@ export class InputSelectComponent {
   @Output() valueChange = new EventEmitter<any>(); 
   touched: boolean = false;
   
-  onValueChange(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    this.value = select.value;
+  onValueChange(newValue: any) {
+    this.value = newValue;
     this.valueChange.emit(this.value);
   }
 
   isInvalid(): boolean {
-    return this.required && (!this.value || this.value.trim() === '') && this.touched;
+    return this.required && (!this.value || this.value.toString().trim() === '') && this.touched;
   }
+
+  compareFn = (o1: any, o2: any): boolean => {
+    return JSON.stringify(o1) === JSON.stringify(o2);
+  };
 }

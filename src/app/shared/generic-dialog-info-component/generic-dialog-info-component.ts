@@ -23,4 +23,12 @@ export class GenericDialogInfoComponent {
   objectKeys(obj: any): string[] {
     return obj ? Object.keys(obj) : [];
   }
+
+  formatKey(key: string): string {
+    return key
+      .replace(/_/g, ' ')             
+      .replace(/\w\S*/g, (w) =>      
+        w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+      );
+  }
 }

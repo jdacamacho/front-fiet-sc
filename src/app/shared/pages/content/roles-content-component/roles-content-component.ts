@@ -45,7 +45,7 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
 
   // Paginación
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 5;
 
   // Flag para controlar orden
   private nombreOrdenAsc = true;

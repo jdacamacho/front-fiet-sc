@@ -8,15 +8,17 @@
 
   <div *ngIf="data" class="dialog-content">
     <div *ngFor="let key of objectKeys(data)" class="dialog-row">
-      <span class="field-name">{{ key }}: </span>
+      <span class="field-name">{{ formatKey(key) }}: </span>
       <span class="field-value">{{ data[key] }}</span>
     </div>
   </div>
 
-  <app-simple-button-component
+  <ng-template pTemplate="footer">
+    <app-simple-button-component
       label="OK"
       width="50px"
       height="30px"
       (clicked)="close()">
-  </app-simple-button-component>
+    </app-simple-button-component>
+  </ng-template>
 </p-dialog>

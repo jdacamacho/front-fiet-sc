@@ -22,7 +22,7 @@ import { BarraBusquedaComponent } from '../../../search/barra-busqueda-component
 })
 export class LogContentComponent implements OnInit {
   currentPage = 1; // Página actual
-  pageSize = 10;   // Tamaño de página
+  pageSize = 5;   // Tamaño de página
   tableComponent = TableGenericComponent; // Componente de tabla
   pretitleComponentComponent = ButtonComponent; // Componente pre-title
 
