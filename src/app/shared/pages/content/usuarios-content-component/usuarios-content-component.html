@@ -221,3 +221,11 @@
   </app-input-select-component>
 
 </app-generic-dialog-form-component>
+
+<app-generic-dialog-upload-file-component
+  [(visible)]="usuarioUploadDialogVisible"
+  title="Subir archivo"
+  (upload)="guardarArchivo($event)">
+</app-generic-dialog-upload-file-component>
+
+

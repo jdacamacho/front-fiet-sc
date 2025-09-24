@@ -18,11 +18,13 @@ import { UsuarioActualizarDTOPeticion } from '../../../../core/models/Usuario/DT
 import { ErrorHandlerService } from '../../../../core/services/error-handler-service';
 import { RolesService } from '../../../../core/services/roles-service';
 import { InputPasswordComponent } from '../../../inputs/input-password-component/input-password-component';
+import { GenericDialogUploadFileComponent } from '../../../generic-dialog-upload-file-component/generic-dialog-upload-file-component';
 
 @Component({
   selector: 'app-usuarios-content-component',
   imports: [CommonModule, CardMainComponent, Paginator, ButtonComponent, BarraBusquedaComponent,
-    GenericDialogInfoComponent, GenericDialogFormComponent, InputTextComponent, InputSelectComponent, InputPasswordComponent],
+    GenericDialogInfoComponent, GenericDialogFormComponent, InputTextComponent, InputSelectComponent, InputPasswordComponent,
+    GenericDialogUploadFileComponent],
   templateUrl: './usuarios-content-component.html',
   styleUrl: './usuarios-content-component.css'
 })
@@ -56,6 +58,10 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
   usuarioInfoDialogVisible = false;
   usuarioFormActualizarDialogVisible = false;
   usuarioFormDialogVisible = false;
+  usuarioUploadDialogVisible = false;
+
+  // Archivo actual cargado
+  archivoSeleccionado: File | null = null;
 
   // Objeto seleccionado para edición o información
   selectedUsuarioInfo: any = null;
@@ -110,7 +116,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
         color: '#1E257B',
         width: '20px',
         height: '20px',
-        onClick: () => this.crearUsuario()  
+        onClick: () => this.abrirDialogoUpload()  
       }
     ];
   }
@@ -155,7 +161,25 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
       { title: 'estado' }
     ];
   }
-    
+
+  protected abrirDialogoUpload(): void {
+    this.archivoSeleccionado = null; 
+    this.usuarioUploadDialogVisible = true;
+  }
+
+  protected guardarArchivo(file: File): void {
+    if (!file) {
+      this.toastService.showError('Error', 'Debe seleccionar un archivo antes de continuar');
+      return;
+    }
+
+    // Aquí puedes llamar a tu servicio de subida
+    console.log('Archivo a subir:', file);
+
+    this.toastService.showSuccess('Archivo cargado', `Se subió el archivo: ${file.name}`);
+    this.usuarioUploadDialogVisible = false;
+  }
+
   /**
    * Carga los usuarios desde el servicio
    */
