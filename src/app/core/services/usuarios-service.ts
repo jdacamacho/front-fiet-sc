@@ -17,7 +17,7 @@ export class UsuariosService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqcGVyZXoiLCJpYXQiOjE3NTg0OTU2MjcsImV4cCI6MTc1ODUwNjQyN30.LRiHqd8T_i68lFjHKiFsHPAMaeKV8fBUTRspiJ7HF0I'; 
+    const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqcGVyZXoiLCJpYXQiOjE3NTg2Njc4ODUsImV4cCI6MTc1ODY3ODY4NX0.OcVneF8_HJNPVXNaYMfhHwL1iVqGqngFuS1-VRbuBsE'; 
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'

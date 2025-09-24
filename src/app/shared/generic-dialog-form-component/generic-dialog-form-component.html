@@ -10,12 +10,12 @@
   <div class="dialog-content" *ngIf="visible">
     <ng-content></ng-content>
   </div>
-  <div class="dialog-footer">
+  <ng-template pTemplate="footer">
     <app-simple-button-component
       label="Guardar"
       width="70px"
       height="30px"
       (clicked)="onSave()">
     </app-simple-button-component>
-  </div>
+  </ng-template>
 </p-dialog>

@@ -28,4 +28,15 @@ export class InputSelectComponent {
   compareFn = (o1: any, o2: any): boolean => {
     return JSON.stringify(o1) === JSON.stringify(o2);
   };
+
+  public reset(): void {
+    this.value = null;
+    this.valueChange.emit(this.value);
+    this.touched = false;
+  }
+
+  public setValue(newValue: any): void {
+    this.value = newValue;
+    this.valueChange.emit(this.value);
+  }
 }

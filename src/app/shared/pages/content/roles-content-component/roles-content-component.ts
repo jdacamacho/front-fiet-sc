@@ -20,6 +20,7 @@ import { InputTextComponent } from '../../../inputs/input-text-component/input-t
 import { InputSelectComponent } from '../../../inputs/input-select-component/input-select-component';
 import { RolDTOPeticion } from '../../../../core/models/Rol/DTORequest/RolDTOPeticion';
 import { ToastService } from '../../../../core/services/toast-service';
+import { ErrorHandlerService } from '../../../../core/services/error-handler-service';
 
 @Component({
   selector: 'app-roles-content-component',
@@ -64,7 +65,9 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
 
   data: any[] = [];
 
-  constructor(private rolesService: RolesService, private toastService: ToastService) {}
+  constructor(private rolesService: RolesService, private toastService: ToastService,
+    private errorHandlerService: ErrorHandlerService
+  ) {}
 
   /**
    * Ordena la tabla por el campo nombre
@@ -171,15 +174,8 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
         this.toastService.showSuccess('Éxito', 'Rol actualizado correctamente');
       },
       error: (err) => {
-        console.log('Error actualizando rol', );
-        let error = '';
-        if (err.error && err.error.descripcion) {
-          error = err.error.descripcion
-        } else {
-          error = err.message;
-        }
         this.rolFormDialogVisible = false;
-        this.toastService.showError('Error Actualizando el Rol', `No se pudo actualizar el rol. ${error}`);
+        this.errorHandlerService.handleError(err, 'Error Actualizando el Rol', 'No se pudo actualizar el Rol');
       }
     });
   }

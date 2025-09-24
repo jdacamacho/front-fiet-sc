@@ -15,17 +15,30 @@ import { InputSelectComponent } from '../../../inputs/input-select-component/inp
 import { UsuarioDTOPeticion } from '../../../../core/models/Usuario/DTORequest/UsuarioDTOPeticion';
 import { ToastService } from '../../../../core/services/toast-service';
 import { UsuarioActualizarDTOPeticion } from '../../../../core/models/Usuario/DTORequest/UsuarioActualizarDTOPeticion';
+import { ErrorHandlerService } from '../../../../core/services/error-handler-service';
+import { RolesService } from '../../../../core/services/roles-service';
+import { InputPasswordComponent } from '../../../inputs/input-password-component/input-password-component';
 
 @Component({
   selector: 'app-usuarios-content-component',
   imports: [CommonModule, CardMainComponent, Paginator, ButtonComponent, BarraBusquedaComponent,
-    GenericDialogInfoComponent, GenericDialogFormComponent, InputTextComponent, InputSelectComponent],
+    GenericDialogInfoComponent, GenericDialogFormComponent, InputTextComponent, InputSelectComponent, InputPasswordComponent],
   templateUrl: './usuarios-content-component.html',
   styleUrl: './usuarios-content-component.css'
 })
 export class UsuariosContentComponent implements OnInit, AfterViewInit{
-  
   // Referencias a inputs y templates
+  // Formulario crear usuario
+  @ViewChild('inputNombres') inputNombres!: InputTextComponent;
+  @ViewChild('inputApellidos') inputApellidos!: InputTextComponent;
+  @ViewChild('inputTipoDocumento') inputTipoDocumento!: InputSelectComponent;
+  @ViewChild('inputNumeroDocumento') inputNumeroDocumento!: InputTextComponent;
+  @ViewChild('inputTelefono') inputTelefono!: InputTextComponent;
+  @ViewChild('inputCorreoElectronico') inputCorreoElectronico!: InputTextComponent;
+  @ViewChild('inputUsername') inputUsername!: InputSelectComponent;
+  @ViewChild('inputPassword') inputPassword!: InputPasswordComponent;
+  @ViewChild('inputTipoUsuario') inputTipoUsuario!: InputSelectComponent;
+  @ViewChild('inputRoles') inputRoles!: InputSelectComponent;
   // Formulario actualización usuario
   @ViewChild('inputNombresActualizar') inputNombresActualizar!: InputTextComponent;
   @ViewChild('inputApellidosActualizar') inputApellidosActualizar!: InputTextComponent;
@@ -42,10 +55,12 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
   // Flags de visibilidad de diálogos
   usuarioInfoDialogVisible = false;
   usuarioFormActualizarDialogVisible = false;
+  usuarioFormDialogVisible = false;
 
   // Objeto seleccionado para edición o información
   selectedUsuarioInfo: any = null;
   selectedUsuarioActualizarForm: any = {};
+  selectedUsuarioForm: any = {};
 
   // Paginación
   currentPage = 1;
@@ -66,28 +81,21 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
   dataCopy: any[] = [];
   tiposUsuario: any[] = [];
   tiposUsuarioOptions: { label: string; value: any }[] = [];
+  roles: any[] = [];
+  rolesOptions: { label: string; value: any }[] = [];
 
 
-  constructor(private usuariosService: UsuariosService, private toastService: ToastService) { }
+  constructor(private usuariosService: UsuariosService, private toastService: ToastService,
+    private errorHandlerService: ErrorHandlerService, private rolesService:RolesService
+  ) { }
 
   /**
    * Inicializa la carga de roles
    */
   ngOnInit(): void {
     this.loadUsuarios();
-
-    this.usuariosService.getTiposUsuario().subscribe({
-    next: (tipos: any[]) => {
-      this.tiposUsuario = tipos;
-      this.tiposUsuarioOptions = tipos.map(tu => ({
-        label: tu.nombre,
-        value: tu
-      }));
-    },
-    error: (err) => {
-      console.error('Error cargando tipos de usuario', err);
-    }
-  });
+    this.loadTiposUsuario();
+    this.loadRoles();
 
     this.buttonsCard = [
       {
@@ -107,8 +115,34 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
     ];
   }
 
-  private crearUsuario(): void {
-    console.log('Crear usuario clicked');
+  private loadTiposUsuario(): void {
+    this.usuariosService.getTiposUsuario().subscribe({
+      next: (tipos: any[]) => {
+        this.tiposUsuario = tipos;
+        this.tiposUsuarioOptions = tipos.map(tu => ({
+          label: tu.nombre,
+          value: tu
+        }));
+      },
+      error: (err) => {
+        console.error('Error cargando tipos de usuario', err);
+      }
+    });
+  }
+
+  private loadRoles(): void {
+    this.rolesService.getRoles().subscribe({
+      next: (roles: any[]) => {
+        this.roles = roles;
+        this.rolesOptions = roles.map(r => ({
+          label: r.nombre,
+          value: r
+        }));
+      },
+      error: (err) => {
+        console.error('Error cargando roles', err);
+      }
+    });
   }
 
   /**
@@ -151,6 +185,76 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
       );
     }
     this.currentPage = 1; // Reinicia paginación al filtrar
+  }
+
+  protected crearUsuario(): void {
+    this.selectedUsuarioForm = {};
+    this.inputNombres.reset();
+    this.inputApellidos.reset();
+    this.inputNumeroDocumento.reset();
+    this.inputTelefono.reset();
+    this.inputCorreoElectronico.reset();
+    this.inputPassword.reset();
+    this.inputTipoDocumento.reset();
+    this.inputUsername.reset();
+    this.inputTipoUsuario.reset();
+    this.inputRoles.reset();
+    this.usuarioFormDialogVisible = true; 
+  }
+
+  protected guardarNuevoUsuario(): void {
+    this.inputNombres.touched = true;
+    this.inputApellidos.touched = true;
+    this.inputTipoDocumento.touched = true;
+    this.inputNumeroDocumento.touched = true;
+    this.inputTelefono.touched = true;
+    this.inputCorreoElectronico.touched = true;
+    this.inputUsername.touched = true;
+    this.inputPassword.touched = true;
+    this.inputTipoUsuario.touched = true;
+    this.inputRoles.touched = true;
+
+    if (
+      this.inputNombres.isInvalid() ||
+      this.inputApellidos.isInvalid() ||
+      this.inputTipoDocumento.isInvalid() ||
+      this.inputNumeroDocumento.isInvalid() ||
+      this.inputTelefono.isInvalid() ||
+      this.inputCorreoElectronico.isInvalid() ||
+      this.inputUsername.isInvalid() ||
+      this.inputPassword.isInvalid() ||
+      this.inputTipoUsuario.isInvalid() ||
+      this.inputRoles.isInvalid()
+    ) return;
+
+    const peticion: UsuarioDTOPeticion = {
+      nombres: this.inputNombres.value,
+      apellidos: this.inputApellidos.value,
+      estado: true,
+      tipoDocumento: this.inputTipoDocumento.value,
+      numeroDocumento: this.inputNumeroDocumento.value,
+      telefono: this.inputTelefono.value,
+      correoElectronico: this.inputCorreoElectronico.value,
+      username: this.inputUsername.value,
+      password: this.inputPassword.value,
+      objTipoUsuario: this.inputTipoUsuario.value, 
+      roles: [this.inputRoles.value]              
+    };
+
+    const tipoUsuarioParam = this.inputRoles.value.nombre.replace(/\s+/g, '');
+
+    this.usuariosService.crearUsuario(peticion, tipoUsuarioParam).subscribe({
+      next: () => {
+        this.toastService.showSuccess('Usuario creado','El usuario se creó correctamente.');
+        this.usuarioFormDialogVisible = false;
+        this.loadUsuarios();
+      },
+      error: (err) => {
+        this.usuarioFormDialogVisible = false;
+        this.errorHandlerService.handleError(err, 'Error creando usuario');
+      }
+    });
+
   }
 
   /**
@@ -237,25 +341,8 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
         this.toastService.showSuccess('Éxito', 'Usuario actualizado correctamente');
       },
       error: (err) => {
-        let error = '';
-        console.log('Error actualizando usuario', err);
-        if (err.error && typeof err.error === 'object' && !err.error.mensaje && !err.error.descripcion) {
-          const fieldErrors = Object.entries(err.error)
-            .filter(([key, value]) => typeof value === 'string')
-            .map(([key, value]) => `${key}: ${value}`)
-            .join(' | ');
-          if (fieldErrors) 
-            error = fieldErrors;
-
-        } else if (err.error && err.error.mensaje) {
-          error = err.error.mensaje;
-        } else if (err.error && err.error.descripcion) {
-          error = err.error.descripcion;
-        } else {
-          error = err.message || 'Error desconocido';
-        }
         this.usuarioFormActualizarDialogVisible = false;
-        this.toastService.showError('Error Actualizando el Usuario', `No se pudo actualizar el usuario. ${error}`);
+        this.errorHandlerService.handleError(err, 'Error Actualizando el Usuario', 'No se pudo actualizar el usuario');
       }
     });
   }

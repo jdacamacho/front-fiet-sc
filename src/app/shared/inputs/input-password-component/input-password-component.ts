@@ -1,15 +1,15 @@
-import { Component, Input, Output, EventEmitter} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-input-text-component',
+  selector: 'app-input-password-component',
   imports: [CommonModule, FloatLabelModule, FormsModule],
-  templateUrl: './input-text-component.html',
-  styleUrl: './input-text-component.css'
+  templateUrl: './input-password-component.html',
+  styleUrl: './input-password-component.css'
 })
-export class InputTextComponent {
+export class InputPasswordComponent {
   @Input() label: string = '';    
   @Input() value: string = '';     
   @Input() required: boolean = false;
