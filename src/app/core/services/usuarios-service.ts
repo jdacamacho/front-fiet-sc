@@ -17,7 +17,7 @@ export class UsuariosService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqcGVyZXoiLCJpYXQiOjE3NTg2Njc4ODUsImV4cCI6MTc1ODY3ODY4NX0.OcVneF8_HJNPVXNaYMfhHwL1iVqGqngFuS1-VRbuBsE'; 
+    const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyb290ZmlldCIsImlhdCI6MTc1ODg0MDY2NCwiZXhwIjoxNzU4ODUxNDY0fQ.eWDMtBw0JgqWo8FcNhH5KFv-hTLBhfXEEWaWgPKU5Jk'; 
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -60,10 +60,11 @@ export class UsuariosService {
 
     return this.http.post<UsuarioDTORespuesta[]>(`${this.url}/cargar/archivo`, formData, {
       headers: new HttpHeaders({
-        'Authorization': `Bearer ${this.getHeaders().get('Authorization')}`
+        'Authorization': `${this.getHeaders().get('Authorization')}`
       })
     });
   }
+
 
   actualizarUsuario(uuidUsuario: string, peticion: UsuarioActualizarDTOPeticion): Observable<UsuarioDTORespuesta> {
     return this.http.put<UsuarioDTORespuesta>(`${this.url}/${uuidUsuario}`, peticion, {

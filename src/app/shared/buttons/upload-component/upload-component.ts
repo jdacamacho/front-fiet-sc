@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileUploadModule, FileUpload  } from 'primeng/fileupload';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
@@ -13,6 +13,7 @@ export class UploadComponent {
   @Input() uploadedFile: File | null = null; 
   @Output() fileSelected = new EventEmitter<File>();
   @Output() fileRemoved = new EventEmitter<void>();
+  @ViewChild(FileUpload) fileUpload!: FileUpload; 
 
   onFileSelect(event: any) {
     const file: File = event.files[0];
@@ -24,6 +25,11 @@ export class UploadComponent {
 
   removeFile() {
     this.uploadedFile = null;
+    this.fileUpload.clear();   
     this.fileRemoved.emit();
+  }
+  reset() {
+    this.uploadedFile = null;
+    this.fileUpload.clear();
   }
 }

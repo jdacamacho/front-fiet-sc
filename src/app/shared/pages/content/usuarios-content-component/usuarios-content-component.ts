@@ -173,11 +173,30 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
       return;
     }
 
-    // Aquí puedes llamar a tu servicio de subida
-    console.log('Archivo a subir:', file);
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    const extensionesPermitidas = ['csv', 'xls', 'xlsx'];
 
-    this.toastService.showSuccess('Archivo cargado', `Se subió el archivo: ${file.name}`);
-    this.usuarioUploadDialogVisible = false;
+    if (!extension || !extensionesPermitidas.includes(extension)) {
+      this.toastService.showError('Error', 'Solo se permiten archivos CSV o Excel (.csv, .xls, .xlsx)');
+      return;
+    }
+
+    this.toastService.showInfo('Procesando', 'Su archivo se está procesando...');
+
+    this.usuariosService.crearUsuariosDesdeArchivo(file).subscribe({
+      next: (respuesta) => {
+        this.toastService.showSuccess(
+          'Archivo cargado',
+          `Se subieron ${respuesta.length} registros al sistema. Para más detalles consulte el historial.`
+        );
+        this.usuarioUploadDialogVisible = false;
+        this.loadUsuarios();
+      },
+      error: (err) => {
+        this.usuarioUploadDialogVisible = false;
+        this.errorHandlerService.handleError(err, 'Error creando usuarios');
+      }
+    });
   }
 
   /**

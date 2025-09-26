@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
@@ -21,7 +21,10 @@ export class GenericDialogUploadFileComponent {
   @Output() fileRemoved = new EventEmitter<void>();
   @Output() upload = new EventEmitter<File>();
 
+  @ViewChild(UploadComponent) uploadComponent!: UploadComponent;
+
   close() {
+    this.uploadComponent.reset(); 
     this.visibleChange.emit(false);
   }
 
