@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ContentComponent } from '../content/content-component/content-component';
 import { CommonModule } from '@angular/common';
-import { RolesContentComponent } from '../content/roles-content-component/roles-content-component';
+import { InfoUsuarioContentComponent } from '../content/info-usuario-content-component/info-usuario-content-component';
 
 @Component({
   selector: 'app-info-usuario-component',
@@ -10,5 +10,5 @@ import { RolesContentComponent } from '../content/roles-content-component/roles-
   styleUrl: './info-usuario-component.css'
 })
 export class InfoUsuarioComponent {
-  content = RolesContentComponent; 
+  content = InfoUsuarioContentComponent; 
 }

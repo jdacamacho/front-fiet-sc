@@ -6,20 +6,24 @@ import Aura from '@primeuix/themes/aura';
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { MessageService } from 'primeng/api';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './core/auth/interceptor/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(),
     MessageService,
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes), provideClientHydration(withEventReplay()),
+    provideRouter(routes),
+    provideClientHydration(withEventReplay()),
     provideAnimationsAsync(),
-        providePrimeNG({
-            theme: {
-                preset: Aura
-            }
-        })
+    providePrimeNG({
+      theme: {
+        preset: Aura
+      }
+    }),
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    )
   ]
 };

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-button-group-component',
@@ -10,4 +10,9 @@ import { Component, Input } from '@angular/core';
 export class ButtonGroupComponent {
   @Input() label: string = '';
   @Input() imgUrl: string = '';
+  @Output() clicked = new EventEmitter<void>();
+
+  onClick() {
+    this.clicked.emit();
+  }
 }

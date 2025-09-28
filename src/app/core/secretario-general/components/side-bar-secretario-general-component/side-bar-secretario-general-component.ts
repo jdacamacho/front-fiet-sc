@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { SidebarComponent } from '../../../../shared/sidebars/sidebar-component/sidebar-component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-side-bar-secretario-general-component',
@@ -8,5 +9,9 @@ import { SidebarComponent } from '../../../../shared/sidebars/sidebar-component/
   styleUrl: './side-bar-secretario-general-component.css'
 })
 export class SideBarSecretarioGeneralComponent {
+  constructor(private router: Router){}
 
+  onSidebarButtonClick(route: string) {
+    this.router.navigate([route]);
+  }
 }

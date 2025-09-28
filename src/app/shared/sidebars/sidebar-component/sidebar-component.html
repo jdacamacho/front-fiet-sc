@@ -8,7 +8,8 @@
     <app-button-group-component
       class="w-100 mb-2"
       [label]="btn.label"
-      [imgUrl]="btn.imgUrl !== undefined ? btn.imgUrl : ''">
+      [imgUrl]="btn.imgUrl !== undefined ? btn.imgUrl : ''"
+      (clicked)="onButtonClick(btn.route)">
     </app-button-group-component>
   }
 </div>

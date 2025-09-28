@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UsuarioDTORespuesta } from '../models/Usuario/DTOResponse/UsuarioDTORespuesta';
@@ -7,74 +7,47 @@ import { UsuarioDTOPeticion } from '../models/Usuario/DTORequest/UsuarioDTOPetic
 import { UsuarioActualizarDTOPeticion } from '../models/Usuario/DTORequest/UsuarioActualizarDTOPeticion';
 import { CambioContraseñaDTOPeticion } from '../models/Usuario/DTORequest/CambioContraseñaDTOPeticion';
 import { TipoUsuarioDTORespuesta } from '../models/Usuario/DTOResponse/TipoUsuarioDTORespuesta';
+import { environment } from '../../../enviroments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuariosService {
-  private url = 'http://localhost:8080/api/unicauca/fiet/consejo/usuarios';
+  private url = `${environment.apiUrl}/usuarios`;
 
   constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyb290ZmlldCIsImlhdCI6MTc1ODg0MDY2NCwiZXhwIjoxNzU4ODUxNDY0fQ.eWDMtBw0JgqWo8FcNhH5KFv-hTLBhfXEEWaWgPKU5Jk'; 
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-  }
-
   getTiposUsuario(): Observable<TipoUsuarioDTORespuesta[]> {
-    return this.http.get<TipoUsuarioDTORespuesta[]>(`${this.url}/tipos`, {
-      headers: this.getHeaders()
-    });
+    return this.http.get<TipoUsuarioDTORespuesta[]>(`${this.url}/tipos`);
   }
 
   getUsuariosPaginado(pagina: number, tamanio: number): Observable<UsuarioLivianoDTORespuesta[]> {
-    return this.http.get<UsuarioLivianoDTORespuesta[]>(`${this.url}/paginado?pagina=${pagina}&tamanio=${tamanio}`, {
-      headers: this.getHeaders()
-    });
+    return this.http.get<UsuarioLivianoDTORespuesta[]>(`${this.url}/paginado?pagina=${pagina}&tamanio=${tamanio}`);
   }
 
   getUsuarios(): Observable<UsuarioLivianoDTORespuesta[]> {
-    return this.http.get<UsuarioLivianoDTORespuesta[]>(`${this.url}`, {
-      headers: this.getHeaders()
-    });
+    return this.http.get<UsuarioLivianoDTORespuesta[]>(`${this.url}`);
   }
 
   getUsuario(uuidUsuario: string): Observable<UsuarioDTORespuesta> {
-    return this.http.get<UsuarioDTORespuesta>(`${this.url}/${uuidUsuario}`, {
-      headers: this.getHeaders()
-    });
+    return this.http.get<UsuarioDTORespuesta>(`${this.url}/${uuidUsuario}`);
   }
 
   crearUsuario(peticion: UsuarioDTOPeticion, tipoUsuario: string): Observable<UsuarioDTORespuesta> {
-    return this.http.post<UsuarioDTORespuesta>(`${this.url}?tipoUsuario=${tipoUsuario}`, peticion, {
-      headers: this.getHeaders()
-    });
+    return this.http.post<UsuarioDTORespuesta>(`${this.url}?tipoUsuario=${tipoUsuario}`, peticion);
   }
 
   crearUsuariosDesdeArchivo(file: File): Observable<UsuarioDTORespuesta[]> {
     const formData = new FormData();
     formData.append('file', file);
-
-    return this.http.post<UsuarioDTORespuesta[]>(`${this.url}/cargar/archivo`, formData, {
-      headers: new HttpHeaders({
-        'Authorization': `${this.getHeaders().get('Authorization')}`
-      })
-    });
+    return this.http.post<UsuarioDTORespuesta[]>(`${this.url}/cargar/archivo`, formData);
   }
 
-
   actualizarUsuario(uuidUsuario: string, peticion: UsuarioActualizarDTOPeticion): Observable<UsuarioDTORespuesta> {
-    return this.http.put<UsuarioDTORespuesta>(`${this.url}/${uuidUsuario}`, peticion, {
-      headers: this.getHeaders()
-    });
+    return this.http.put<UsuarioDTORespuesta>(`${this.url}/${uuidUsuario}`, peticion);
   }
 
   cambiarContraseña(uuidUsuario: string, peticion: CambioContraseñaDTOPeticion): Observable<void> {
-    return this.http.patch<void>(`${this.url}/${uuidUsuario}`, peticion, {
-      headers: this.getHeaders()
-    });
+    return this.http.patch<void>(`${this.url}/${uuidUsuario}`, peticion);
   }
 }

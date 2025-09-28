@@ -1,0 +1,5 @@
+<div class="user-card" *ngIf="usuario">
+  <h2>Bienvenido, {{ usuario.username }}</h2>
+  <p><strong>Nombre:</strong> {{ usuario.nombreCompleto || usuario.username }}</p>
+  <p><strong>Correo:</strong> {{ usuario.correoElectronico }}</p>
+</div>

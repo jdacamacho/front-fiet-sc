@@ -1,14 +1,21 @@
-import { Component, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SecretarioGeneralRolesComponent } from './core/secretario-general/pages/secretario-general-roles-component/secretario-general-roles-component';
-import { SecretarioGeneralLogComponent } from "./core/secretario-general/pages/secretario-general-log-component/secretario-general-log-component";
-import { SecretarioGeneralUsuariosComponent } from "./core/secretario-general/pages/secretario-general-usuarios-component/secretario-general-usuarios-component";
+
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SecretarioGeneralRolesComponent, SecretarioGeneralLogComponent, SecretarioGeneralUsuariosComponent],
+  imports: [RouterOutlet, CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('front-fiet-sc');
+  loading = true;
+  token: string | null = null;
+
+  ngOnInit() {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      this.token = localStorage.getItem('authToken');
+    }
+    this.loading = false;
+  }
 }
