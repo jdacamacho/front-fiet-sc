@@ -13,9 +13,12 @@ export class App {
   token: string | null = null;
 
   ngOnInit() {
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (typeof window !== 'undefined' && window.localStorage){
       this.token = localStorage.getItem('authToken');
+
+      setTimeout(() => {
+        this.loading = false;
+      }, 200);
     }
-    this.loading = false;
   }
 }
