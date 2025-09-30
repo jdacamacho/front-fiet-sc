@@ -24,17 +24,21 @@
     padding: 0.25rem 0.5rem;
     background-color: #fff !important; 
     color: #1E257B !important; 
-    border-color: white;    
+    font-family: 'Titillium Web', sans-serif;
+    border-color: #928F9A;    
 }
 
 .dropdown-menu-white .dropdown-item{
     background-color: #fff !important;
     color: #454444 !important;
+    font-family: 'Titillium Web', sans-serif;
+    font-size: 12px;
+    font-size: 0.85rem;  
 }
 
 .dropdown-menu-white .dropdown-item:hover,
 .dropdown-menu-white .dropdown-item:focus,
 .dropdown-menu-white .dropdown-item:active {
-  background-color: #1E257B !important;
+  background-color: #FFB000 !important;
   color: #fff !important;
 }

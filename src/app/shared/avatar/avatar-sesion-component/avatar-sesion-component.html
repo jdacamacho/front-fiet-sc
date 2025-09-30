@@ -1,5 +1,4 @@
 <div class="d-flex align-items-center">
-  <!-- Avatar a la izquierda -->
   <p-avatar 
     [label]="avatarLabel" 
     class="avatar-custom me-3">
@@ -17,7 +16,9 @@
           <a class="dropdown-item" href="#">{{ role }}</a>
         </li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
+        <li>
+          <a class="dropdown-item" href="#" (click)="cerrarSesion()">Cerrar sesión</a>
+        </li>
       </ul>
     </div>
   </div>

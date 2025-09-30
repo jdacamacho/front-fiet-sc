@@ -26,5 +26,7 @@
         {{ rol.nombre }}<span *ngIf="!last">, </span>
       </span>
     </p>
+
+    <app-change-password-component [uuidUsuario]="usuario.uuidUsuario"></app-change-password-component>
   </div>
 </div>
