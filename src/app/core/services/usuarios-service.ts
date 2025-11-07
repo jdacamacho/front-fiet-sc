@@ -8,6 +8,7 @@ import { UsuarioActualizarDTOPeticion } from '../models/Usuario/DTORequest/Usuar
 import { CambioContraseñaDTOPeticion } from '../models/Usuario/DTORequest/CambioContraseñaDTOPeticion';
 import { TipoUsuarioDTORespuesta } from '../models/Usuario/DTOResponse/TipoUsuarioDTORespuesta';
 import { environment } from '../../../enviroments/environment';
+import { PaginacionRespuestaDTO } from '../models/PaginacionRespuestaDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -17,12 +18,33 @@ export class UsuariosService {
 
   constructor(private http: HttpClient) {}
 
+  getTotalUsuarios(): Observable<number> {
+    return this.http.get<number>(`${this.url}/total`);
+  }
+
   getTiposUsuario(): Observable<TipoUsuarioDTORespuesta[]> {
     return this.http.get<TipoUsuarioDTORespuesta[]>(`${this.url}/tipos`);
   }
 
-  getUsuariosPaginado(pagina: number, tamanio: number): Observable<UsuarioLivianoDTORespuesta[]> {
-    return this.http.get<UsuarioLivianoDTORespuesta[]>(`${this.url}/paginado?pagina=${pagina}&tamanio=${tamanio}`);
+  getUsuariosPaginado(pagina: number, tamanio: number): Observable<PaginacionRespuestaDTO<UsuarioLivianoDTORespuesta>> {
+    return this.http.get<PaginacionRespuestaDTO<UsuarioLivianoDTORespuesta>>(
+      `${this.url}/paginado?pagina=${pagina}&tamanio=${tamanio}`
+    );
+  }
+
+  getUsuariosFiltrados(nombreCompleto: string, pagina: number, tamanio: number): Observable<PaginacionRespuestaDTO<UsuarioLivianoDTORespuesta>> {
+    const params = new URLSearchParams();
+
+    if (nombreCompleto && nombreCompleto.trim() !== '') {
+      params.append('nombreCompleto', nombreCompleto.trim());
+    }
+
+    params.append('pagina', pagina.toString());
+    params.append('tamanio', tamanio.toString());
+
+    return this.http.get<PaginacionRespuestaDTO<UsuarioLivianoDTORespuesta>>(
+      `${this.url}/filtro?${params.toString()}`
+    );
   }
 
   getUsuarios(): Observable<UsuarioLivianoDTORespuesta[]> {
