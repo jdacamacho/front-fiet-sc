@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, TemplateRef, AfterViewInit, Input } from 
 import { UsuariosService } from '../../../../core/services/usuarios-service';
 import { TableGenericComponent } from '../../../table-generic-component/table-generic-component';
 import { ButtonComponent } from '../../../buttons/button-component/button-component';
-import { UsuarioLivianoDTORespuesta } from '../../../../core/models/Usuario/DTOResponse/UsuarioLivianoDTORespuesta';
 import { CommonModule } from '@angular/common';
 import { CardMainComponent } from '../../../card-main-component/card-main-component';
 import { Paginator } from "../../../paginator/paginator";
@@ -67,10 +66,13 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
   selectedUsuarioInfo: any = null;
   selectedUsuarioActualizarForm: any = {};
   selectedUsuarioForm: any = {};
+  busquedaActual: string = '';
 
   // Paginación
   currentPage = 1;
   pageSize = 5;
+  totalElements = 0;
+  totalPages = 1;
 
   // Componentes para uso en CardMainComponent
   tableComponent = TableGenericComponent;
@@ -83,8 +85,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
     {title: 'estado'}
   ];
 
-  data: any[] = [];
-  dataCopy: any[] = [];
+  paginatedData: any[] = [];
   tiposUsuario: any[] = [];
   tiposUsuarioOptions: { label: string; value: any }[] = [];
   roles: any[] = [];
@@ -151,6 +152,50 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
     });
   }
 
+  private cargarUsuarios(page: number = 1, busqueda: string = ''): void {
+    const backendPage = page - 1;
+
+    const observable = busqueda && busqueda.trim()
+      ? this.usuariosService.getUsuariosFiltrados(busqueda, backendPage, this.pageSize)
+      : this.usuariosService.getUsuariosPaginado(backendPage, this.pageSize);
+
+    observable.subscribe({
+      next: (respuesta) => {
+        if (!respuesta.content || respuesta.content.length === 0) {
+          this.paginatedData = [];
+          this.totalElements = 0;
+          this.totalPages = 0;
+          this.currentPage = 1;
+          this.busquedaActual = busqueda;
+          return;
+        }
+
+        this.paginatedData = respuesta.content.map(u => ({
+          uuidUsuario: u.uuidUsuario,
+          nombre: `${u.nombres} ${u.apellidos}`,
+          estado: u.estado ? '✅ Activo' : '❌ Inactivo'
+        }));
+
+        this.totalElements = respuesta.totalElements;
+        this.totalPages = Math.ceil(this.totalElements / this.pageSize);
+        this.currentPage = Math.min(page, this.totalPages);
+        this.busquedaActual = busqueda;
+      },
+      error: (err) => console.error('Error cargando usuarios', err)
+    });
+  }
+
+  /**
+ * Filtra los usuarios por nombre completo usando el endpoint del backend.
+ */
+  onBuscarUsuarios(nombreCompleto: string): void {
+    this.currentPage = 1;
+    this.paginatedData = [];
+    this.totalElements = 0;
+    this.totalPages = 0;
+    this.cargarUsuarios(1, nombreCompleto);
+  }
+
   /**
    * Se ejecuta después de que la vista se inicializa
    * Se asigna la referencia del template del botón al header
@@ -202,32 +247,29 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
   /**
    * Carga los usuarios desde el servicio
    */
-  loadUsuarios(): void {
-    this.usuariosService.getUsuarios().subscribe({
-      next: (usuarios: UsuarioLivianoDTORespuesta[]) => {
-        this.data = usuarios.map(u => ({
+  loadUsuarios(page: number = 1): void {
+    const backendPage = page - 1;
+    this.usuariosService.getUsuariosPaginado(backendPage, this.pageSize).subscribe({
+      next: (respuesta) => {
+        if (!respuesta.content || respuesta.content.length === 0) {
+          this.paginatedData = [];
+          this.totalElements = 0;
+          this.totalPages = 0;
+          this.currentPage = 1;
+          return;
+        }
+        this.paginatedData = respuesta.content.map(u => ({
           uuidUsuario: u.uuidUsuario,
           nombre: `${u.nombres} ${u.apellidos}`,
           estado: u.estado ? '✅ Activo' : '❌ Inactivo'
         }));
-        this.dataCopy = [...this.data];
-      },
-      error: (err) => {
-        console.error('Error cargando usuarios', err);
-      }
-    });
-  }
 
-  // Filtra la data según el campo y texto ingresado
-  filtrarData(campo: string, texto: string) {
-    if (!texto) {
-      this.dataCopy = [...this.data]; // Mostrar todo si no hay texto
-    } else {
-      this.dataCopy = this.data.filter(item =>
-        item[campo]?.toLowerCase().includes(texto.toLowerCase())
-      );
-    }
-    this.currentPage = 1; // Reinicia paginación al filtrar
+        this.totalElements = respuesta.totalElements;
+        this.totalPages = this.totalElements > 0 ? Math.ceil(this.totalElements / this.pageSize) : 1;
+        this.currentPage = Math.min(page, this.totalPages);
+      },
+      error: (err) => console.error('Error cargando usuarios', err)
+    });
   }
 
   protected crearUsuario(): void {
@@ -331,7 +373,6 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
    * Guarda los cambios realizados a un usuario
    */
   protected guardarUsuarioActualizado(): void {
-    // Marcar inputs como tocados para validación
     this.inputNombresActualizar.touched = true;
     this.inputApellidosActualizar.touched = true;
     this.inputTipoDocumentoActualizar.touched = true;
@@ -354,7 +395,6 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
       this.inputEstadoActualizar.isInvalid()
     ) return;
 
-    // Preparar datos a enviar
     const usuarioActualizado: UsuarioActualizarDTOPeticion = {
       nombres: this.selectedUsuarioActualizarForm.nombres,
       apellidos: this.selectedUsuarioActualizarForm.apellidos,
@@ -364,32 +404,23 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
       correoElectronico: this.selectedUsuarioActualizarForm.correoElectronico,
       username: this.selectedUsuarioActualizarForm.username,
       objTipoUsuario: this.selectedUsuarioActualizarForm.objTipoUsuario,
-      estado: this.selectedUsuarioActualizarForm.estado === '✅ Activo' ? true : false,
+      estado: this.selectedUsuarioActualizarForm.estado === '✅ Activo',
       roles: this.selectedUsuarioActualizarForm.roles
     };
 
-    // Llamada al servicio para actualizar
-    this.usuariosService.actualizarUsuario(this.selectedUsuarioActualizarForm.uuidUsuario, usuarioActualizado).subscribe({
-      next: (updatedUsuario) => {
-        const index = this.data.findIndex(u => u.uuidUsuario === updatedUsuario.uuidUsuario);
-        if (index !== -1) {
-          this.data[index] = {
-            uuidUsuario: updatedUsuario.uuidUsuario,
-            nombre: `${updatedUsuario.nombres} ${updatedUsuario.apellidos}`,
-            estado: updatedUsuario.estado ? '✅ Activo' : '❌ Inactivo'
-          };
+    this.usuariosService.actualizarUsuario(this.selectedUsuarioActualizarForm.uuidUsuario, usuarioActualizado)
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('Éxito', 'Usuario actualizado correctamente');
+          this.usuarioFormActualizarDialogVisible = false;
+          this.loadUsuarios(this.currentPage); 
+        },
+        error: (err) => {
+          this.usuarioFormActualizarDialogVisible = false;
+          this.errorHandlerService.handleError(err, 'Error Actualizando el Usuario', 'No se pudo actualizar el usuario');
         }
-        this.loadUsuarios(); 
-        this.usuarioFormActualizarDialogVisible = false;
-        this.toastService.showSuccess('Éxito', 'Usuario actualizado correctamente');
-      },
-      error: (err) => {
-        this.usuarioFormActualizarDialogVisible = false;
-        this.errorHandlerService.handleError(err, 'Error Actualizando el Usuario', 'No se pudo actualizar el usuario');
-      }
-    });
+      });
   }
-
 
    /**
    * Abre el diálogo de información del usuario
@@ -418,24 +449,10 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
   }
 
   /**
-   * Devuelve el número total de páginas según pageSize
-   */
-  get totalPages(): number {
-    return this.dataCopy.length ? Math.ceil(this.dataCopy.length / this.pageSize) : 1;
-  }
-
-  /**
-   * Devuelve los datos paginados para la tabla
-   */
-  get paginatedData() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.dataCopy.slice(start, start + this.pageSize);
-  }
-
-  /**
    * Actualiza la página actual al cambiar el paginador
    */
-  onPageChange(page: number) {
-    this.currentPage = page;
+  onPageChange(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.cargarUsuarios(page, this.busquedaActual);
   }
 }

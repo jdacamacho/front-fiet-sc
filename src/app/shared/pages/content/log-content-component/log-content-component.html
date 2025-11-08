@@ -9,18 +9,19 @@
 <ng-template #busquedaResponsable>
   <app-barra-busqueda-component
     [placeholder]="'Buscar Responsable'"
-    (valueChange)="filtrarData('Responsable', $event)">
+    (valueChange)="onBuscarResponsable($event)">
   </app-barra-busqueda-component>
 </ng-template>
 
 <ng-template #busquedaFecha>
   <app-barra-busqueda-component
     [placeholder]="'Buscar Fecha'"
-    (valueChange)="filtrarData('Fecha', $event)">
+    (valueChange)="onBuscarFecha($event)">
   </app-barra-busqueda-component>
 </ng-template>
 
 <app-paginator
+  *ngIf="totalElements > 0"
   [totalPages]="totalPages"
   [currentPage]="currentPage"
   (pageChange)="onPageChange($event)">

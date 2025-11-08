@@ -28,6 +28,7 @@
 </ng-template>
 
 <app-paginator
+  *ngIf="totalElements > 0"
   [totalPages]="totalPages"
   [currentPage]="currentPage"
   (pageChange)="onPageChange($event)">
@@ -36,7 +37,7 @@
 <ng-template #busquedaNombre>
   <app-barra-busqueda-component
     [placeholder]="'Buscar Usuario'"
-    (valueChange)="filtrarData('nombre', $event)">
+    (valueChange)="onBuscarUsuarios($event)">
   </app-barra-busqueda-component>
 </ng-template>
 

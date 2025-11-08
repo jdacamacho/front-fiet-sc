@@ -13,6 +13,10 @@ export class BarraBusquedaComponent {
   @Input() value: string = ''; 
   @Output() valueChange = new EventEmitter<string>(); 
 
+  ngOnInit(): void {
+    this.valueChange.emit(this.value);
+  }
+
   onInputChange() {
     this.valueChange.emit(this.value);
   }

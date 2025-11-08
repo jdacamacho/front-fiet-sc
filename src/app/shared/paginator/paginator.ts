@@ -39,8 +39,7 @@ export class Paginator {
   }
 
   goToPage(page: number) {
-    if (page >= 1 && page <= this.totalPages) {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) 
       this.pageChange.emit(page);
-    }
   }
 }
