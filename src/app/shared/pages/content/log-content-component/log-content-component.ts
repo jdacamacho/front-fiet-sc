@@ -10,7 +10,6 @@ import { CommonModule } from '@angular/common';
 import { CardMainComponent } from '../../../card-main-component/card-main-component';
 import { ButtonComponent } from '../../../buttons/button-component/button-component';
 import { LogService } from '../../../../core/services/log-service';
-import { LogDTORespuesta } from '../../../../core/models/Log/DTOResponse/LogDTORespuesta';
 import { Paginator } from "../../../paginator/paginator";
 import { BarraBusquedaComponent } from '../../../search/barra-busqueda-component/barra-busqueda-component';
 
@@ -23,6 +22,11 @@ import { BarraBusquedaComponent } from '../../../search/barra-busqueda-component
 export class LogContentComponent implements OnInit {
   currentPage = 1; // Página actual
   pageSize = 5;   // Tamaño de página
+  totalElements = 0;
+  totalPages = 1;
+  responsableFiltro: string = '';
+  fechaFiltro: string = '';
+
   tableComponent = TableGenericComponent; // Componente de tabla
   pretitleComponentComponent = ButtonComponent; // Componente pre-title
 
@@ -37,8 +41,7 @@ export class LogContentComponent implements OnInit {
   @ViewChild('busquedaResponsable') busquedaResponsable!: TemplateRef<any>; // Template búsqueda Responsable
   @ViewChild('busquedaFecha') busquedaFecha!: TemplateRef<any>;             // Template búsqueda Fecha
 
-  originalData: any[] = []; // Data completa
-  data: any[] = [];         // Data filtrada para mostrar
+  paginatedData: any[] = []; // Data de la página actual (proviene del backend)
 
   constructor(private logService: LogService) {}
 
@@ -57,43 +60,45 @@ export class LogContentComponent implements OnInit {
   }
 
   // Cargar logs desde el servicio
-  loadLogs(): void {
-    this.logService.getLogs().subscribe({
-      next: (logs: LogDTORespuesta[]) => {
-        this.originalData = logs.map(log => ({
-          Responsable: `${log.objUsuarioLog.nombres} ${log.objUsuarioLog.apellidos}`,
+  loadLogs(page: number = 1): void {
+    const backendPage = page - 1; 
+
+    const observable =
+      this.responsableFiltro.trim() !== '' || this.fechaFiltro.trim() !== ''
+        ? this.logService.getLogsFiltrados(this.responsableFiltro, this.fechaFiltro, backendPage, this.pageSize)
+        : this.logService.getLogsPaginado(backendPage, this.pageSize);
+
+    observable.subscribe({
+      next: (respuesta) => {
+        this.paginatedData = (respuesta.content || []).map((log: any) => ({
+          Responsable: `${log.objUsuarioLog?.nombres ?? ''} ${log.objUsuarioLog?.apellidos ?? ''}`.trim(),
           Fecha: log.fecha,
           Acción: log.accion,
           Resultado: log.resultado
         }));
-        this.data = [...this.originalData]; // Inicializa la data filtrada
+
+        this.totalElements = respuesta.totalElements ?? 0;
+        this.totalPages = this.totalElements > 0 ? Math.ceil(this.totalElements / this.pageSize) : 1;
+        this.currentPage = Math.min(page, this.totalPages);
       },
       error: (err) => console.error('Error cargando logs', err)
     });
   }
 
-  // Filtra la data según el campo y texto ingresado
-  filtrarData(campo: string, texto: string) {
-    if (!texto) {
-      this.data = [...this.originalData]; // Mostrar todo si no hay texto
-    } else {
-      this.data = this.originalData.filter(item =>
-        item[campo]?.toLowerCase().includes(texto.toLowerCase())
-      );
-    }
-    this.currentPage = 1; // Reinicia paginación al filtrar
+  onBuscarResponsable(responsable: string): void {
+    this.responsableFiltro = responsable;
+    this.currentPage = 1;
+    this.loadLogs(1);
   }
 
-  get totalPages(): number {
-    return this.data.length ? Math.ceil(this.data.length / this.pageSize) : 1;
+  onBuscarFecha(fecha: string): void {
+    this.fechaFiltro = fecha;
+    this.currentPage = 1;
+    this.loadLogs(1);
   }
 
-  get paginatedData() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.data.slice(start, start + this.pageSize);
-  }
-
-  onPageChange(page: number) {
-    this.currentPage = page;
+  onPageChange(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.loadLogs(page);
   }
 }

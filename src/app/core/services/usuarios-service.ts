@@ -35,9 +35,8 @@ export class UsuariosService {
   getUsuariosFiltrados(nombreCompleto: string, pagina: number, tamanio: number): Observable<PaginacionRespuestaDTO<UsuarioLivianoDTORespuesta>> {
     const params = new URLSearchParams();
 
-    if (nombreCompleto && nombreCompleto.trim() !== '') {
+    if (nombreCompleto && nombreCompleto.trim() !== '') 
       params.append('nombreCompleto', nombreCompleto.trim());
-    }
 
     params.append('pagina', pagina.toString());
     params.append('tamanio', tamanio.toString());

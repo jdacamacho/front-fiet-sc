@@ -162,11 +162,12 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
     observable.subscribe({
       next: (respuesta) => {
         if (!respuesta.content || respuesta.content.length === 0) {
-          if (busqueda) {
-            this.busquedaActual = '';
-            this.cargarUsuarios(1, '');
-            return;
-          }
+          this.paginatedData = [];
+          this.totalElements = 0;
+          this.totalPages = 0;
+          this.currentPage = 1;
+          this.busquedaActual = busqueda;
+          return;
         }
 
         this.paginatedData = respuesta.content.map(u => ({
@@ -176,7 +177,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
         }));
 
         this.totalElements = respuesta.totalElements;
-        this.totalPages = this.totalElements > 0 ? Math.ceil(this.totalElements / this.pageSize) : 1;
+        this.totalPages = Math.ceil(this.totalElements / this.pageSize);
         this.currentPage = Math.min(page, this.totalPages);
         this.busquedaActual = busqueda;
       },
@@ -189,6 +190,9 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
  */
   onBuscarUsuarios(nombreCompleto: string): void {
     this.currentPage = 1;
+    this.paginatedData = [];
+    this.totalElements = 0;
+    this.totalPages = 0;
     this.cargarUsuarios(1, nombreCompleto);
   }
 
@@ -247,6 +251,13 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
     const backendPage = page - 1;
     this.usuariosService.getUsuariosPaginado(backendPage, this.pageSize).subscribe({
       next: (respuesta) => {
+        if (!respuesta.content || respuesta.content.length === 0) {
+          this.paginatedData = [];
+          this.totalElements = 0;
+          this.totalPages = 0;
+          this.currentPage = 1;
+          return;
+        }
         this.paginatedData = respuesta.content.map(u => ({
           uuidUsuario: u.uuidUsuario,
           nombre: `${u.nombres} ${u.apellidos}`,

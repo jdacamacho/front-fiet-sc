@@ -28,6 +28,7 @@
 </ng-template>
 
 <app-paginator
+  *ngIf="totalElements > 0"
   [totalPages]="totalPages"
   [currentPage]="currentPage"
   (pageChange)="onPageChange($event)">
