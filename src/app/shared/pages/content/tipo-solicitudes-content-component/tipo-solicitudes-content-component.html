@@ -1,0 +1,85 @@
+<app-card-main-component
+  [preTitleComponent]="pretitleComponentComponent"
+  [preTitleInputs]="{ imgUrl: 'buttons/configuracion.svg' }"
+  [title]="'Gestión de Tipos de Solicitudes'"
+  [bodyComponent]="tableComponent"
+  [bodyInputs]="{ headers: headers, data: paginatedData, actionTemplate: actionTemplate }"
+  [buttons]="buttonsCard">>
+</app-card-main-component>
+
+<ng-template #actionTemplate let-row>
+  <div class="d-flex gap-2">
+    <app-button-component
+      imgUrl="buttons/edit.svg"
+      color="white"
+      width="18px"
+      height="18px"
+      (clicked)="abrirModalActualizarTipoSolicitud(row)">
+    </app-button-component>
+
+    <app-button-component
+      imgUrl="buttons/eye.svg"
+      color="white"
+      width="18px"
+      height="18px"
+      (clicked)="verMasInfo(row)">
+    </app-button-component>
+
+    <app-button-component
+      imgUrl="buttons/employee.svg"
+      color="white"
+      width="18px"
+      height="18px"
+      (clicked)="abrirModalActualizarFuncionarioTipoSolicitud(row)">
+    </app-button-component>
+  </div>
+</ng-template>
+
+<ng-template #busquedaTipoSolicitud>
+  <app-barra-busqueda-component
+    [placeholder]="'Buscar Tipo Solicitud'"
+    (valueChange)="onBuscarTipoSolicitud($event)">
+  </app-barra-busqueda-component>
+</ng-template>
+
+<ng-template #busquedaFuncionario>
+  <app-barra-busqueda-component
+    [placeholder]="'Buscar Funcionario'"
+    (valueChange)="onBuscarFuncionario($event)">
+  </app-barra-busqueda-component>
+</ng-template>
+
+<app-generic-dialog-info-component
+  [visible]="tipoInfoDialogVisible"
+  (visibleChange)="tipoInfoDialogVisible = $event"
+  [title]="'Información del Rol'"
+  [data]="selectedTipoInfo">
+</app-generic-dialog-info-component>
+
+<app-generic-dialog-upload-file-component
+  [(visible)]="tipoUploadDialogVisible"
+  title="Subir archivo"
+  (upload)="guardarArchivo($event)">
+</app-generic-dialog-upload-file-component>
+
+<app-generic-dialog-form-component
+  [visible]="funcionarioFormActualizarDialogVisible"
+  (visibleChange)="funcionarioFormActualizarDialogVisible = $event"
+  [title]="'Asignar Funcionario'"
+  (save)="guardarFuncionarioTipoSolicitud()">
+
+  <app-input-select-component
+    #inputFuncionario
+    [(value)]="selectedTipoSolicitudActualizarFuncionarioForm.uuidUsuarioFuncionario"
+    [label]="'Nuevo Funcionario Encargado'"
+    [options]="funcionariosOptions"
+    [required]="true">
+  </app-input-select-component>
+</app-generic-dialog-form-component>
+
+<app-paginator
+  *ngIf="totalElements > 0"
+  [totalPages]="totalPages"
+  [currentPage]="currentPage"
+  (pageChange)="onPageChange($event)">
+</app-paginator>

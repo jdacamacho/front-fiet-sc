@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef, AfterViewInit, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, AfterViewInit } from '@angular/core';
 import { UsuariosService } from '../../../../core/services/usuarios-service';
 import { TableGenericComponent } from '../../../table-generic-component/table-generic-component';
 import { ButtonComponent } from '../../../buttons/button-component/button-component';

@@ -50,6 +50,10 @@ export class UsuariosService {
     return this.http.get<UsuarioLivianoDTORespuesta[]>(`${this.url}`);
   }
 
+  getFuncionarios(): Observable<UsuarioLivianoDTORespuesta[]> {
+    return this.http.get<UsuarioLivianoDTORespuesta[]>(`${this.url}/funcionarios`);
+  }
+
   getUsuario(uuidUsuario: string): Observable<UsuarioDTORespuesta> {
     return this.http.get<UsuarioDTORespuesta>(`${this.url}/${uuidUsuario}`);
   }
