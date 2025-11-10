@@ -77,6 +77,36 @@
   </app-input-select-component>
 </app-generic-dialog-form-component>
 
+<!-- 🔹 NUEVO DIALOGO MULTI-STEP -->
+<app-generic-dialog-steps-form-component
+  [visible]="dialogoStepsVisible"
+  (visibleChange)="dialogoStepsVisible = $event"
+  [title]="'Crear Tipo de Solicitud'"
+  [steps]="steps"
+  (save)="guardarFuncionarioTipoSolicitud()">
+</app-generic-dialog-steps-form-component>
+
+<!-- Templates para cada paso -->
+<ng-template #step1>
+  <app-input-select-component
+    [(value)]="selectedTipoSolicitudActualizarFuncionarioForm.uuidUsuarioFuncionario"
+    [label]="'Funcionario Encargado'"
+    [options]="funcionariosOptions"
+    [required]="true">
+  </app-input-select-component>
+</ng-template>
+
+<ng-template #step2>
+  <app-input-select-component
+    [(value)]="selectedTipoSolicitudActualizarFuncionarioForm.uuidUsuarioFuncionario"
+    [label]="'Funcionario Encargado'"
+    [options]="funcionariosOptions"
+    [required]="true">
+  </app-input-select-component>
+  <p>Confirma que deseas asignar este funcionario al tipo de solicitud.</p>
+</ng-template>
+
+
 <app-paginator
   *ngIf="totalElements > 0"
   [totalPages]="totalPages"

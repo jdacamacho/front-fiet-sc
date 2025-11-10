@@ -21,11 +21,13 @@ import { GenericDialogFormComponent } from '../../../generic-dialog-form-compone
 import { UsuariosService } from '../../../../core/services/usuarios-service';
 import { UsuarioLivianoDTORespuesta } from '../../../../core/models/Usuario/DTOResponse/UsuarioLivianoDTORespuesta';
 import { TipoSolicitudDTOPeticion } from '../../../../core/models/TipoSolicitud/DTORequest/TipoSolicitudDTOPeticion';
+import { GenericDialogStepsFormComponent } from '../../../generic-dialog-steps-form-component/generic-dialog-steps-form-component';
 
 @Component({
   selector: 'app-tipo-solicitudes-content-component',
   imports: [CommonModule, CardMainComponent, Paginator, BarraBusquedaComponent, ButtonComponent, 
-    GenericDialogInfoComponent, GenericDialogUploadFileComponent, InputSelectComponent, GenericDialogFormComponent
+    GenericDialogInfoComponent, GenericDialogUploadFileComponent, InputSelectComponent, GenericDialogFormComponent,
+    GenericDialogStepsFormComponent
   ],
   templateUrl: './tipo-solicitudes-content-component.html',
   styleUrl: './tipo-solicitudes-content-component.css'
@@ -55,6 +57,12 @@ export class TipoSolicitudesContentComponent implements OnInit{
   buttonsCard: any[] = [];
   funcionariosOptions: { label: string; value: string }[] = [];
 
+  dialogoStepsVisible = false;
+  steps: { title: string; contentTemplate: TemplateRef<any> }[] = [];
+
+  @ViewChild('step1', { static: true }) step1Template!: TemplateRef<any>;
+  @ViewChild('step2', { static: true }) step2Template!: TemplateRef<any>;
+
   // Encabezados de la tabla, algunos con template de búsqueda
   headers: any[] = [
     { title: 'Solicitud', headerTemplate: null },
@@ -74,13 +82,19 @@ export class TipoSolicitudesContentComponent implements OnInit{
   ngOnInit(): void {
     this.loadTiposSolicitudes();
     this.loadFuncionarios();
+
+    this.steps = [
+      { title: 'Paso 1: Información del Tipo de Solicitud', contentTemplate: this.step1Template },
+      { title: 'Paso 2: Anexos', contentTemplate: this.step2Template },
+    ];
+
     this.buttonsCard = [
       {
         imgUrl: 'buttons/add.svg',
         color: '#1E257B',
         width: '20px',
         height: '20px',
-        onClick: () => {}  
+        onClick: () => this.abrirDialogoStepsPrueba() 
       },
       {
         imgUrl: 'buttons/upload.svg',
@@ -100,6 +114,10 @@ export class TipoSolicitudesContentComponent implements OnInit{
     ];
   }
 
+  abrirDialogoStepsPrueba(): void {
+    this.dialogoStepsVisible = true;
+  }
+
   loadFuncionarios(): void {
     this.usuariosService.getFuncionarios().subscribe({
       next: (respuesta: UsuarioLivianoDTORespuesta[]) => {
@@ -107,7 +125,6 @@ export class TipoSolicitudesContentComponent implements OnInit{
           label: `${f.nombres} ${f.apellidos}`,
           value: f.uuidUsuario
         }));
-        console.log('Funcionarios cargados:', this.funcionariosOptions);
       },
       error: (err) => {
         console.error('Error cargando funcionarios:', err);
