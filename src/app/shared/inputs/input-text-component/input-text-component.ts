@@ -13,6 +13,7 @@ export class InputTextComponent {
   @Input() label: string = '';    
   @Input() value: string = '';     
   @Input() required: boolean = false;
+  @Input() forceValidation: boolean = false;
   @Output() valueChange = new EventEmitter<string>(); 
   touched: boolean = false;
   
@@ -23,13 +24,15 @@ export class InputTextComponent {
   }
 
   isInvalid(): boolean {
-    return this.required && (!this.value || this.value === '') && this.touched;
+    const empty = !this.value || this.value.trim() === '';
+    return this.required && empty && (this.touched || this.forceValidation);
   }
 
   public reset(): void {
     this.value = '';
     this.valueChange.emit(this.value);
     this.touched = false;
+    this.forceValidation = false;
   }
 
   public setValue(newValue: string): void {

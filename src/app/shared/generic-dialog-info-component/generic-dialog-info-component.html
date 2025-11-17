@@ -9,7 +9,7 @@
   <div *ngIf="data" class="dialog-content">
     <div *ngFor="let key of objectKeys(data)" class="dialog-row">
       <span class="field-name">{{ formatKey(key) }}: </span>
-      <span class="field-value">{{ data[key] }}</span>
+      <span class="field-value" style="white-space: pre-line;">{{ data[key] }}</span>
     </div>
   </div>
 

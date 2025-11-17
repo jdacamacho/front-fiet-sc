@@ -14,6 +14,7 @@ export class InputSelectComponent {
   @Input() value: any; 
   @Input() required: boolean = false;
   @Output() valueChange = new EventEmitter<any>(); 
+  @Input() forceValidation: boolean = false;
   touched: boolean = false;
   
   onValueChange(newValue: any) {
@@ -22,7 +23,12 @@ export class InputSelectComponent {
   }
 
   isInvalid(): boolean {
-    return this.required && (!this.value || this.value.toString().trim() === '') && this.touched;
+    const empty =
+      this.value === null ||
+      this.value === undefined ||
+      (typeof this.value === 'string' && this.value.trim() === '');
+
+    return this.required && empty && (this.touched || this.forceValidation);
   }
 
   compareFn = (o1: any, o2: any): boolean => {
@@ -33,6 +39,7 @@ export class InputSelectComponent {
     this.value = null;
     this.valueChange.emit(this.value);
     this.touched = false;
+    this.forceValidation = false;
   }
 
   public setValue(newValue: any): void {
