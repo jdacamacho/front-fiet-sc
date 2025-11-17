@@ -22,17 +22,40 @@ import { UsuariosService } from '../../../../core/services/usuarios-service';
 import { UsuarioLivianoDTORespuesta } from '../../../../core/models/Usuario/DTOResponse/UsuarioLivianoDTORespuesta';
 import { TipoSolicitudDTOPeticion } from '../../../../core/models/TipoSolicitud/DTORequest/TipoSolicitudDTOPeticion';
 import { GenericDialogStepsFormComponent } from '../../../generic-dialog-steps-form-component/generic-dialog-steps-form-component';
+import { InputTextComponent } from '../../../inputs/input-text-component/input-text-component';
+import { SimpleButtonComponent } from '../../../buttons/simple-button-component/simple-button-component';
 
 @Component({
   selector: 'app-tipo-solicitudes-content-component',
   imports: [CommonModule, CardMainComponent, Paginator, BarraBusquedaComponent, ButtonComponent, 
     GenericDialogInfoComponent, GenericDialogUploadFileComponent, InputSelectComponent, GenericDialogFormComponent,
-    GenericDialogStepsFormComponent
+    GenericDialogStepsFormComponent, InputTextComponent, SimpleButtonComponent, ButtonComponent
   ],
   templateUrl: './tipo-solicitudes-content-component.html',
   styleUrl: './tipo-solicitudes-content-component.css'
 })
 export class TipoSolicitudesContentComponent implements OnInit{
+  // Referencias a inputs y templates
+  // Formulario crear tipo solicitud
+  @ViewChild('inputNombreTS') inputNombreCrearTS!: InputTextComponent;
+  @ViewChild('inputDescripcionTS') inputDescripcionCrearTS!: InputTextComponent;
+  @ViewChild('inputSeccionTS') inputSeccionCrearTS!: InputSelectComponent;
+  @ViewChild('inputFuncionarioTS') inputFuncionarioCrearTS!: InputSelectComponent;
+  @ViewChild('inputTipoAnexoNombre') inputTipoAnexoNombre?: InputTextComponent;
+  @ViewChild('inputTipoAnexoDescripcion') inputTipoAnexoDescripcion?: InputTextComponent;
+  @ViewChild('inputTipoAnexoFormato') inputTipoAnexoFormato?: InputSelectComponent;
+  @ViewChild('inputTipoAnexoObligatoriedad') inputTipoAnexoObligatoriedad?: InputSelectComponent;
+  // Referencias a inputs y templates
+  // Formulario actualizar tipo solicitud
+  @ViewChild('inputNombreTSUpdate') inputNombreUpdate?: InputTextComponent;
+  @ViewChild('inputDescripcionTSUpdate') inputDescripcionUpdate?: InputTextComponent;
+  @ViewChild('inputSeccionTSUpdate') inputSeccionUpdate?: InputSelectComponent;
+  @ViewChild('inputFuncionarioTSUpdate') inputFuncionarioUpdate?: InputSelectComponent;
+  @ViewChild('inputTipoAnexoNombreUpdate') inputTipoAnexoNombreUpdate?: InputTextComponent;
+  @ViewChild('inputTipoAnexoDescripcionUpdate') inputTipoAnexoDescripcionUpdate?: InputTextComponent;
+  @ViewChild('inputTipoAnexoFormatoUpdate') inputTipoAnexoFormatoUpdate?: InputSelectComponent;
+  @ViewChild('inputTipoAnexoObligatoriedadUpdate') inputTipoAnexoObligatoriedadUpdate?: InputSelectComponent;
+
   // Flags de visibilidad de diálogos
   tipoInfoDialogVisible = false;
   tipoUploadDialogVisible = false;
@@ -57,13 +80,29 @@ export class TipoSolicitudesContentComponent implements OnInit{
   buttonsCard: any[] = [];
   funcionariosOptions: { label: string; value: string }[] = [];
 
+  //Dialogo con steps para crear y actualizar tipo de solicitud
   dialogoStepsVisible = false;
-  steps: { title: string; contentTemplate: TemplateRef<any> }[] = [];
+  actualizarDialogVisible = false;
+  forceAnexoValidation = false;
+  steps: { 
+    title: string; 
+    contentTemplate: TemplateRef<any>; 
+    canContinue?: () => boolean; 
+  }[] = [];
 
+  stepsActualizar: {
+    title: string;
+    contentTemplate: TemplateRef<any>;
+    canContinue?: () => boolean;
+  }[] = [];
+
+  // Templates de los steps
   @ViewChild('step1', { static: true }) step1Template!: TemplateRef<any>;
   @ViewChild('step2', { static: true }) step2Template!: TemplateRef<any>;
+  @ViewChild('step1Update', { static: true }) step1UpdateTemplate!: TemplateRef<any>;
+  @ViewChild('step2Update', { static: true }) step2UpdateTemplate!: TemplateRef<any>;
 
-  // Encabezados de la tabla, algunos con template de búsqueda
+
   headers: any[] = [
     { title: 'Solicitud', headerTemplate: null },
     { title: 'Funcionario', headerTemplate: null }
@@ -73,7 +112,16 @@ export class TipoSolicitudesContentComponent implements OnInit{
   @ViewChild('busquedaTipoSolicitud') busquedaTipoSolicitud!: TemplateRef<any>; // Template búsqueda Responsable
   @ViewChild('busquedaFuncionario') busquedaFuncionario!: TemplateRef<any>;             // Template búsqueda Fecha
 
-  paginatedData: any[] = []; // Data de la página actual (proviene del backend)
+  // Datos para crear nuevo tipo de solicitud
+  nuevoTipoSolicitud: any = {};
+  nuevoTipoAnexo: any = {};
+  paginatedData: any[] = [];
+  tiposAnexos: any[] = []; 
+  // Datos para actualizar tipo de solicitud
+  nuevoTipoSolicitudUpdate: any = {};
+  nuevoTipoAnexoUpdate: any = {};
+  tiposAnexosUpdate: any[] = [];
+  forceAnexoValidationUpdate = false;
 
   constructor(private tipoSolicitudesService: TipoSolicitudService, private toastService: ToastService,
     private errorHandlerService: ErrorHandlerService, private usuariosService: UsuariosService
@@ -84,8 +132,13 @@ export class TipoSolicitudesContentComponent implements OnInit{
     this.loadFuncionarios();
 
     this.steps = [
-      { title: 'Paso 1: Información del Tipo de Solicitud', contentTemplate: this.step1Template },
-      { title: 'Paso 2: Anexos', contentTemplate: this.step2Template },
+      { title: 'Paso 1: Información del Tipo de Solicitud', contentTemplate: this.step1Template, canContinue: () => this.canContinueStep1()},
+      { title: 'Paso 2: Anexos', contentTemplate: this.step2Template,  canContinue: () => this.canContinueStep2() },
+    ];
+
+    this.stepsActualizar = [
+      { title: 'Paso 1: Información (Actualizar)', contentTemplate: this.step1UpdateTemplate, canContinue: () => this.canContinueStep1Update() },
+      { title: 'Paso 2: Anexos (Actualizar)', contentTemplate: this.step2UpdateTemplate, canContinue: () => this.canContinueStep2Update() }
     ];
 
     this.buttonsCard = [
@@ -94,7 +147,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
         color: '#1E257B',
         width: '20px',
         height: '20px',
-        onClick: () => this.abrirDialogoStepsPrueba() 
+        onClick: () => this.abrirDialogCrearTipoSolicitud() 
       },
       {
         imgUrl: 'buttons/upload.svg',
@@ -107,17 +160,19 @@ export class TipoSolicitudesContentComponent implements OnInit{
   }
 
   ngAfterViewInit(): void {
-    // Asignar templates de búsqueda a los encabezados
     this.headers = [
       { title: 'Solicitud', headerTemplate: this.busquedaTipoSolicitud },
       { title: 'Funcionario', headerTemplate: this.busquedaFuncionario }
     ];
   }
 
-  abrirDialogoStepsPrueba(): void {
+  // Abre el diálogo para crear un nuevo Tipo de Solicitud
+  abrirDialogCrearTipoSolicitud(): void {
+    this.resetFormulariosCrear();
     this.dialogoStepsVisible = true;
   }
 
+  // Carga la lista de funcionarios para el filtro y selección
   loadFuncionarios(): void {
     this.usuariosService.getFuncionarios().subscribe({
       next: (respuesta: UsuarioLivianoDTORespuesta[]) => {
@@ -133,6 +188,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
+  // Carga los tipos de solicitudes con paginación y filtros
   loadTiposSolicitudes(page: number = 1): void {
     const backendPage = page - 1; 
 
@@ -164,6 +220,211 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
+  // Validaciones para avanzar en los steps
+  canContinueStep1(): boolean {
+    return !!(
+      this.nuevoTipoSolicitud.nombre?.trim() &&
+      this.nuevoTipoSolicitud.seccion &&
+      this.nuevoTipoSolicitud.uuidFuncionario
+    );
+  }
+
+  // Validaciones para avanzar en los steps
+  canContinueStep2(): boolean {
+    return this.tiposAnexos.length > 0;
+  }
+
+  // Validaciones para avanzar en los steps
+  canContinueStep1Update(): boolean {
+    return !!(
+      this.nuevoTipoSolicitudUpdate.nombre?.trim() &&
+      this.nuevoTipoSolicitudUpdate.seccion &&
+      this.nuevoTipoSolicitudUpdate.uuidFuncionario
+    );
+  }
+
+  // Validaciones para avanzar en los steps
+  canContinueStep2Update(): boolean {
+    return this.tiposAnexosUpdate.length > 0;
+  }
+
+  // Métodos para agregar y eliminar tipos de anexos (actualizar)
+  agregarTipoAnexoUpdate() {
+    this.forceAnexoValidationUpdate = true;
+
+    if (
+      !this.nuevoTipoAnexoUpdate.nombre?.trim() ||
+      !this.nuevoTipoAnexoUpdate.formato ||
+      this.nuevoTipoAnexoUpdate.obligatoriedad == null
+    ) {
+      return;
+    }
+
+    this.tiposAnexosUpdate.push({ ...this.nuevoTipoAnexoUpdate });
+
+    this.nuevoTipoAnexoUpdate = {
+      nombre: '',
+      descripcion: '',
+      formato: '',
+      obligatoriedad: null
+    };
+
+    this.inputTipoAnexoNombreUpdate?.reset();
+    this.inputTipoAnexoDescripcionUpdate?.reset();
+    this.inputTipoAnexoFormatoUpdate?.reset();
+    this.inputTipoAnexoObligatoriedadUpdate?.reset();
+
+    this.forceAnexoValidationUpdate = false;
+  }
+
+  eliminarTipoAnexoUpdate(index: number) {
+    this.tiposAnexosUpdate.splice(index, 1);
+  }
+
+  // Métodos para agregar y eliminar tipos de anexos (crear)
+  agregarTipoAnexo() {
+    this.forceAnexoValidation = true; 
+
+    if (
+    !this.nuevoTipoAnexo.nombre?.trim() ||
+    !this.nuevoTipoAnexo.formato ||
+    this.nuevoTipoAnexo.obligatoriedad == null || this.nuevoTipoAnexo.obligatoriedad === undefined
+    ) {
+      return; 
+    }
+
+    this.tiposAnexos.push({ ...this.nuevoTipoAnexo });
+    this.nuevoTipoAnexo = {
+      nombre: '',
+      descripcion: '',
+      formato: '',
+      obligatoriedad: null
+    };
+
+    this.inputTipoAnexoNombre?.reset();
+    this.inputTipoAnexoDescripcion?.reset();
+    this.inputTipoAnexoFormato?.reset();
+    this.inputTipoAnexoObligatoriedad?.reset();
+    this.forceAnexoValidation = false; 
+  }
+
+  eliminarTipoAnexo(index: number) {
+    this.tiposAnexos.splice(index, 1);
+  }
+
+  // Guarda el nuevo tipo de solicitud
+  protected guardarTipoSolicitud(): void {
+    if (!this.canContinueStep1() || !this.canContinueStep2()) {
+      this.toastService.showError(
+        'No se puede guardar',
+        'Por favor completa los pasos antes de continuar.'
+      );
+      return;
+    }
+
+    const peticion: TipoSolicitudDTOPeticion = {
+      nombre: this.nuevoTipoSolicitud.nombre.trim(),
+      descripcion: this.nuevoTipoSolicitud.descripcion?.trim() || '',
+      seccion: this.nuevoTipoSolicitud.seccion,
+      uuidFuncionario: this.nuevoTipoSolicitud.uuidFuncionario,
+      anexos: this.tiposAnexos.map(a => ({
+        nombre: a.nombre,
+        descripcion: a.descripcion?.trim() || '',
+        formato: a.formato,
+        obligatoriedad: a.obligatoriedad
+      }))
+    };
+
+    this.tipoSolicitudesService.crearTipoSolicitud(peticion).subscribe({
+      next: () => {
+        this.toastService.showSuccess(
+          'Tipo de Solicitud creado',
+          'El registro fue creado correctamente.'
+        );
+
+        this.dialogoStepsVisible = false;
+        this.loadTiposSolicitudes();
+        this.resetFormulariosCrear();
+      },
+      error: (err) => {
+        this.dialogoStepsVisible = false;
+        this.resetFormulariosCrear();
+        this.errorHandlerService.handleError(err, 'Error creando el Tipo de Solicitud');
+      }
+    });
+  }
+
+  // Resetea los formularios de creación
+  private resetFormulariosCrear(): void {
+    this.nuevoTipoSolicitud = {};
+    this.nuevoTipoAnexo = {};
+    this.tiposAnexos = [];
+
+    this.inputNombreCrearTS?.reset();
+    this.inputDescripcionCrearTS?.reset();
+    this.inputSeccionCrearTS?.reset();
+    this.inputFuncionarioCrearTS?.reset();
+
+    this.inputTipoAnexoNombre?.reset();
+    this.inputTipoAnexoDescripcion?.reset();
+    this.inputTipoAnexoFormato?.reset();
+    this.inputTipoAnexoObligatoriedad?.reset();
+  }
+
+  // Guarda la actualización del tipo de solicitud
+  protected actualizarTipoSolicitud(): void {
+    if (!this.canContinueStep1Update() || !this.canContinueStep2Update()) {
+      this.toastService.showError('No se puede actualizar', 'Por favor completa los pasos antes de continuar.');
+      return;
+    }
+
+    const peticion: TipoSolicitudDTOPeticion = {
+      nombre: this.nuevoTipoSolicitudUpdate.nombre.trim(),
+      descripcion: this.nuevoTipoSolicitudUpdate.descripcion.trim(),
+      seccion: this.nuevoTipoSolicitudUpdate.seccion,
+      uuidFuncionario: this.nuevoTipoSolicitudUpdate.uuidFuncionario,
+      anexos: this.tiposAnexosUpdate.map(a => ({
+        nombre: a.nombre,
+        descripcion: a.descripcion,
+        formato: a.formato,
+        obligatoriedad: a.obligatoriedad
+      }))
+    };
+
+    const uuid = this.nuevoTipoSolicitudUpdate.uuidTipoSolicitud || this.nuevoTipoSolicitudUpdate.uuidTipoSolicitud; // prueba seguridad
+    this.tipoSolicitudesService.actualizarTipoSolicitud(uuid, peticion).subscribe({
+      next: () => {
+        this.toastService.showSuccess('Tipo de Solicitud actualizado', 'Cambios guardados.');
+        this.actualizarDialogVisible = false;
+        this.loadTiposSolicitudes();
+        this.resetFormulariosActualizar();
+      },
+      error: (err) => {
+        this.actualizarDialogVisible = false;
+        this.resetFormulariosActualizar();
+        this.errorHandlerService.handleError(err, 'Error actualizando Tipo de Solicitud');
+      }
+    });
+  }
+
+  // Resetea los formularios de actualización
+  private resetFormulariosActualizar(): void {
+    this.nuevoTipoSolicitudUpdate = {};
+    this.nuevoTipoAnexoUpdate = {};
+    this.tiposAnexosUpdate = [];
+
+    this.inputNombreUpdate?.reset();
+    this.inputDescripcionUpdate?.reset();
+    this.inputSeccionUpdate?.reset();
+    this.inputFuncionarioUpdate?.reset();
+
+    this.inputTipoAnexoNombreUpdate?.reset();
+    this.inputTipoAnexoDescripcionUpdate?.reset();
+    this.inputTipoAnexoFormatoUpdate?.reset();
+    this.inputTipoAnexoObligatoriedadUpdate?.reset();
+  }
+
+  // Guarda el funcionario asignado al tipo de solicitud
   protected guardarFuncionarioTipoSolicitud(): void {
     this.inputFuncionario.touched = true;
 
@@ -202,11 +463,11 @@ export class TipoSolicitudesContentComponent implements OnInit{
    * Abre el diálogo de información del Tipo de Solicitud
    */
   protected verMasInfo(tipoSolicitud: TipoSolicitudDTORespuesta): void {
-    this.tipoSolicitudesService.getTipoSolicitud  (tipoSolicitud.uuidTipoSolicitud).subscribe({
+    this.tipoSolicitudesService.getTipoSolicitud(tipoSolicitud.uuidTipoSolicitud).subscribe({
       next: (tipoSolicitudDetallado: TipoSolicitudDTORespuesta) => {
         const anexosTexto = (tipoSolicitudDetallado.anexos || [])
           .map(a => 
-            `\n• ${a.nombre}\n${a.descripcion}\nObligatorio: ${a.obligatoriedad ? 'Sí ✅' : 'No ❌'}`
+            `\n• ${a.nombre}\n${a.descripcion}\n${a.formato}\nObligatorio: ${a.obligatoriedad ? 'Sí ✅' : 'No ❌'}`
           )
           .join('\n');
 
@@ -226,10 +487,42 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
-  protected abrirModalActualizarTipoSolicitud(usuario: any): void {
+  // Abre el diálogo para actualizar un Tipo de Solicitud
+  protected abrirModalActualizarTipoSolicitud(row: any): void {
+    this.tipoSolicitudesService.getTipoSolicitud(row.uuidTipoSolicitud).subscribe({
+      next: (tipoSolicitud) => {
+        this.nuevoTipoSolicitudUpdate = {
+          uuidTipoSolicitud: tipoSolicitud.uuidTipoSolicitud,
+          nombre: tipoSolicitud.nombre,
+          descripcion: tipoSolicitud.descripcion,
+          seccion: tipoSolicitud.seccion,
+          uuidFuncionario: tipoSolicitud.objFuncionarioEncargado?.uuidUsuario || null
+        };
 
+        this.tiposAnexosUpdate = (tipoSolicitud.anexos || []).map((a: any) => ({
+          nombre: a.nombre,
+          descripcion: a.descripcion,
+          formato: a.formato,
+          obligatoriedad: a.obligatoriedad
+        }));
+
+        this.nuevoTipoAnexoUpdate = {
+          nombre: '',
+          descripcion: '',
+          formato: '',
+          obligatoriedad: null
+        };
+
+        this.forceAnexoValidationUpdate = false;
+        this.actualizarDialogVisible = true;
+      },
+      error: (err) => {
+        this.errorHandlerService.handleError(err, 'Error cargando Tipo de Solicitud para actualizar');
+      }
+    });
   }
 
+  // Abre el formulario para actualizar el funcionario encargado del tipo de solicitud
   protected abrirModalActualizarFuncionarioTipoSolicitud(tipoSolicitud: any): void {
     this.selectedTipoSolicitudActualizarFuncionarioForm = { ...tipoSolicitud };
 
@@ -243,12 +536,12 @@ export class TipoSolicitudesContentComponent implements OnInit{
     this.funcionarioFormActualizarDialogVisible = true;
   }
 
-
   protected abrirDialogoUpload(): void {
     this.archivoSeleccionado = null; 
     this.tipoUploadDialogVisible = true;
   }
 
+  // Guarda el archivo cargado para crear tipos de solicitud
   protected guardarArchivo(file: File): void {
     if (!file) {
       this.toastService.showError('Error', 'Debe seleccionar un archivo antes de continuar');

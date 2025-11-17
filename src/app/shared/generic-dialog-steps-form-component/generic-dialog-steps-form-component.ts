@@ -11,23 +11,42 @@ import { SimpleButtonComponent } from '../buttons/simple-button-component/simple
   styleUrl: './generic-dialog-steps-form-component.css'
 })
 export class GenericDialogStepsFormComponent {
-  @Input() visible: boolean = false;
+  private _visible: boolean = false;
   @Input() title: string = '';
-  @Input() steps: { title: string; contentTemplate: any }[] = []; // secciones dinámicas
+  @Input() steps: { 
+    title: string; 
+    contentTemplate: any;
+    canContinue?: () => boolean;
+  }[] = [];
 
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() save = new EventEmitter<void>();
 
   currentStep = 0;
 
+  @Input()
+  set visible(value: boolean) {
+    this._visible = value;
+    if (value === true) 
+      this.currentStep = 0;
+  }
+
+  get visible(): boolean {
+    return this._visible;
+  }
+
   close() {
     this.visibleChange.emit(false);
   }
 
   nextStep() {
-    if (this.currentStep < this.steps.length - 1) {
+    const current = this.steps[this.currentStep];
+
+    if (current.canContinue && !current.canContinue()) 
+      return;
+
+    if (this.currentStep < this.steps.length - 1) 
       this.currentStep++;
-    }
   }
 
   prevStep() {

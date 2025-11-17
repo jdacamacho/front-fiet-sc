@@ -23,18 +23,21 @@
       </app-simple-button-component>
 
       <app-simple-button-component
-        *ngIf="currentStep < steps.length - 1"
-        label="Siguiente"
-        width="90px"
-        height="30px"
-        (clicked)="nextStep()">
-      </app-simple-button-component>
+      *ngIf="currentStep < steps.length - 1"
+      label="Siguiente"
+      width="90px"
+      height="30px"
+      [disabled]="!(steps[currentStep].canContinue?.() ?? true)"
+      (clicked)="nextStep()">
+    </app-simple-button-component>
+
 
       <app-simple-button-component
         *ngIf="currentStep === steps.length - 1"
         label="Guardar"
         width="90px"
         height="30px"
+        [disabled]="!(steps[currentStep].canContinue?.() ?? true)"
         (clicked)="onSave()">
       </app-simple-button-component>
     </div>

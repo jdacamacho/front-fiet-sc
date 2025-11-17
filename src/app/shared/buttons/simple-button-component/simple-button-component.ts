@@ -11,10 +11,11 @@ export class SimpleButtonComponent {
   @Input() color: string = '#1E257B';   
   @Input() width: string = '';    
   @Input() height: string = '';
-
+  @Input() disabled: boolean = false;
   @Output() clicked = new EventEmitter<void>();
 
   onClick() {
+    if (this.disabled) return;
     this.clicked.emit();
   }
 }
