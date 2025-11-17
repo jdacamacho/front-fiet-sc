@@ -24,6 +24,7 @@ import { TipoSolicitudDTOPeticion } from '../../../../core/models/TipoSolicitud/
 import { GenericDialogStepsFormComponent } from '../../../generic-dialog-steps-form-component/generic-dialog-steps-form-component';
 import { InputTextComponent } from '../../../inputs/input-text-component/input-text-component';
 import { SimpleButtonComponent } from '../../../buttons/simple-button-component/simple-button-component';
+import { RolesService } from '../../../../core/services/roles-service';
 
 @Component({
   selector: 'app-tipo-solicitudes-content-component',
@@ -40,6 +41,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
   @ViewChild('inputNombreTS') inputNombreCrearTS!: InputTextComponent;
   @ViewChild('inputDescripcionTS') inputDescripcionCrearTS!: InputTextComponent;
   @ViewChild('inputSeccionTS') inputSeccionCrearTS!: InputSelectComponent;
+  @ViewChild('inputPerfilSolicitanteTS') inputPerfilSolicitanteCrearTS!: InputSelectComponent;
   @ViewChild('inputFuncionarioTS') inputFuncionarioCrearTS!: InputSelectComponent;
   @ViewChild('inputTipoAnexoNombre') inputTipoAnexoNombre?: InputTextComponent;
   @ViewChild('inputTipoAnexoDescripcion') inputTipoAnexoDescripcion?: InputTextComponent;
@@ -50,6 +52,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
   @ViewChild('inputNombreTSUpdate') inputNombreUpdate?: InputTextComponent;
   @ViewChild('inputDescripcionTSUpdate') inputDescripcionUpdate?: InputTextComponent;
   @ViewChild('inputSeccionTSUpdate') inputSeccionUpdate?: InputSelectComponent;
+  @ViewChild('inputPerfilSolicitanteTSUpdate') inputPerfilSolicitanteUpdate?: InputSelectComponent;
   @ViewChild('inputFuncionarioTSUpdate') inputFuncionarioUpdate?: InputSelectComponent;
   @ViewChild('inputTipoAnexoNombreUpdate') inputTipoAnexoNombreUpdate?: InputTextComponent;
   @ViewChild('inputTipoAnexoDescripcionUpdate') inputTipoAnexoDescripcionUpdate?: InputTextComponent;
@@ -96,6 +99,8 @@ export class TipoSolicitudesContentComponent implements OnInit{
     canContinue?: () => boolean;
   }[] = [];
 
+  perfilesSolicitante: { label: string; value: string }[] = [];
+
   // Templates de los steps
   @ViewChild('step1', { static: true }) step1Template!: TemplateRef<any>;
   @ViewChild('step2', { static: true }) step2Template!: TemplateRef<any>;
@@ -106,6 +111,17 @@ export class TipoSolicitudesContentComponent implements OnInit{
   headers: any[] = [
     { title: 'Solicitud', headerTemplate: null },
     { title: 'Funcionario', headerTemplate: null }
+  ];
+
+  secciones: { label: string; value: string }[] = [
+    { label: 'Asuntos Decano', value: 'asuntos decano' },
+    { label: 'Asuntos Pregrado', value: 'asuntos pregrado' },
+    { label: 'Asuntos Posgrados', value: 'asuntos posgrados' },
+    { label: 'Asuntos Delegados en Decano', value: 'asuntos delegados en decano' },
+    { label: 'Solicitud Comisión Académica al Interior del País', value: 'solicitud comisión académica al interior del país' },
+    { label: 'Solicitud Comisión Académica al Exterior al País', value: 'solicitud comisión académica al exterior al país' },
+    { label: 'Informe de Comisión Académica', value: 'informe de comisión académica' },
+    { label: 'Asuntos Varios', value: 'asuntos varios' }
   ];
 
   @ViewChild('inputFuncionario') inputFuncionario!: InputSelectComponent;
@@ -124,12 +140,14 @@ export class TipoSolicitudesContentComponent implements OnInit{
   forceAnexoValidationUpdate = false;
 
   constructor(private tipoSolicitudesService: TipoSolicitudService, private toastService: ToastService,
-    private errorHandlerService: ErrorHandlerService, private usuariosService: UsuariosService
+    private errorHandlerService: ErrorHandlerService, private usuariosService: UsuariosService,
+    private rolesService: RolesService
   ) {}
   
   ngOnInit(): void {
     this.loadTiposSolicitudes();
     this.loadFuncionarios();
+    this.loadPerfilesSolicitante(); 
 
     this.steps = [
       { title: 'Paso 1: Información del Tipo de Solicitud', contentTemplate: this.step1Template, canContinue: () => this.canContinueStep1()},
@@ -217,6 +235,21 @@ export class TipoSolicitudesContentComponent implements OnInit{
         this.currentPage = Math.min(page, this.totalPages);
       },
       error: (err) => console.error('Error cargando Tipos de Solicitudes', err)
+    });
+  }
+
+  loadPerfilesSolicitante(): void {
+    this.rolesService.getRoles().subscribe({
+      next: (perfiles: any[]) => {
+        this.perfilesSolicitante = perfiles.map(p => ({
+          label: p.nombre, 
+          value: p.nombre    
+        }));
+      },
+      error: (err) => {
+        console.error('Error cargando perfiles de solicitante', err);
+        this.perfilesSolicitante = [];
+      }
     });
   }
 
@@ -326,6 +359,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
       nombre: this.nuevoTipoSolicitud.nombre.trim(),
       descripcion: this.nuevoTipoSolicitud.descripcion?.trim() || '',
       seccion: this.nuevoTipoSolicitud.seccion,
+      perfilSolicitante: this.nuevoTipoSolicitud.perfilSolicitante,
       uuidFuncionario: this.nuevoTipoSolicitud.uuidFuncionario,
       anexos: this.tiposAnexos.map(a => ({
         nombre: a.nombre,
@@ -382,6 +416,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
       nombre: this.nuevoTipoSolicitudUpdate.nombre.trim(),
       descripcion: this.nuevoTipoSolicitudUpdate.descripcion.trim(),
       seccion: this.nuevoTipoSolicitudUpdate.seccion,
+      perfilSolicitante: this.nuevoTipoSolicitudUpdate.perfilSolicitante,
       uuidFuncionario: this.nuevoTipoSolicitudUpdate.uuidFuncionario,
       anexos: this.tiposAnexosUpdate.map(a => ({
         nombre: a.nombre,
@@ -391,7 +426,9 @@ export class TipoSolicitudesContentComponent implements OnInit{
       }))
     };
 
-    const uuid = this.nuevoTipoSolicitudUpdate.uuidTipoSolicitud || this.nuevoTipoSolicitudUpdate.uuidTipoSolicitud; // prueba seguridad
+    console.log('Actualizar Tipo de Solicitud con petición:', peticion);
+
+    const uuid = this.nuevoTipoSolicitudUpdate.uuidTipoSolicitud || this.nuevoTipoSolicitudUpdate.uuidTipoSolicitud;
     this.tipoSolicitudesService.actualizarTipoSolicitud(uuid, peticion).subscribe({
       next: () => {
         this.toastService.showSuccess('Tipo de Solicitud actualizado', 'Cambios guardados.');
@@ -434,6 +471,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
       nombre: this.selectedTipoSolicitudActualizarFuncionarioForm.nombre,
       descripcion: this.selectedTipoSolicitudActualizarFuncionarioForm.descripcion,
       seccion: this.selectedTipoSolicitudActualizarFuncionarioForm.seccion,
+      perfilSolicitante: this.selectedTipoSolicitudActualizarFuncionarioForm.perfilSolicitante,
       anexos: (this.selectedTipoSolicitudActualizarFuncionarioForm.anexos || []).map((a: any) => ({
         nombre: a.nombre,
         descripcion: a.descripcion,
@@ -475,6 +513,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
           Nombre: tipoSolicitudDetallado.nombre,
           Descripción: tipoSolicitudDetallado.descripcion,
           Sección: tipoSolicitudDetallado.seccion,
+          Perfil_Solicitante: tipoSolicitudDetallado.perfilSolicitante,
           Anexos: anexosTexto || 'Sin anexos registrados',
           Funcionario_Responsable: `${tipoSolicitudDetallado.objFuncionarioEncargado?.nombres ?? ''} ${tipoSolicitudDetallado.objFuncionarioEncargado?.apellidos ?? ''}`.trim(),
           Correo_Electrónico: tipoSolicitudDetallado.objFuncionarioEncargado?.correoElectronico || 'N/A'
@@ -496,7 +535,8 @@ export class TipoSolicitudesContentComponent implements OnInit{
           nombre: tipoSolicitud.nombre,
           descripcion: tipoSolicitud.descripcion,
           seccion: tipoSolicitud.seccion,
-          uuidFuncionario: tipoSolicitud.objFuncionarioEncargado?.uuidUsuario || null
+          uuidFuncionario: tipoSolicitud.objFuncionarioEncargado?.uuidUsuario || null,
+          perfilSolicitante: tipoSolicitud.perfilSolicitante
         };
 
         this.tiposAnexosUpdate = (tipoSolicitud.anexos || []).map((a: any) => ({

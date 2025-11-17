@@ -104,12 +104,16 @@
     #inputSeccionTS
     [(value)]="nuevoTipoSolicitud.seccion"
     [label]="'Sección'"
-    [options]="[
-      { label: 'Decanatura', value: 'Decanatura' },
-      { label: 'Posgrado', value: 'Posgrado' },
-      { label: 'Pregrado', value: 'Pregrado' },
-      { label: 'Otro', value: 'Otro' }
-    ]"
+    [options]="secciones"
+    [required]="true">
+  </app-input-select-component>
+
+  <app-input-select-component
+    #inputPerfilSolicitanteTS
+    [options]="perfilesSolicitante"
+    [(value)]="nuevoTipoSolicitud.perfilSolicitante"
+    label="Perfil del Solicitante"
+    placeholder="Seleccione un perfil"
     [required]="true">
   </app-input-select-component>
 
@@ -224,14 +228,19 @@
     #inputSeccionTSUpdate
     [(value)]="nuevoTipoSolicitudUpdate.seccion"
     [label]="'Sección (Actualizar)'"
-    [options]="[
-      { label: 'Decanatura', value: 'Decanatura' },
-      { label: 'Posgrado', value: 'Posgrado' },
-      { label: 'Pregrado', value: 'Pregrado' },
-      { label: 'Otro', value: 'Otro' }
-    ]"
+    [options]="secciones"
     [required]="true">
   </app-input-select-component>
+
+  <app-input-select-component
+    #inputPerfilSolicitanteTSUpdate
+    [options]="perfilesSolicitante"
+    [(value)]="nuevoTipoSolicitudUpdate.perfilSolicitante"
+    label="Perfil del Solicitante"
+    placeholder="Seleccione un perfil"
+    [required]="true">
+  </app-input-select-component>
+
 
   <app-input-select-component
     #inputFuncionarioTSUpdate

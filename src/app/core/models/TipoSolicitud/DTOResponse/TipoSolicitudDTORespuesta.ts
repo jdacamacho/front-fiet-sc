@@ -6,6 +6,7 @@ export class TipoSolicitudDTORespuesta {
     nombre!: string;
     descripcion!: string;
     seccion!: string;
+    perfilSolicitante!: string;
     anexos!: TipoAnexoDTORespuesta[];
     objFuncionarioEncargado!: FuncionarioTipoSolicitudDTORespuesta;
 }
