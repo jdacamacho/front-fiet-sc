@@ -1,23 +1,24 @@
-import { Component, Input, Output, EventEmitter} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-input-text-component',
+  selector: 'app-input-text-tarea-component',
   imports: [CommonModule, FormsModule],
-  templateUrl: './input-text-component.html',
-  styleUrl: './input-text-component.css'
+  templateUrl: './input-text-tarea-component.html',
+  styleUrl: './input-text-tarea-component.css'
 })
-export class InputTextComponent {
-  @Input() label: string = '';    
-  @Input() value: string = '';     
+export class InputTextTareaComponent {
+  @Input() label: string = '';
+  @Input() value: string = '';
   @Input() required: boolean = false;
   @Input() forceValidation: boolean = false;
-  @Output() valueChange = new EventEmitter<string>(); 
-  touched: boolean = false;
+  @Output() valueChange = new EventEmitter<string>();
   
+  touched: boolean = false;
+
   onValueChange(event: Event) {
-    const input = event.target as HTMLInputElement;
+    const input = event.target as HTMLTextAreaElement;
     this.value = input.value;
     this.valueChange.emit(this.value);
   }

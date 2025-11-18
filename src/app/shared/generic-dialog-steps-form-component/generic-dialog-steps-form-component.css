@@ -101,3 +101,13 @@
   font-family: 'Titillium Web', sans-serif;
 }
 
+:host ::ng-deep .p-dialog-mask:has(.custom-dialog) {
+  background: transparent !important;
+}
+
+:host ::ng-deep .p-dialog.custom-dialog {
+  border: 4px solid transparent !important;     
+  border-radius: 12px !important;              
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.25) !important;  
+  background: white !important;              
+}

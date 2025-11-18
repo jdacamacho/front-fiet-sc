@@ -93,23 +93,27 @@
     [required]="true">
   </app-input-text-component>
 
-  <app-input-text-component
+  <app-input-text-tarea-component
     #inputDescripcionTS
     [(value)]="nuevoTipoSolicitud.descripcion"
     [label]="'Descripción del Tipo de Solicitud'"
     [required]="false">
-  </app-input-text-component>
+  </app-input-text-tarea-component>
 
   <app-input-select-component
     #inputSeccionTS
     [(value)]="nuevoTipoSolicitud.seccion"
     [label]="'Sección'"
-    [options]="[
-      { label: 'Decanatura', value: 'Decanatura' },
-      { label: 'Posgrado', value: 'Posgrado' },
-      { label: 'Pregrado', value: 'Pregrado' },
-      { label: 'Otro', value: 'Otro' }
-    ]"
+    [options]="secciones"
+    [required]="true">
+  </app-input-select-component>
+
+  <app-input-select-component
+    #inputPerfilSolicitanteTS
+    [options]="perfilesSolicitante"
+    [(value)]="nuevoTipoSolicitud.perfilSolicitante"
+    label="Perfil del Solicitante"
+    placeholder="Seleccione un perfil"
     [required]="true">
   </app-input-select-component>
 
@@ -133,13 +137,13 @@
       [forceValidation]="forceAnexoValidation">
     </app-input-text-component>
 
-    <app-input-text-component
+    <app-input-text-tarea-component
       #inputTipoAnexoDescripcion
       [(value)]="nuevoTipoAnexo.descripcion"
       [label]="'Descripción del Tipo de Anexo'"
       [required]="false"
       [forceValidation]="forceAnexoValidation">
-    </app-input-text-component>
+    </app-input-text-tarea-component>
 
     <app-input-select-component
       #inputTipoAnexoFormato
@@ -213,25 +217,30 @@
     [required]="true">
   </app-input-text-component>
 
-  <app-input-text-component
+  <app-input-text-tarea-component
     #inputDescripcionTSUpdate
     [(value)]="nuevoTipoSolicitudUpdate.descripcion"
     [label]="'Descripción del Tipo de Solicitud (Actualizar)'"
     [required]="false">
-  </app-input-text-component>
+  </app-input-text-tarea-component>
 
   <app-input-select-component
     #inputSeccionTSUpdate
     [(value)]="nuevoTipoSolicitudUpdate.seccion"
     [label]="'Sección (Actualizar)'"
-    [options]="[
-      { label: 'Decanatura', value: 'Decanatura' },
-      { label: 'Posgrado', value: 'Posgrado' },
-      { label: 'Pregrado', value: 'Pregrado' },
-      { label: 'Otro', value: 'Otro' }
-    ]"
+    [options]="secciones"
     [required]="true">
   </app-input-select-component>
+
+  <app-input-select-component
+    #inputPerfilSolicitanteTSUpdate
+    [options]="perfilesSolicitante"
+    [(value)]="nuevoTipoSolicitudUpdate.perfilSolicitante"
+    label="Perfil del Solicitante"
+    placeholder="Seleccione un perfil"
+    [required]="true">
+  </app-input-select-component>
+
 
   <app-input-select-component
     #inputFuncionarioTSUpdate
@@ -252,13 +261,13 @@
       [forceValidation]="forceAnexoValidationUpdate">
     </app-input-text-component>
 
-    <app-input-text-component
+    <app-input-text-tarea-component
       #inputTipoAnexoDescripcionUpdate
       [(value)]="nuevoTipoAnexoUpdate.descripcion"
       [label]="'Descripción del Tipo de Anexo (Actualizar)'"
       [required]="false"
       [forceValidation]="forceAnexoValidationUpdate">
-    </app-input-text-component>
+    </app-input-text-tarea-component>
 
     <app-input-select-component
       #inputTipoAnexoFormatoUpdate
