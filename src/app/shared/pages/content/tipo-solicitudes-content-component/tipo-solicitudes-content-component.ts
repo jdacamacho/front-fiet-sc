@@ -25,12 +25,13 @@ import { GenericDialogStepsFormComponent } from '../../../generic-dialog-steps-f
 import { InputTextComponent } from '../../../inputs/input-text-component/input-text-component';
 import { SimpleButtonComponent } from '../../../buttons/simple-button-component/simple-button-component';
 import { RolesService } from '../../../../core/services/roles-service';
+import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
 
 @Component({
   selector: 'app-tipo-solicitudes-content-component',
   imports: [CommonModule, CardMainComponent, Paginator, BarraBusquedaComponent, ButtonComponent, 
     GenericDialogInfoComponent, GenericDialogUploadFileComponent, InputSelectComponent, GenericDialogFormComponent,
-    GenericDialogStepsFormComponent, InputTextComponent, SimpleButtonComponent, ButtonComponent
+    GenericDialogStepsFormComponent, InputTextComponent, SimpleButtonComponent, ButtonComponent, InputTextTareaComponent
   ],
   templateUrl: './tipo-solicitudes-content-component.html',
   styleUrl: './tipo-solicitudes-content-component.css'
@@ -39,23 +40,23 @@ export class TipoSolicitudesContentComponent implements OnInit{
   // Referencias a inputs y templates
   // Formulario crear tipo solicitud
   @ViewChild('inputNombreTS') inputNombreCrearTS!: InputTextComponent;
-  @ViewChild('inputDescripcionTS') inputDescripcionCrearTS!: InputTextComponent;
+  @ViewChild('inputDescripcionTS') inputDescripcionCrearTS!: InputTextTareaComponent;
   @ViewChild('inputSeccionTS') inputSeccionCrearTS!: InputSelectComponent;
   @ViewChild('inputPerfilSolicitanteTS') inputPerfilSolicitanteCrearTS!: InputSelectComponent;
   @ViewChild('inputFuncionarioTS') inputFuncionarioCrearTS!: InputSelectComponent;
   @ViewChild('inputTipoAnexoNombre') inputTipoAnexoNombre?: InputTextComponent;
-  @ViewChild('inputTipoAnexoDescripcion') inputTipoAnexoDescripcion?: InputTextComponent;
+  @ViewChild('inputTipoAnexoDescripcion') inputTipoAnexoDescripcion?: InputTextTareaComponent;
   @ViewChild('inputTipoAnexoFormato') inputTipoAnexoFormato?: InputSelectComponent;
   @ViewChild('inputTipoAnexoObligatoriedad') inputTipoAnexoObligatoriedad?: InputSelectComponent;
   // Referencias a inputs y templates
   // Formulario actualizar tipo solicitud
   @ViewChild('inputNombreTSUpdate') inputNombreUpdate?: InputTextComponent;
-  @ViewChild('inputDescripcionTSUpdate') inputDescripcionUpdate?: InputTextComponent;
+  @ViewChild('inputDescripcionTSUpdate') inputDescripcionUpdate?: InputTextTareaComponent;
   @ViewChild('inputSeccionTSUpdate') inputSeccionUpdate?: InputSelectComponent;
   @ViewChild('inputPerfilSolicitanteTSUpdate') inputPerfilSolicitanteUpdate?: InputSelectComponent;
   @ViewChild('inputFuncionarioTSUpdate') inputFuncionarioUpdate?: InputSelectComponent;
   @ViewChild('inputTipoAnexoNombreUpdate') inputTipoAnexoNombreUpdate?: InputTextComponent;
-  @ViewChild('inputTipoAnexoDescripcionUpdate') inputTipoAnexoDescripcionUpdate?: InputTextComponent;
+  @ViewChild('inputTipoAnexoDescripcionUpdate') inputTipoAnexoDescripcionUpdate?: InputTextTareaComponent;
   @ViewChild('inputTipoAnexoFormatoUpdate') inputTipoAnexoFormatoUpdate?: InputSelectComponent;
   @ViewChild('inputTipoAnexoObligatoriedadUpdate') inputTipoAnexoObligatoriedadUpdate?: InputSelectComponent;
 
@@ -390,8 +391,20 @@ export class TipoSolicitudesContentComponent implements OnInit{
 
   // Resetea los formularios de creación
   private resetFormulariosCrear(): void {
-    this.nuevoTipoSolicitud = {};
-    this.nuevoTipoAnexo = {};
+    this.nuevoTipoSolicitud = {
+      nombre: '',
+      descripcion: '',
+      seccion: null,
+      perfilSolicitante: null,
+      uuidFuncionario: null
+    };
+
+    this.nuevoTipoAnexo = {
+      nombre: '',
+      descripcion: '',
+      formato: null,
+      obligatoriedad: null
+    };
     this.tiposAnexos = [];
 
     this.inputNombreCrearTS?.reset();

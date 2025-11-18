@@ -66,12 +66,12 @@
   [title]="'Actualizar Rol'"
   (save)="guardarRolActualizado()">
 
-  <app-input-text-component
+  <app-input-text-tarea-component
     #inputDescripcion
     [(value)]="selectedRolForm.descripcion"
     [label]="'Descripción'"
     [required]="true">
-  </app-input-text-component>
+  </app-input-text-tarea-component>
 
   <app-input-select-component
     #inputEstado

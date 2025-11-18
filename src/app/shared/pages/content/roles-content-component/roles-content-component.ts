@@ -16,22 +16,22 @@ import { RolDTORespuesta } from '../../../../core/models/Rol/DTOResponse/RolDTOR
 import { Paginator } from "../../../paginator/paginator";
 import { GenericDialogInfoComponent } from '../../../generic-dialog-info-component/generic-dialog-info-component';
 import { GenericDialogFormComponent } from '../../../generic-dialog-form-component/generic-dialog-form-component';
-import { InputTextComponent } from '../../../inputs/input-text-component/input-text-component';
 import { InputSelectComponent } from '../../../inputs/input-select-component/input-select-component';
 import { RolDTOPeticion } from '../../../../core/models/Rol/DTORequest/RolDTOPeticion';
 import { ToastService } from '../../../../core/services/toast-service';
 import { ErrorHandlerService } from '../../../../core/services/error-handler-service';
+import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
 
 @Component({
   selector: 'app-roles-content-component',
   imports: [CommonModule, CardMainComponent, Paginator, ButtonComponent,
-     GenericDialogInfoComponent, GenericDialogFormComponent, InputTextComponent, InputSelectComponent],
+     GenericDialogInfoComponent, GenericDialogFormComponent, InputSelectComponent, InputTextTareaComponent],
   templateUrl: './roles-content-component.html',
   styleUrl: './roles-content-component.css'
 })
 export class RolesContentComponent implements OnInit, AfterViewInit {
   // Referencias a inputs y templates
-  @ViewChild('inputDescripcion') inputDescripcion!: InputTextComponent;
+  @ViewChild('inputDescripcion') inputDescripcion!: InputTextTareaComponent;
   @ViewChild('inputEstado') inputEstado!: InputSelectComponent;
   @ViewChild('botonNombre') botonNombre!: TemplateRef<any>;
   @ViewChild('botonDescripcion') botonDescripcion!: TemplateRef<any>;

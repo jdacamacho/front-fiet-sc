@@ -93,12 +93,12 @@
     [required]="true">
   </app-input-text-component>
 
-  <app-input-text-component
+  <app-input-text-tarea-component
     #inputDescripcionTS
     [(value)]="nuevoTipoSolicitud.descripcion"
     [label]="'Descripción del Tipo de Solicitud'"
     [required]="false">
-  </app-input-text-component>
+  </app-input-text-tarea-component>
 
   <app-input-select-component
     #inputSeccionTS
@@ -137,13 +137,13 @@
       [forceValidation]="forceAnexoValidation">
     </app-input-text-component>
 
-    <app-input-text-component
+    <app-input-text-tarea-component
       #inputTipoAnexoDescripcion
       [(value)]="nuevoTipoAnexo.descripcion"
       [label]="'Descripción del Tipo de Anexo'"
       [required]="false"
       [forceValidation]="forceAnexoValidation">
-    </app-input-text-component>
+    </app-input-text-tarea-component>
 
     <app-input-select-component
       #inputTipoAnexoFormato
@@ -217,12 +217,12 @@
     [required]="true">
   </app-input-text-component>
 
-  <app-input-text-component
+  <app-input-text-tarea-component
     #inputDescripcionTSUpdate
     [(value)]="nuevoTipoSolicitudUpdate.descripcion"
     [label]="'Descripción del Tipo de Solicitud (Actualizar)'"
     [required]="false">
-  </app-input-text-component>
+  </app-input-text-tarea-component>
 
   <app-input-select-component
     #inputSeccionTSUpdate
@@ -261,13 +261,13 @@
       [forceValidation]="forceAnexoValidationUpdate">
     </app-input-text-component>
 
-    <app-input-text-component
+    <app-input-text-tarea-component
       #inputTipoAnexoDescripcionUpdate
       [(value)]="nuevoTipoAnexoUpdate.descripcion"
       [label]="'Descripción del Tipo de Anexo (Actualizar)'"
       [required]="false"
       [forceValidation]="forceAnexoValidationUpdate">
-    </app-input-text-component>
+    </app-input-text-tarea-component>
 
     <app-input-select-component
       #inputTipoAnexoFormatoUpdate
