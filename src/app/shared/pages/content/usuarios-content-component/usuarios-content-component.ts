@@ -310,7 +310,12 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
       this.inputPassword.isInvalid() ||
       this.inputTipoUsuario.isInvalid() ||
       this.inputRoles.isInvalid()
-    ) return;
+    ) {
+      this.toastService.showError('Error', 'Completa todos los campos requeridos.');
+      return;
+    }
+
+    
 
     const peticion: UsuarioDTOPeticion = {
       nombres: this.inputNombres.value,
@@ -393,7 +398,10 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
       this.inputUsernameActualizar.isInvalid() ||
       this.inputTipoUsuarioActualizar.isInvalid() ||
       this.inputEstadoActualizar.isInvalid()
-    ) return;
+    ){
+      this.toastService.showError('Error', 'Completa todos los campos requeridos.');
+      return;
+    } 
 
     const usuarioActualizado: UsuarioActualizarDTOPeticion = {
       nombres: this.selectedUsuarioActualizarForm.nombres,

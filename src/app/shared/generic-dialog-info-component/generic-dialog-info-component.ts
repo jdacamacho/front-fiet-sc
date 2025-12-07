@@ -13,6 +13,7 @@ export class GenericDialogInfoComponent {
   @Input() visible: boolean = false;       
   @Input() title: string = ''; 
   @Input() data: Record<string, any> = {};
+  @Input() showCustomContent: boolean = false;
 
   @Output() visibleChange = new EventEmitter<boolean>(); 
 

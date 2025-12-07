@@ -31,7 +31,7 @@ import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-compon
   selector: 'app-tipo-solicitudes-content-component',
   imports: [CommonModule, CardMainComponent, Paginator, BarraBusquedaComponent, ButtonComponent, 
     GenericDialogInfoComponent, GenericDialogUploadFileComponent, InputSelectComponent, GenericDialogFormComponent,
-    GenericDialogStepsFormComponent, InputTextComponent, SimpleButtonComponent, ButtonComponent, InputTextTareaComponent
+    GenericDialogStepsFormComponent, InputTextComponent, SimpleButtonComponent, InputTextTareaComponent
   ],
   templateUrl: './tipo-solicitudes-content-component.html',
   styleUrl: './tipo-solicitudes-content-component.css'
@@ -183,6 +183,17 @@ export class TipoSolicitudesContentComponent implements OnInit{
       { title: 'Solicitud', headerTemplate: this.busquedaTipoSolicitud },
       { title: 'Funcionario', headerTemplate: this.busquedaFuncionario }
     ];
+  }
+
+  private validarCamposRequeridos(campos: { valor: any, nombre: string }[]): boolean {
+    const camposInvalidos = campos.filter(c => c.valor === null || c.valor === undefined || (typeof c.valor === 'string' && !c.valor.trim()));
+
+    if (camposInvalidos.length > 0) {
+      const nombresCampos = camposInvalidos.map(c => c.nombre).join(', ');
+      this.toastService.showError('Error', `Completa los campos requeridos: ${nombresCampos}`);
+      return false;
+    }
+    return true;
   }
 
   // Abre el diálogo para crear un nuevo Tipo de Solicitud

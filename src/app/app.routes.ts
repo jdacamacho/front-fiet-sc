@@ -41,6 +41,12 @@ export const routes: Routes = [
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-tipo-solicitudes-component/secretario-general-tipo-solicitudes-component').then(m => m.SecretarioGeneralTipoSolicitudesComponent)
     },
     {
+        path: 'sec/solicitudes',
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: ['Secretario General']},
+        loadComponent: () => import('./core/secretario-general/pages/secretario-general-solicitudes/secretario-general-solicitudes').then(m => m.SecretarioGeneralSolicitudes)
+    },
+    {
         path: '',
         redirectTo: 'roles',
         pathMatch: 'full'
