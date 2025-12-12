@@ -1,5 +1,5 @@
 /**
- * Componente solcitudes secretario general
+ * Componente solicitudes Funcionario
  * Author: Julian David Camacho Erazo  {@literal <jdacamacho@unicauca.edu.co>}
  */
 import { CommonModule } from '@angular/common';
@@ -14,24 +14,24 @@ import { BarraBusquedaComponent } from '../../../search/barra-busqueda-component
 import { GenericDialogInfoComponent } from '../../../generic-dialog-info-component/generic-dialog-info-component';
 import { SolicitudDTORespuesta } from '../../../../core/models/Solicitudes/DTOResponse/SolicitudDTORespuesta';
 import { AnexosViewComponent } from '../../../others/anexos-view-component/anexos-view-component';
-import { UsuariosService } from '../../../../core/services/usuarios-service';
 import { InputTextComponent } from '../../../inputs/input-text-component/input-text-component';
 import { InputSelectComponent } from '../../../inputs/input-select-component/input-select-component';
 import { ToastService } from '../../../../core/services/toast-service';
 import { ErrorHandlerService } from '../../../../core/services/error-handler-service';
 import { GenericDialogFormComponent } from '../../../generic-dialog-form-component/generic-dialog-form-component';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
+import { AuthService } from '../../../../core/services/auth-service';
 
 @Component({
-  selector: 'app-sec-content-component',
+  selector: 'app-fun-solicitudes-content-component',
   imports: [CommonModule, CardMainComponent, ButtonComponent, Paginator, BarraBusquedaComponent,
     GenericDialogInfoComponent,AnexosViewComponent, InputTextComponent, InputSelectComponent, GenericDialogFormComponent,
     InputTextTareaComponent
   ],
-  templateUrl: './sec-content-component.html',
-  styleUrl: './sec-content-component.css'
+  templateUrl: './fun-solicitudes-content-component.html',
+  styleUrl: './fun-solicitudes-content-component.css'
 })
-export class SecContentComponent implements OnInit{
+export class FunSolicitudesContentComponent implements OnInit {
   // Flags de visibilidad de diálogos
   solicitudInfoDialogVisible = false;
   dialogUsaComponente: boolean = false;
@@ -57,47 +57,45 @@ export class SecContentComponent implements OnInit{
   // Flag para mostrar el diálogo
   actualizarSolicitudDialogVisible = false;
 
-  // Lista de funcionarios para el select
-  funcionariosOptions: { label: string; value: string }[] = [];
-
   // Paginación
   currentPage = 1;
   pageSize = 5;
   totalPages = 1;
   totalElements = 0;
 
+  usuario: any;
+
   // Header con filtro incrustado
   @ViewChild('headerSolicitud') headerSolicitud!: TemplateRef<any>;
 
   @ViewChild('inputNombreActualizar') inputNombreActualizar!: InputTextComponent;
   @ViewChild('inputEstadoActualizar') inputEstadoActualizar!: InputSelectComponent;
-  @ViewChild('inputFuncionarioActualizar') inputFuncionarioActualizar!: InputSelectComponent;
   @ViewChild('inputDescripcionActualizar') inputDescripcionActualizar!: InputTextComponent;
   @ViewChild('inputConsecutivoActualizar') inputConsecutivoActualizar!: InputTextComponent;
 
 
   headers: any[] = [
     { title: 'Solicitud', headerTemplate: null },
-    { title: 'Responsable', headerTemplate: null },
     { title: 'Estado', headerTemplate: null }
   ];
 
   constructor(
     private solicitudesService: SolicitudesService,
-    private usuariosService: UsuariosService,
     private toastService: ToastService,
-    private errorHandlerService: ErrorHandlerService
+    private errorHandlerService: ErrorHandlerService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.authService.usuario$.subscribe(user => {
+      this.usuario = user;
+    });
     this.loadSolicitudes();
-    this.loadFuncionarios();
   }
 
   ngAfterViewInit(): void {
     this.headers = [
       { title: 'Solicitud', headerTemplate: this.headerSolicitud },
-      { title: 'Responsable', headerTemplate: null },
       { title: 'Estado', headerTemplate: null }
     ];
   }
@@ -107,8 +105,8 @@ export class SecContentComponent implements OnInit{
     const backendPage = page - 1;
 
     const observable = this.solicitudFiltro && this.solicitudFiltro.trim() !== ''
-      ? this.solicitudesService.buscarSolicitudesPorNombre(this.solicitudFiltro.trim(), backendPage, this.pageSize)
-      : this.solicitudesService.getSolicitudesPaginado(backendPage, this.pageSize);
+      ? this.solicitudesService.buscarSolicitudesPorNombreYFuncionario(this.usuario.uuidUsuario, this.solicitudFiltro.trim(), backendPage, this.pageSize)
+      : this.solicitudesService.getSolicitudesPorFuncionario(this.usuario.uuidUsuario, backendPage, this.pageSize);
 
     observable.subscribe({
       next: (respuesta: any) => {
@@ -142,21 +140,6 @@ export class SecContentComponent implements OnInit{
     });
   }
 
-  loadFuncionarios(): void {
-    this.usuariosService.getFuncionarios().subscribe({
-      next: (respuesta: any[]) => {
-        this.funcionariosOptions = respuesta.map(f => ({
-          label: `${f.nombres} ${f.apellidos}`,
-          value: f.uuidUsuario
-        }));
-      },
-      error: (err) => {
-        console.error('Error cargando funcionarios:', err);
-        this.funcionariosOptions = [];
-      }
-    });
-  }
-
   /**
    * Abre el diálogo de información de Solicitud
    */
@@ -171,8 +154,8 @@ export class SecContentComponent implements OnInit{
           Descripción: solicitudDetallada.descripcion,
           Estado: solicitudDetallada.estado,
           Consecutivo: solicitudDetallada.consecutivo || 'Sin consecutivo',
-          Orden_del_Día_identificador: solicitudDetallada.ordenDelDia
-            ? solicitudDetallada.ordenDelDia.uuidOrdenDelDia + " / " + (solicitudDetallada.ordenDelDia.nombre || '')
+          Orden_del_Día: solicitudDetallada.ordenDelDia
+            ? (solicitudDetallada.ordenDelDia.nombre || '')
             : 'Sin orden del día asignado',
 
           Tipo_de_Solicitud: solicitudDetallada.tipoSolicitud.nombre,
@@ -198,9 +181,8 @@ export class SecContentComponent implements OnInit{
     this.solicitudActualizar = {
       uuidSolicitud: row.uuidSolicitud,
       nombre: row.nombre,
-      descripcion: row.descripcion,
       estado: row.estado,
-      uuidFuncionario: row.objFuncionario?.uuidUsuario || null,
+      descripcion: row.descripcion,
       consecutivo: row.consecutivo
     };
     this.actualizarSolicitudDialogVisible = true;
@@ -209,13 +191,11 @@ export class SecContentComponent implements OnInit{
   guardarSolicitudActualizada(): void {
     this.inputNombreActualizar.touched = true;
     this.inputEstadoActualizar.touched = true;
-    this.inputFuncionarioActualizar.touched = true;
 
     // Validar los campos obligatorios
     if (
       this.inputNombreActualizar.isInvalid() ||
-      this.inputEstadoActualizar.isInvalid() ||
-      this.inputFuncionarioActualizar.isInvalid()
+      this.inputEstadoActualizar.isInvalid()
     ) {
       this.toastService.showError('Error', 'Completa todos los campos requeridos.');
       return;
@@ -226,7 +206,6 @@ export class SecContentComponent implements OnInit{
       consecutivo: this.solicitudActualizar.consecutivo,
       descripcion: this.solicitudActualizar.descripcion,
       estado: this.solicitudActualizar.estado,
-      uuidFuncionario: this.solicitudActualizar.uuidFuncionario
     };
 
     this.solicitudesService.actualizarSolicitud(this.solicitudActualizar.uuidSolicitud, peticion)
@@ -252,7 +231,6 @@ export class SecContentComponent implements OnInit{
     this.inputDescripcionActualizar?.reset();
     this.inputConsecutivoActualizar?.reset();
     this.inputEstadoActualizar?.reset();
-    this.inputFuncionarioActualizar?.reset();
   }
 
   buscarSolicitudes(value: string): void {
@@ -265,5 +243,4 @@ export class SecContentComponent implements OnInit{
     if (page < 1 || page > this.totalPages) return;
     this.loadSolicitudes(page);
   }
-
 }

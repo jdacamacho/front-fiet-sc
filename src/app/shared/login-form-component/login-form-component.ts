@@ -30,7 +30,10 @@ export class LoginFormComponent {
     this.authService.login(request).subscribe({
       next: (userInfo) => {
         const roles = userInfo.roles.map(r => r.nombre);
-        if (roles.includes('Secretario General')) this.router.navigate(['/secgeneral']);
+        if (roles.includes('Secretario General')) 
+          this.router.navigate(['/secgeneral']);
+        else if (roles.includes('Funcionario'))
+          this.router.navigate(['/funcionario']);
       },
       error: (err) => this.errorHandlerService.handleError(err, "Error en Autenticación")
     });

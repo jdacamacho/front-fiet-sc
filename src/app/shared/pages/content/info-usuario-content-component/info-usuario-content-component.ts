@@ -16,6 +16,7 @@ export class InfoUsuarioContentComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.usuario$.subscribe(user => {
+      console.log(user)
       this.usuario = user;
     });
   }

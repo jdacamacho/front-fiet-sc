@@ -112,4 +112,11 @@ export class SolicitudesService {
       `${this.url}/buscar?filtro=${filtro}&pagina=${pagina}&tamanio=${tamanio}`
     );
   }
+
+  buscarSolicitudesPorNombreYFuncionario(uuidFuncionario: string, filtro: string, pagina: number,tamanio: number): Observable<PaginacionRespuestaDTO<SolicitudDTORespuesta>> {
+    return this.http.get<PaginacionRespuestaDTO<SolicitudDTORespuesta>>(
+      `${this.url}/fun/buscar/?uuidFuncionario=${uuidFuncionario}&filtro=${filtro}&pagina=${pagina}&tamanio=${tamanio}`
+    );
+  }
+
 }

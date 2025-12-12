@@ -15,6 +15,12 @@ export const routes: Routes = [
         data: { roles: ['Secretario General']},
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-home-component/secretario-general-home-component').then(m => m.SecretarioGeneralHomeComponent)
     },
+    {
+        path: 'funcionario',
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: ['Funcionario']},
+        loadComponent: () => import('./core/funcionario/pages/funcionario-home-component/funcionario-home-component').then(m => m.FuncionarioHomeComponent)
+    },
     // Vistas
     {
         path: 'roles',
@@ -45,6 +51,12 @@ export const routes: Routes = [
         canActivate: [AuthGuard, RoleGuard],
         data: { roles: ['Secretario General']},
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-solicitudes/secretario-general-solicitudes').then(m => m.SecretarioGeneralSolicitudes)
+    },
+    {
+        path: 'fun/solicitudes',
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: ['Funcionario']},
+        loadComponent: () => import('./core/funcionario/pages/funcionario-solicitudes/funcionario-solicitudes').then(m => m.FuncionarioSolicitudes)
     },
     {
         path: '',

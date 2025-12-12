@@ -9,10 +9,10 @@ import { AuthService } from '../../../core/services/auth-service';
   styleUrl: './header-main-component.css'
 })
 export class HeaderMainComponent {
-  nombre: string = 'Carlos Alberto';
-  avatarLabel: string = 'CA';
+  nombre: string = '';
+  avatarLabel: string = '';
   roles: string[] = [];
-  currentRole: string = 'Secretario General';
+  currentRole: string = '';
 
   constructor(private authService: AuthService) {}
 
