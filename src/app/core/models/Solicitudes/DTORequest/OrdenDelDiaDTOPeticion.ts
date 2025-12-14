@@ -1,5 +1,5 @@
 export class OrdenDelDiaDTOPeticion {
-    nomre!: string ;
+    nombre!: string ;
     descripcion!: string ;
     ciudad!: string ;
     fecha!: string ;

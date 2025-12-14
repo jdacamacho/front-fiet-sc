@@ -59,6 +59,12 @@ export const routes: Routes = [
         loadComponent: () => import('./core/funcionario/pages/funcionario-solicitudes/funcionario-solicitudes').then(m => m.FuncionarioSolicitudes)
     },
     {
+        path: 'sec/orden-del-dia',
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: ['Secretario General']},
+        loadComponent: () => import('./core/secretario-general/pages/secretario-general-ordel-del-dia/secretario-general-ordel-del-dia').then(m => m.SecretarioGeneralOrdelDelDia)
+    },
+    {
         path: '',
         redirectTo: 'roles',
         pathMatch: 'full'
