@@ -61,4 +61,31 @@ export class TipoSolicitudService {
   actualizarTipoSolicitud(uuidTipoSolicitud: string, peticion: TipoSolicitudDTOPeticion): Observable<TipoSolicitudDTORespuesta> {
     return this.http.put<TipoSolicitudDTORespuesta>(`${this.url}/${uuidTipoSolicitud}`, peticion);
   }
+
+  getTiposSolicitudPorPerfilSolicitante(perfil: string, pagina: number, tamanio: number):
+    Observable<PaginacionRespuestaDTO<TipoSolicitudDTORespuesta>> {
+    return this.http.get<PaginacionRespuestaDTO<TipoSolicitudDTORespuesta>>(
+      `${this.url}/perfil/paginado?perfil=${perfil}&pagina=${pagina}&tamanio=${tamanio}`
+    );
+  }
+
+  getTiposSolicitudPorNombreYPerfilSolicitante(nombre: string, perfil: string, pagina: number, tamanio: number):
+    Observable<PaginacionRespuestaDTO<TipoSolicitudDTORespuesta>> {
+    const params = new URLSearchParams();
+    if (nombre && nombre.trim() !== '') params.append('nombre', nombre.trim());
+    params.append('perfil', perfil);
+    params.append('pagina', pagina.toString());
+    params.append('tamanio', tamanio.toString());
+
+    return this.http.get<PaginacionRespuestaDTO<TipoSolicitudDTORespuesta>>(
+      `${this.url}/perfil/filtro?${params.toString()}`
+    );
+  }
+
+  getTiposSolicitudPorPerfil(perfil: string): Observable<TipoSolicitudDTORespuesta[]> {
+    return this.http.get<TipoSolicitudDTORespuesta[]>(
+      `${this.url}/perfil?perfil=${perfil}`
+    );
+  }
+
 }

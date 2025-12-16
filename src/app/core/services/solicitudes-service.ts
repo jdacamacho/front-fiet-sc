@@ -119,4 +119,10 @@ export class SolicitudesService {
     );
   }
 
+  getOrdenesDelDiaPorEstado(estado: boolean): Observable<OrdenDelDiaDTORespuesta[]> {
+    return this.http.get<OrdenDelDiaDTORespuesta[]>(
+      `${this.url}/orden-del-dia/estado?estado=${estado}`
+    );
+  }
+
 }

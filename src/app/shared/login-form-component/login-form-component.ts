@@ -17,7 +17,7 @@ import { ErrorHandlerService } from '../../core/services/error-handler-service';
 export class LoginFormComponent {
   username = '';
   password = '';
-
+  usuariosFiet: string[] = ['Coordinador Pregrado', 'Coordinador Posgrados', 'Jefe de Departamento', 'Decano', 'Docente']; 
   constructor(
     private authService: AuthService,
     private errorHandlerService: ErrorHandlerService,
@@ -34,6 +34,8 @@ export class LoginFormComponent {
           this.router.navigate(['/secgeneral']);
         else if (roles.includes('Funcionario'))
           this.router.navigate(['/funcionario']);
+        else if (roles.some(r => this.usuariosFiet.includes(r))) 
+          this.router.navigate(['/usuario-fiet']);
       },
       error: (err) => this.errorHandlerService.handleError(err, "Error en Autenticación")
     });

@@ -6,6 +6,5 @@ export class SolicitudPublicaDTOPeticion {
     descripcion!: string ;
     uuidTipoSolicitud!: string ;
     anexos!: AnexoDTOPeticion[] ;
-    uuidOrdenDelDia!: string ;
     informacionSolicitante!: InformacionSolicitanteDTOPeticion ;
 }

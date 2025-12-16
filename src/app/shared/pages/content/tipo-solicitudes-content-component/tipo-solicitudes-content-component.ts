@@ -185,17 +185,6 @@ export class TipoSolicitudesContentComponent implements OnInit{
     ];
   }
 
-  private validarCamposRequeridos(campos: { valor: any, nombre: string }[]): boolean {
-    const camposInvalidos = campos.filter(c => c.valor === null || c.valor === undefined || (typeof c.valor === 'string' && !c.valor.trim()));
-
-    if (camposInvalidos.length > 0) {
-      const nombresCampos = camposInvalidos.map(c => c.nombre).join(', ');
-      this.toastService.showError('Error', `Completa los campos requeridos: ${nombresCampos}`);
-      return false;
-    }
-    return true;
-  }
-
   // Abre el diálogo para crear un nuevo Tipo de Solicitud
   abrirDialogCrearTipoSolicitud(): void {
     this.resetFormulariosCrear();
@@ -449,8 +438,6 @@ export class TipoSolicitudesContentComponent implements OnInit{
         obligatoriedad: a.obligatoriedad
       }))
     };
-
-    console.log('Actualizar Tipo de Solicitud con petición:', peticion);
 
     const uuid = this.nuevoTipoSolicitudUpdate.uuidTipoSolicitud || this.nuevoTipoSolicitudUpdate.uuidTipoSolicitud;
     this.tipoSolicitudesService.actualizarTipoSolicitud(uuid, peticion).subscribe({
