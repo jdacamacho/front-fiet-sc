@@ -9,6 +9,14 @@
     {{ tipoAnexo.descripcion }}
   </small>
 
+  <small class="text-muted">
+    {{ tipoAnexo.formato }}
+  </small>
+
+  <small class="text-muted">
+    {{ tipoAnexo.obligatoriedad ? 'Obligatorio' : 'Opcional' }}
+  </small>
+
   <p-fileUpload
     mode="basic"
     name="file"
