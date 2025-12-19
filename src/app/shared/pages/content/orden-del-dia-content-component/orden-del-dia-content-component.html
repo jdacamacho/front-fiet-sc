@@ -166,5 +166,13 @@
     [label]="'Lugar'">
   </app-input-text-component>
 
+  <app-input-select-component
+    #inputEstadoActualizar
+    [(value)]="selectedOrdenActualizarForm.estado"
+    [label]="'Estado'"
+    [options]="estadosBooleano"
+    [required]="true">
+  </app-input-select-component>
+
 </app-generic-dialog-form-component>
 

@@ -26,6 +26,7 @@ import { InputTextComponent } from '../../../inputs/input-text-component/input-t
 import { SimpleButtonComponent } from '../../../buttons/simple-button-component/simple-button-component';
 import { RolesService } from '../../../../core/services/roles-service';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
+import { BOOLEANO, FORMATOS } from '../../../../core/constantes/constantes';
 
 @Component({
   selector: 'app-tipo-solicitudes-content-component',
@@ -101,6 +102,9 @@ export class TipoSolicitudesContentComponent implements OnInit{
   }[] = [];
 
   perfilesSolicitante: { label: string; value: string }[] = [];
+
+  formatos = FORMATOS;
+  booleano = BOOLEANO;
 
   // Templates de los steps
   @ViewChild('step1', { static: true }) step1Template!: TemplateRef<any>;

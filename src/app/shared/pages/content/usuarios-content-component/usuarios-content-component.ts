@@ -18,6 +18,10 @@ import { ErrorHandlerService } from '../../../../core/services/error-handler-ser
 import { RolesService } from '../../../../core/services/roles-service';
 import { InputPasswordComponent } from '../../../inputs/input-password-component/input-password-component';
 import { GenericDialogUploadFileComponent } from '../../../generic-dialog-upload-file-component/generic-dialog-upload-file-component';
+import { TIPOS_DOCUMENTO } from '../../../../core/constantes/constantes';
+import { ESTADO_BOOLEANO } from '../../../../core/constantes/constantes';
+import {ACTIVO} from '../../../../core/constantes/constantes';
+import {INACTIVO} from '../../../../core/constantes/constantes';
 
 @Component({
   selector: 'app-usuarios-content-component',
@@ -77,6 +81,10 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
   // Componentes para uso en CardMainComponent
   tableComponent = TableGenericComponent;
   pretitleComponentComponent = ButtonComponent;
+
+  tiposDocumento = TIPOS_DOCUMENTO;
+  estadosBooleano = ESTADO_BOOLEANO;
+
   buttonsCard: any[] = [];
 
   // Cabeceras y datos de la tabla
@@ -173,7 +181,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
         this.paginatedData = respuesta.content.map(u => ({
           uuidUsuario: u.uuidUsuario,
           nombre: `${u.nombres} ${u.apellidos}`,
-          estado: u.estado ? '✅ Activo' : '❌ Inactivo'
+          estado: u.estado ? ACTIVO : INACTIVO
         }));
 
         this.totalElements = respuesta.totalElements;
@@ -261,7 +269,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
         this.paginatedData = respuesta.content.map(u => ({
           uuidUsuario: u.uuidUsuario,
           nombre: `${u.nombres} ${u.apellidos}`,
-          estado: u.estado ? '✅ Activo' : '❌ Inactivo'
+          estado: u.estado ? ACTIVO : INACTIVO
         }));
 
         this.totalElements = respuesta.totalElements;
@@ -357,7 +365,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
           uuidUsuario: usuario.uuidUsuario,
           nombres: usuarioDetallado.nombres,
           apellidos: usuarioDetallado.apellidos,
-          estado: usuarioDetallado.estado ? '✅ Activo' : '❌ Inactivo',
+          estado: usuarioDetallado.estado ? ACTIVO : INACTIVO,
           tipoDocumento: usuarioDetallado.tipoDocumento,
           numeroDocumento: usuarioDetallado.numeroDocumento,
           telefono: usuarioDetallado.telefono,
@@ -412,7 +420,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
       correoElectronico: this.selectedUsuarioActualizarForm.correoElectronico,
       username: this.selectedUsuarioActualizarForm.username,
       objTipoUsuario: this.selectedUsuarioActualizarForm.objTipoUsuario,
-      estado: this.selectedUsuarioActualizarForm.estado === '✅ Activo',
+      estado: this.selectedUsuarioActualizarForm.estado === ACTIVO,
       roles: this.selectedUsuarioActualizarForm.roles
     };
 
@@ -446,7 +454,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
           username: usuarioDetallado.username,
           Tipo_Usuario: usuarioDetallado.objTipoUsuario?.nombre, 
           Roles: usuarioDetallado.roles?.map(r => r.nombre).join(', ') || 'Sin roles', 
-          Estado: usuarioDetallado.estado ? '✅ Activo' : '❌ Inactivo'
+          Estado: usuarioDetallado.estado ? ACTIVO : INACTIVO
         };
         this.usuarioInfoDialogVisible = true;
       },

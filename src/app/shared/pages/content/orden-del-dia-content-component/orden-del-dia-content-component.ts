@@ -15,7 +15,10 @@ import { ToastService } from '../../../../core/services/toast-service';
 import { ErrorHandlerService } from '../../../../core/services/error-handler-service';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
 import { InputDateComponent } from '../../../inputs/input-date-component/input-date-component';
-
+import { InputSelectComponent } from '../../../inputs/input-select-component/input-select-component';
+import { ESTADO_BOOLEANO } from '../../../../core/constantes/constantes';
+import { ACTIVO } from '../../../../core/constantes/constantes';
+import { INACTIVO } from '../../../../core/constantes/constantes';
 @Component({
   selector: 'app-orden-del-dia-content-component',
   imports: [
@@ -28,7 +31,8 @@ import { InputDateComponent } from '../../../inputs/input-date-component/input-d
     GenericDialogFormComponent,
     InputTextComponent,
     InputTextTareaComponent,
-    InputDateComponent
+    InputDateComponent,
+    InputSelectComponent
   ],
   templateUrl: './orden-del-dia-content-component.html',
   styleUrl: './orden-del-dia-content-component.css'
@@ -53,6 +57,7 @@ export class OrdenDelDiaContentComponent implements OnInit, AfterViewInit{
   @ViewChild('inputHoraFinActualizar') inputHoraFinActualizar!: InputTextComponent;
   @ViewChild('inputLugarActualizar') inputLugarActualizar!: InputTextComponent;
   @ViewChild('inputNumeroActaActualizar') inputNumeroActaActualizar!: InputTextComponent;
+  @ViewChild('inputEstadoActualizar') inputEstadoActualizar!: InputSelectComponent;
 
   // Búsqueda
   @ViewChild('busquedaNumeroActa') busquedaNumeroActa!: TemplateRef<any>;
@@ -60,6 +65,8 @@ export class OrdenDelDiaContentComponent implements OnInit, AfterViewInit{
   ordenInfoDialogVisible = false;
   ordenFormDialogVisible = false;
   ordenFormActualizarDialogVisible = false;
+
+  estadosBooleano = ESTADO_BOOLEANO;
 
   selectedOrdenInfo: any = null;
   selectedOrdenForm: any = {};
@@ -130,7 +137,7 @@ export class OrdenDelDiaContentComponent implements OnInit, AfterViewInit{
           uuidOrdenDelDia: o.uuidOrdenDelDia,
           nombre: o.nombre,
           acta: o.numeroActa,
-          estado: o.estado ? '✅ Activo' : '❌ Inactivo'
+          estado: o.estado ? ACTIVO : INACTIVO
         }));
 
         this.totalElements = resp.totalElements;
@@ -202,6 +209,7 @@ export class OrdenDelDiaContentComponent implements OnInit, AfterViewInit{
     this.solicitudesService.getOrdenDelDia(row.uuidOrdenDelDia).subscribe({
       next: (orden: OrdenDelDiaDTORespuesta) => {
         this.selectedOrdenActualizarForm = orden;
+        this.selectedOrdenActualizarForm.estado = orden.estado ? ACTIVO : INACTIVO;
         this.ordenFormActualizarDialogVisible = true;
       }
     });
@@ -228,7 +236,7 @@ export class OrdenDelDiaContentComponent implements OnInit, AfterViewInit{
       horaFin: this.selectedOrdenActualizarForm.horaFin,
       lugarReunion: this.selectedOrdenActualizarForm.lugarReunion,
       numeroActa: this.selectedOrdenActualizarForm.numeroActa,
-      estado: this.selectedOrdenActualizarForm.estado
+      estado: this.selectedOrdenActualizarForm.estado === ACTIVO,
     };
 
     this.solicitudesService.actualizarOrdenDelDia(
@@ -256,7 +264,7 @@ export class OrdenDelDiaContentComponent implements OnInit, AfterViewInit{
           Hora_Fin: orden.horaFin,
           Lugar: orden.lugarReunion,
           Acta: orden.numeroActa,
-          Estado: orden.estado ? '✅ Activo' : '❌ Inactivo'
+          Estado: orden.estado ? ACTIVO : INACTIVO
         };
         this.ordenInfoDialogVisible = true;
       }

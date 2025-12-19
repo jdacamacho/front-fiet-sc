@@ -72,15 +72,7 @@
     #inputTipoDocumento
     [(value)]="selectedUsuarioForm.tipoDocumento"
     [label]="'Tipo Documento'"
-    [options]="[
-      { label: 'Cédula de ciudadanía', value: 'Cédula de ciudadanía' },
-      { label: 'Tarjeta de identidad', value: 'Tarjeta de identidad' },
-      { label: 'Cédula de extranjería', value: 'Cédula de extranjería' },
-      { label: 'Pasaporte', value: 'Pasaporte' },
-      { label: 'Registro civil de nacimiento', value: 'Registro civil de nacimiento' },
-      { label: 'Permiso especial de permanencia', value: 'Permiso especial de permanencia' },
-      { label: 'Carné diplomático', value: 'Carné diplomático' }
-    ]"
+    [options]="tiposDocumento"
     [required]="true">
   </app-input-select-component>
 
@@ -162,15 +154,7 @@
     #inputTipoDocumentoActualizar
     [(value)]="selectedUsuarioActualizarForm.tipoDocumento"
     [label]="'Tipo Documento'"
-    [options]="[
-      { label: 'Cédula de ciudadanía', value: 'Cédula de ciudadanía' },
-      { label: 'Tarjeta de identidad', value: 'Tarjeta de identidad' },
-      { label: 'Cédula de extranjería', value: 'Cédula de extranjería' },
-      { label: 'Pasaporte', value: 'Pasaporte' },
-      { label: 'Registro civil de nacimiento', value: 'Registro civil de nacimiento' },
-      { label: 'Permiso especial de permanencia', value: 'Permiso especial de permanencia' },
-      { label: 'Carné diplomático', value: 'Carné diplomático' }
-    ]"
+    [options]="tiposDocumento"
     [required]="true">
   </app-input-select-component>
 
@@ -214,10 +198,7 @@
     #inputEstadoActualizar
     [(value)]="selectedUsuarioActualizarForm.estado"
     [label]="'Estado'"
-    [options]="[
-      { label: '✅ Activo', value: '✅ Activo' },
-      { label: '❌ Inactivo', value: '❌ Inactivo' }
-    ]"
+    [options]="estadosBooleano"
     [required]="true">
   </app-input-select-component>
 

@@ -21,6 +21,7 @@ import { ToastService } from '../../../../core/services/toast-service';
 import { ErrorHandlerService } from '../../../../core/services/error-handler-service';
 import { GenericDialogFormComponent } from '../../../generic-dialog-form-component/generic-dialog-form-component';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
+import { ESTADOS_SOLICITUD } from '../../../../core/constantes/constantes';
 
 @Component({
   selector: 'app-sec-content-component',
@@ -59,6 +60,8 @@ export class SecContentComponent implements OnInit{
 
   // Lista de funcionarios para el select
   funcionariosOptions: { label: string; value: string }[] = [];
+
+  estadosSolicitud = ESTADOS_SOLICITUD;
 
   // Paginación
   currentPage = 1;
@@ -171,8 +174,8 @@ export class SecContentComponent implements OnInit{
           Descripción: solicitudDetallada.descripcion,
           Estado: solicitudDetallada.estado,
           Consecutivo: solicitudDetallada.consecutivo || 'Sin consecutivo',
-          Orden_del_Día_identificador: solicitudDetallada.ordenDelDia
-            ? solicitudDetallada.ordenDelDia.uuidOrdenDelDia + " / " + (solicitudDetallada.ordenDelDia.nombre || '')
+          Orden_del_Día: solicitudDetallada.ordenDelDia
+            ? (solicitudDetallada.ordenDelDia.nombre || '')
             : 'Sin orden del día asignado',
 
           Tipo_de_Solicitud: solicitudDetallada.tipoSolicitud.nombre,

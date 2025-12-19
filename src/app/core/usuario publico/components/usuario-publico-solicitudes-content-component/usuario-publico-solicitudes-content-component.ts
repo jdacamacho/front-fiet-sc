@@ -8,8 +8,6 @@ import { GenericDialogInfoComponent } from '../../../../shared/generic-dialog-in
 import { Paginator } from '../../../../shared/paginator/paginator';
 import { TipoSolicitudService } from '../../../../core/services/tipo-solicitud-service';
 import { TipoSolicitudDTORespuesta } from '../../../../core/models/TipoSolicitud/DTOResponse/TipoSolicitudDTORespuesta';
-import { EnviarSolicitudUsuarioPublicoComponent } from '../enviar-solicitud-usuario-publico-component/enviar-solicitud-usuario-publico-component';
-
 @Component({
   selector: 'app-usuario-publico-solicitudes-content-component',
   standalone: true,
@@ -19,8 +17,7 @@ import { EnviarSolicitudUsuarioPublicoComponent } from '../enviar-solicitud-usua
     ButtonComponent,
     BarraBusquedaComponent,
     GenericDialogInfoComponent,
-    Paginator,
-    EnviarSolicitudUsuarioPublicoComponent
+    Paginator
   ],
   templateUrl: './usuario-publico-solicitudes-content-component.html',
   styleUrl: './usuario-publico-solicitudes-content-component.css'
@@ -29,7 +26,6 @@ export class UsuarioPublicoSolicitudesContentComponent implements OnInit, AfterV
 
   tableComponent = TableGenericComponent;
   tipoDeSolicitudFiltro: string = '';
-  enviarSolicitudVisible = false;
 
   headers: any[] = [
     { title: 'Solicitud', headerTemplate: null }
@@ -60,10 +56,6 @@ export class UsuarioPublicoSolicitudesContentComponent implements OnInit, AfterV
     this.headers = [
       { title: 'Solicitud', headerTemplate: this.busquedaTipoSolicitud }
     ];
-  }
-
-  onRealizarSolicitud(): void {
-    this.enviarSolicitudVisible = true;
   }
 
   loadTiposSolicitudes(page: number = 1): void {

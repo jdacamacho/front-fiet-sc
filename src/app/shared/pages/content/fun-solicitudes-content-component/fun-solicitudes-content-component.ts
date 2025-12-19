@@ -21,12 +21,15 @@ import { ErrorHandlerService } from '../../../../core/services/error-handler-ser
 import { GenericDialogFormComponent } from '../../../generic-dialog-form-component/generic-dialog-form-component';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
 import { AuthService } from '../../../../core/services/auth-service';
+import { ESTADOS_SOLICITUD } from '../../../../core/constantes/constantes';
+import { EnviarSolicitudUsuarioPublicoComponent } from '../../../../core/usuario publico/components/enviar-solicitud-usuario-publico-component/enviar-solicitud-usuario-publico-component';
 
 @Component({
   selector: 'app-fun-solicitudes-content-component',
   imports: [CommonModule, CardMainComponent, ButtonComponent, Paginator, BarraBusquedaComponent,
     GenericDialogInfoComponent,AnexosViewComponent, InputTextComponent, InputSelectComponent, GenericDialogFormComponent,
-    InputTextTareaComponent
+    InputTextTareaComponent,
+    EnviarSolicitudUsuarioPublicoComponent
   ],
   templateUrl: './fun-solicitudes-content-component.html',
   styleUrl: './fun-solicitudes-content-component.css'
@@ -56,6 +59,7 @@ export class FunSolicitudesContentComponent implements OnInit {
 
   // Flag para mostrar el diálogo
   actualizarSolicitudDialogVisible = false;
+  enviarSolicitudVisible = false;
 
   // Paginación
   currentPage = 1;
@@ -64,6 +68,9 @@ export class FunSolicitudesContentComponent implements OnInit {
   totalElements = 0;
 
   usuario: any;
+  buttonsCard: any[] = [];
+
+  estadosSolicitud = ESTADOS_SOLICITUD;
 
   // Header con filtro incrustado
   @ViewChild('headerSolicitud') headerSolicitud!: TemplateRef<any>;
@@ -87,6 +94,16 @@ export class FunSolicitudesContentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.buttonsCard = [
+      {
+        imgUrl: 'buttons/campana.svg',
+        color: '#1E257B',
+        width: '20px',
+        height: '20px',
+        onClick: () => this.onRealizarSolicitud()  
+      }
+    ];
+    
     this.authService.usuario$.subscribe(user => {
       this.usuario = user;
     });
@@ -98,6 +115,10 @@ export class FunSolicitudesContentComponent implements OnInit {
       { title: 'Solicitud', headerTemplate: this.headerSolicitud },
       { title: 'Estado', headerTemplate: null }
     ];
+  }
+
+  onRealizarSolicitud(): void {
+    this.enviarSolicitudVisible = true;
   }
 
   // Carga solicitudes con paginación y filtros
@@ -192,7 +213,6 @@ export class FunSolicitudesContentComponent implements OnInit {
     this.inputNombreActualizar.touched = true;
     this.inputEstadoActualizar.touched = true;
 
-    // Validar los campos obligatorios
     if (
       this.inputNombreActualizar.isInvalid() ||
       this.inputEstadoActualizar.isInvalid()

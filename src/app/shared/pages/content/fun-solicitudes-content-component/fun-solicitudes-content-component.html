@@ -3,8 +3,14 @@
   [preTitleInputs]="{ imgUrl: 'buttons/solicitudes.svg' }"
   [title]="'Gestión de Solicitudes'"
   [bodyComponent]="tableComponent"
-  [bodyInputs]="{ headers: headers, data: paginatedData, actionTemplate: actionTemplate }">
+  [bodyInputs]="{ headers: headers, data: paginatedData, actionTemplate: actionTemplate }"
+  [buttons]="buttonsCard">
 </app-card-main-component>
+
+<app-enviar-solicitud-usuario-publico-component
+  *ngIf="enviarSolicitudVisible"
+  [(visible)]="enviarSolicitudVisible">
+</app-enviar-solicitud-usuario-publico-component>
 
 <ng-template #headerSolicitud>
   <app-barra-busqueda-component
@@ -78,12 +84,7 @@
     #inputEstadoActualizar
     [(value)]="solicitudActualizar.estado"
     [label]="'Estado'"
-    [options]="[
-      { label: 'SIN RESPONDER', value: 'SIN RESPONDER' },
-      { label: 'RECHAZADO', value: 'RECHAZADO' },
-      { label: 'AGREGADO EN EL ORDEN DEL DÍA', value: 'AGREGADO EN EL ORDEN DEL DÍA' },
-      { label: 'PENDIENTE AL ORDEN DEL DÍA', value: 'PENDIENTE AL ORDEN DEL DÍA' }
-    ]"
+    [options]="estadosSolicitud"
     [required]="true">
   </app-input-select-component>
 </app-generic-dialog-form-component>

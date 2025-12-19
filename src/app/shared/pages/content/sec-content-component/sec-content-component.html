@@ -78,12 +78,7 @@
     #inputEstadoActualizar
     [(value)]="solicitudActualizar.estado"
     [label]="'Estado'"
-    [options]="[
-      { label: 'SIN RESPONDER', value: 'SIN RESPONDER' },
-      { label: 'RECHAZADO', value: 'RECHAZADO' },
-      { label: 'AGREGADO EN EL ORDEN DEL DÍA', value: 'AGREGADO EN EL ORDEN DEL DÍA' },
-      { label: 'PENDIENTE AL ORDEN DEL DÍA', value: 'PENDIENTE AL ORDEN DEL DÍA' }
-    ]"
+    [options]="estadosSolicitud"
     [required]="true">
   </app-input-select-component>
 
