@@ -26,12 +26,13 @@ import { InputTextComponent } from '../../../inputs/input-text-component/input-t
 import { SimpleButtonComponent } from '../../../buttons/simple-button-component/simple-button-component';
 import { RolesService } from '../../../../core/services/roles-service';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
+import { BOOLEANO, FORMATOS } from '../../../../core/constantes/constantes';
 
 @Component({
   selector: 'app-tipo-solicitudes-content-component',
   imports: [CommonModule, CardMainComponent, Paginator, BarraBusquedaComponent, ButtonComponent, 
     GenericDialogInfoComponent, GenericDialogUploadFileComponent, InputSelectComponent, GenericDialogFormComponent,
-    GenericDialogStepsFormComponent, InputTextComponent, SimpleButtonComponent, ButtonComponent, InputTextTareaComponent
+    GenericDialogStepsFormComponent, InputTextComponent, SimpleButtonComponent, InputTextTareaComponent
   ],
   templateUrl: './tipo-solicitudes-content-component.html',
   styleUrl: './tipo-solicitudes-content-component.css'
@@ -101,6 +102,9 @@ export class TipoSolicitudesContentComponent implements OnInit{
   }[] = [];
 
   perfilesSolicitante: { label: string; value: string }[] = [];
+
+  formatos = FORMATOS;
+  booleano = BOOLEANO;
 
   // Templates de los steps
   @ViewChild('step1', { static: true }) step1Template!: TemplateRef<any>;
@@ -438,8 +442,6 @@ export class TipoSolicitudesContentComponent implements OnInit{
         obligatoriedad: a.obligatoriedad
       }))
     };
-
-    console.log('Actualizar Tipo de Solicitud con petición:', peticion);
 
     const uuid = this.nuevoTipoSolicitudUpdate.uuidTipoSolicitud || this.nuevoTipoSolicitudUpdate.uuidTipoSolicitud;
     this.tipoSolicitudesService.actualizarTipoSolicitud(uuid, peticion).subscribe({

@@ -13,6 +13,10 @@
     </div>
   </div>
 
+  <div *ngIf="showCustomContent">
+    <ng-content></ng-content>
+  </div>
+
   <ng-template pTemplate="footer">
     <app-simple-button-component
       label="OK"

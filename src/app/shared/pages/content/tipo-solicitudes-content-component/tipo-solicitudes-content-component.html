@@ -149,10 +149,7 @@
       #inputTipoAnexoFormato
       [(value)]="nuevoTipoAnexo.formato"
       [label]="'Formato del Anexo'"
-      [options]="[
-        { label: 'PDF', value: 'PDF' },
-        { label: 'DOCX', value: 'DOCX' },
-      ]"
+      [options]="formatos"
       [required]="true"
       [forceValidation]="forceAnexoValidation">
     </app-input-select-component>
@@ -161,10 +158,7 @@
       #inputTipoAnexoObligatoriedad
       [(value)]="nuevoTipoAnexo.obligatoriedad"
       [label]="'¿Es obligatorio este tipo de anexo?'"
-      [options]="[
-        { label: 'Sí', value: true },
-        { label: 'No', value: false }
-      ]"
+      [options]="booleano"
       [required]="true"
       [forceValidation]="forceAnexoValidation">
     </app-input-select-component>
@@ -194,7 +188,7 @@
         </div>
 
         <div class="anexo-label">
-          {{ anexo.nombre }}
+          {{ anexo.nombre }} / {{ anexo.formato }} / {{ anexo.obligatoriedad ? 'Obligatorio' : 'Opcional' }}
         </div>
       </li>
     </ul>
@@ -273,10 +267,7 @@
       #inputTipoAnexoFormatoUpdate
       [(value)]="nuevoTipoAnexoUpdate.formato"
       [label]="'Formato del Anexo (Actualizar)'"
-      [options]="[
-        { label: 'PDF', value: 'PDF' },
-        { label: 'DOCX', value: 'DOCX' }
-      ]"
+      [options]="formatos"
       [required]="true"
       [forceValidation]="forceAnexoValidationUpdate">
     </app-input-select-component>
@@ -285,10 +276,7 @@
       #inputTipoAnexoObligatoriedadUpdate
       [(value)]="nuevoTipoAnexoUpdate.obligatoriedad"
       [label]="'¿Es obligatorio este tipo de anexo? (Actualizar)'"
-      [options]="[
-        { label: 'Sí', value: true },
-        { label: 'No', value: false }
-      ]"
+      [options]="booleano"
       [required]="true"
       [forceValidation]="forceAnexoValidationUpdate">
     </app-input-select-component>
@@ -318,7 +306,7 @@
         </div>
 
         <div class="anexo-label">
-          {{ anexo.nombre }}
+          {{ anexo.nombre }} / {{ anexo.formato }} / {{ anexo.obligatoriedad ? 'Obligatorio' : 'Opcional' }}
         </div>
       </li>
     </ul>

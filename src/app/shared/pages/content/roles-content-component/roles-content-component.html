@@ -77,10 +77,7 @@
     #inputEstado
     [(value)]="selectedRolForm.estado"
     [label]="'Estado'"
-    [options]="[
-      { label: '✅ Activo', value: '✅ Activo' },
-      { label: '❌ Inactivo', value: '❌ Inactivo' }
-    ]"
+    [options]="estadosBooleano"
     [required]="true">
   </app-input-select-component>
 

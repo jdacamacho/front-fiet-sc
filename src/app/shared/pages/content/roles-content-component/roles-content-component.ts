@@ -21,6 +21,9 @@ import { RolDTOPeticion } from '../../../../core/models/Rol/DTORequest/RolDTOPet
 import { ToastService } from '../../../../core/services/toast-service';
 import { ErrorHandlerService } from '../../../../core/services/error-handler-service';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
+import { ESTADO_BOOLEANO } from '../../../../core/constantes/constantes';
+import { ACTIVO } from '../../../../core/constantes/constantes';
+import { INACTIVO } from '../../../../core/constantes/constantes';
 
 @Component({
   selector: 'app-roles-content-component',
@@ -47,6 +50,8 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
   // Paginación
   currentPage = 1;
   pageSize = 5;
+
+  estadosBooleano = ESTADO_BOOLEANO;
 
   // Flag para controlar orden
   private nombreOrdenAsc = true;
@@ -124,7 +129,7 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
       next: (roles: RolDTORespuesta[]) => {
         this.data = roles.map(r => ({
           ...r,
-          estado: r.estado ? '✅ Activo' : '❌ Inactivo'
+          estado: r.estado ? ACTIVO : INACTIVO
         }));
       },
       error: (err) => {
@@ -157,7 +162,7 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
     // Preparar datos a enviar
     const rolActualizado: RolDTOPeticion = {
       descripcion: this.selectedRolForm.descripcion,
-      estado: this.selectedRolForm.estado === '✅ Activo' ? true : false
+      estado: this.selectedRolForm.estado === ACTIVO ? true : false
     };
 
     // Llamada al servicio para actualizar
@@ -167,7 +172,7 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
         if (index !== -1) {
           this.data[index] = {
             ...updatedRol,
-            estado: updatedRol.estado ? '✅ Activo' : '❌ Inactivo'
+            estado: updatedRol.estado ? ACTIVO : INACTIVO
           };
         }
         this.rolFormDialogVisible = false;
