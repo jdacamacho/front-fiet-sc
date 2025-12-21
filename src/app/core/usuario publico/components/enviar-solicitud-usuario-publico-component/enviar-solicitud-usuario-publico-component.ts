@@ -11,6 +11,7 @@ import { ToastService } from '../../../services/toast-service';
 import { ErrorHandlerService } from '../../../services/error-handler-service';
 import { TipoSolicitudDTORespuesta } from '../../../models/TipoSolicitud/DTOResponse/TipoSolicitudDTORespuesta';
 import { SolicitudPublicaDTOPeticion } from '../../../models/Solicitudes/DTORequest/SolicitudPublicaDTOPeticion';
+import { TIPOS_DOCUMENTO } from '../../../constantes/constantes';
 
 @Component({
   selector: 'app-enviar-solicitud-usuario-publico-component',
@@ -78,6 +79,7 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
 
   archivosAnexos: File[] = [];
   anexosSolicitud: { nombre: string }[] = [];
+  tiposDocumento = TIPOS_DOCUMENTO;
 
   constructor(
     private tipoSolicitudService: TipoSolicitudService,

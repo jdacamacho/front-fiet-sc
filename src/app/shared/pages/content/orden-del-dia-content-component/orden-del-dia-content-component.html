@@ -11,6 +11,11 @@
   [buttons]="buttonsCard">
 </app-card-main-component>
 
+<app-orden-del-dia-visualizador-component
+  [(visible)]="ordenDelDiaVisible"
+  [orden]="ordenSeleccionada">
+</app-orden-del-dia-visualizador-component>
+
 <ng-template #actionTemplate let-row>
   <div class="d-flex gap-2">
     <app-button-component
@@ -27,6 +32,14 @@
       width="18px"
       height="18px"
       (clicked)="verMasInfo(row)">
+    </app-button-component>
+
+    <app-button-component
+      imgUrl="buttons/folder.svg"
+      color="white"
+      width="18px"
+      height="18px"
+      (clicked)="abrirOrdenDelDia(row)">
     </app-button-component>
   </div>
 </ng-template>

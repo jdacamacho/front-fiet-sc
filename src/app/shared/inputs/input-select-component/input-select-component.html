@@ -1,15 +1,7 @@
 <div class="form-floating mb-3 small-input mt-3">
-  <select
-    class="form-select"
-    [class.is-invalid]="isInvalid()"
-    [id]="label"
-    [ngModel]="value"
-    (ngModelChange)="onValueChange($event)"
-    [compareWith]="compareFn"
-    [required]="required"
-    (blur)="touched = true"
-    aria-label="{{label}}"
-  >
+  <select class="form-select" [class.is-invalid]="isInvalid()" [id]="label" [ngModel]="value"
+    (ngModelChange)="onValueChange($event)" [compareWith]="compareFn" [required]="required" (blur)="touched = true"
+    (click)="onOpen()" aria-label="{{label}}">
     <option [ngValue]="null">Seleccione una opción</option>
     <option *ngFor="let opt of options" [ngValue]="opt.value">
       {{ opt.label }}

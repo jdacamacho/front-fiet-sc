@@ -125,4 +125,12 @@ export class SolicitudesService {
     );
   }
 
+  descargarAnexosOrdenDelDia(uuidOrden: string, nombreOrden: string): Observable<Blob> {
+    const params = { uuidOrden, nombreOrden };
+    return this.http.get(`${this.url}/anexos/download`, {
+      params,
+      responseType: 'blob'
+    });
+  }
+
 }

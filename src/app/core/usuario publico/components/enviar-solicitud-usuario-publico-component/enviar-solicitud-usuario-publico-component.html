@@ -11,15 +11,7 @@
     #inputTipoDocumento
     label="Tipo de Documento"
     [(value)]="solicitudPublica.informacionSolicitante.tipoDocumento"
-    [options]="[
-        { label: 'Cédula de ciudadanía', value: 'Cédula de ciudadanía' },
-        { label: 'Tarjeta de identidad', value: 'Tarjeta de identidad' },
-        { label: 'Cédula de extranjería', value: 'Cédula de extranjería' },
-        { label: 'Pasaporte', value: 'Pasaporte' },
-        { label: 'Registro civil de nacimiento', value: 'Registro civil de nacimiento' },
-        { label: 'Permiso especial de permanencia', value: 'Permiso especial de permanencia' },
-        { label: 'Carné diplomático', value: 'Carné diplomático' }
-        ]"
+    [options]="tiposDocumento"
     [required]="true">
   </app-input-select-component>
 

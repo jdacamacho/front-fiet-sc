@@ -19,6 +19,7 @@ import { InputSelectComponent } from '../../../inputs/input-select-component/inp
 import { ESTADO_BOOLEANO } from '../../../../core/constantes/constantes';
 import { ACTIVO } from '../../../../core/constantes/constantes';
 import { INACTIVO } from '../../../../core/constantes/constantes';
+import { OrdenDelDiaVisualizadorComponent } from '../../../../core/secretario-general/components/orden-del-dia-visualizador-component/orden-del-dia-visualizador-component';
 @Component({
   selector: 'app-orden-del-dia-content-component',
   imports: [
@@ -32,7 +33,8 @@ import { INACTIVO } from '../../../../core/constantes/constantes';
     InputTextComponent,
     InputTextTareaComponent,
     InputDateComponent,
-    InputSelectComponent
+    InputSelectComponent,
+    OrdenDelDiaVisualizadorComponent
   ],
   templateUrl: './orden-del-dia-content-component.html',
   styleUrl: './orden-del-dia-content-component.css'
@@ -67,6 +69,8 @@ export class OrdenDelDiaContentComponent implements OnInit, AfterViewInit{
   ordenFormActualizarDialogVisible = false;
 
   estadosBooleano = ESTADO_BOOLEANO;
+  ordenDelDiaVisible: boolean = false;
+  ordenSeleccionada: any;
 
   selectedOrdenInfo: any = null;
   selectedOrdenForm: any = {};
@@ -118,6 +122,16 @@ export class OrdenDelDiaContentComponent implements OnInit, AfterViewInit{
     ];
   }
 
+  abrirOrdenDelDia(row: any) {
+    this.solicitudesService.getOrdenDelDia(row.uuidOrdenDelDia).subscribe({
+      next: (orden: OrdenDelDiaDTORespuesta) => {
+        this.ordenSeleccionada = orden;
+        this.ordenSeleccionada.estado = orden.estado ? ACTIVO : INACTIVO;
+        this.ordenDelDiaVisible = true;
+      }
+    });
+  }
+  
   cargarOrdenes(page: number = 1, filtro: string = ''): void {
     const backendPage = page - 1;
 
