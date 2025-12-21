@@ -256,7 +256,34 @@ export class OrdenDelDiaVisualizadorComponent {
   }
 
   exportarOrdenDelDia(): void {
-    console.log('Exportar Orden del Día (pendiente)');
+    if (!this.orden) return;
+
+    const uuidOrden = this.orden.uuidOrdenDelDia;
+
+    this.solicitudesService.exportarOrdenDelDia(uuidOrden).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+
+        const nombreOrden = (this.orden.nombre || 'Orden_Del_Dia')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-zA-Z0-9]/g, '_');
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${nombreOrden}.docx`;
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.log(err);
+        this.toastService.showError(
+          'Error',
+          'No se pudo exportar el Orden del Día'
+        );
+      }
+    });
   }
 
   registrarSolicitudesEnOrdenDelDia(solicitud: SolicitudDTORespuesta): void {

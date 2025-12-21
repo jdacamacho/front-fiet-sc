@@ -133,4 +133,14 @@ export class SolicitudesService {
     });
   }
 
+  exportarOrdenDelDia(uuidOrden: string): Observable<Blob> {
+    return this.http.get(
+      `${this.url}/exportar`,
+      {
+        params: { uuidOrden },
+        responseType: 'blob'
+      }
+    );
+  }
+
 }
