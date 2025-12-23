@@ -16,6 +16,12 @@ export class InputSelectComponent {
   @Output() valueChange = new EventEmitter<any>(); 
   @Input() forceValidation: boolean = false;
   touched: boolean = false;
+
+  @Output() open = new EventEmitter<void>();
+
+  onOpen() {
+    this.open.emit();
+  }
   
   onValueChange(newValue: any) {
     this.value = newValue;

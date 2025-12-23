@@ -204,7 +204,8 @@ export class FunSolicitudesContentComponent implements OnInit {
       nombre: row.nombre,
       estado: row.estado,
       descripcion: row.descripcion,
-      consecutivo: row.consecutivo
+      consecutivo: row.consecutivo,
+      uuidOrdenDelDia: row.ordenDelDia?.uuidOrdenDelDia || null
     };
     this.actualizarSolicitudDialogVisible = true;
   }
@@ -226,6 +227,7 @@ export class FunSolicitudesContentComponent implements OnInit {
       consecutivo: this.solicitudActualizar.consecutivo,
       descripcion: this.solicitudActualizar.descripcion,
       estado: this.solicitudActualizar.estado,
+      uuidOrdenDelDia: this.solicitudActualizar.uuidOrdenDelDia || null
     };
 
     this.solicitudesService.actualizarSolicitud(this.solicitudActualizar.uuidSolicitud, peticion)

@@ -126,9 +126,9 @@ export class SecContentComponent implements OnInit{
 
         this.paginatedData = content.map((s: any) => ({
           ...s,
-          Solicitud: s.nombre || s.titulo || s.asunto || '', 
+          Solicitud: s.nombre, 
           Responsable: `${s.objFuncionario?.nombres} ${s.objFuncionario?.apellidos }`.trim(),
-          Estado: s.estado || s.estadoSolicitud || ''
+          Estado: s.estado
         }));
 
         this.totalElements = respuesta.totalElements ?? 0;
@@ -204,7 +204,8 @@ export class SecContentComponent implements OnInit{
       descripcion: row.descripcion,
       estado: row.estado,
       uuidFuncionario: row.objFuncionario?.uuidUsuario || null,
-      consecutivo: row.consecutivo
+      consecutivo: row.consecutivo,
+      uuidOrdenDelDia: row.ordenDelDia?.uuidOrdenDelDia || null
     };
     this.actualizarSolicitudDialogVisible = true;
   }
@@ -229,7 +230,8 @@ export class SecContentComponent implements OnInit{
       consecutivo: this.solicitudActualizar.consecutivo,
       descripcion: this.solicitudActualizar.descripcion,
       estado: this.solicitudActualizar.estado,
-      uuidFuncionario: this.solicitudActualizar.uuidFuncionario
+      uuidFuncionario: this.solicitudActualizar.uuidFuncionario,
+      uuidOrdenDelDia: this.solicitudActualizar.uuidOrdenDelDia
     };
 
     this.solicitudesService.actualizarSolicitud(this.solicitudActualizar.uuidSolicitud, peticion)
