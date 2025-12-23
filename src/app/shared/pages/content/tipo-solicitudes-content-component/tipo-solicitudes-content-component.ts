@@ -21,7 +21,7 @@ import { InputTextComponent } from '../../../inputs/input-text-component/input-t
 import { SimpleButtonComponent } from '../../../buttons/simple-button-component/simple-button-component';
 import { RolesService } from '../../../../core/services/roles-service';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
-import { BOOLEANO, FORMATOS } from '../../../../core/constantes/constantes';
+import { BOOLEANO, FORMATOS, SECCIONES } from '../../../../core/constantes/constantes';
 
 /**
  * Componente para gestionar tipos de solicitudes, incluyendo creación, actualización,
@@ -175,16 +175,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
   ];
 
   /** Secciones disponibles para selección */
-  secciones: { label: string; value: string }[] = [
-    { label: 'Asuntos Decano', value: 'asuntos decano' },
-    { label: 'Asuntos Pregrado', value: 'asuntos pregrado' },
-    { label: 'Asuntos Posgrados', value: 'asuntos posgrados' },
-    { label: 'Asuntos Delegados en Decano', value: 'asuntos delegados en decano' },
-    { label: 'Solicitud Comisión Académica al Interior del País', value: 'solicitud comisión académica al interior del país' },
-    { label: 'Solicitud Comisión Académica al Exterior al País', value: 'solicitud comisión académica al exterior al país' },
-    { label: 'Informe de Comisión Académica', value: 'informe de comisión académica' },
-    { label: 'Asuntos Varios', value: 'asuntos varios' }
-  ];
+  secciones: { label: string; value: string }[] = SECCIONES;
 
   /** Referencia al select de funcionario para actualizar */
   @ViewChild('inputFuncionario') inputFuncionario!: InputSelectComponent;
