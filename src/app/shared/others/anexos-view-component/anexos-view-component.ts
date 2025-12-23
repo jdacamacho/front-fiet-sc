@@ -3,6 +3,12 @@ import { AnexoDTORespuesta } from '../../../core/models/Solicitudes/DTOResponse/
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
+/**
+ * Componente para visualizar y descargar anexos.
+ * Permite mostrar una lista de anexos y descargar cada uno mediante un enlace.
+ * 
+ * @autor Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-anexos-view-component',
   imports: [CommonModule],
@@ -10,10 +16,19 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   styleUrls: ['./anexos-view-component.css']
 })
 export class AnexosViewComponent {
+  /**
+   * Lista de anexos que se mostrarán en el componente.
+   */
   @Input() anexos: AnexoDTORespuesta[] = [];
 
   constructor(private http: HttpClient) {}
 
+  /**
+   * Descarga el anexo seleccionado.
+   * Crea un enlace temporal para descargar el archivo con el nombre correcto.
+   * 
+   * @param anexo Anexo a descargar.
+   */
   descargar(anexo: AnexoDTORespuesta) {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.getToken()}`
@@ -31,10 +46,21 @@ export class AnexosViewComponent {
     });
   }
 
+  /**
+   * Obtiene el token de autenticación almacenado en localStorage.
+   * 
+   * @returns Token como string o vacío si no existe.
+   */
   private getToken(): string {
     return localStorage.getItem('token') || '';
   }
 
+  /**
+   * Obtiene la extensión del archivo a partir de la URL.
+   * 
+   * @param url URL del archivo.
+   * @returns Extensión del archivo incluyendo el punto inicial.
+   */
   private getFileExtension(url: string): string {
     return url.substring(url.lastIndexOf('.'));
   }

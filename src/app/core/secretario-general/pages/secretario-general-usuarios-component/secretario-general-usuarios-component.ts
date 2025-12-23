@@ -6,6 +6,12 @@ import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb-co
 import { PageComponent } from '../../../../shared/pages/page-component/page-component';
 import { UsuariosComponent } from '../../../../shared/pages/usuarios-component/usuarios-component';
 
+/**
+ * Componente principal para la gestión de usuarios del sistema
+ * para el usuario Secretario General.
+ *
+ * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-secretario-general-usuarios-component',
   imports: [CommonModule, PageComponent],
@@ -13,8 +19,24 @@ import { UsuariosComponent } from '../../../../shared/pages/usuarios-component/u
   styleUrl: './secretario-general-usuarios-component.css'
 })
 export class SecretarioGeneralUsuariosComponent {
+
+  /**
+   * Componente de barra lateral del Secretario General.
+   */
   sidebar = SideBarSecretarioGeneralComponent;
+
+  /**
+   * Componente de encabezado principal.
+   */
   header = HeaderMainComponent;
+
+  /**
+   * Componente de navegación tipo breadcrumb.
+   */
   breadcrumb = BreadcrumbComponent;
+
+  /**
+   * Componente principal que gestiona los usuarios del sistema.
+   */
   main = UsuariosComponent;
 }

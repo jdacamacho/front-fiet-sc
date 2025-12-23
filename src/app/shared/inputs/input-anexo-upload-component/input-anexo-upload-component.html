@@ -17,15 +17,8 @@
     {{ tipoAnexo.obligatoriedad ? 'Obligatorio' : 'Opcional' }}
   </small>
 
-  <p-fileUpload
-    mode="basic"
-    name="file"
-    [auto]="true"
-    [customUpload]="true"
-    [showUploadButton]="false"
-    [showCancelButton]="false"
-    chooseLabel="Seleccionar archivo"
-    [disabled]="!!uploadedFile"
+  <p-fileUpload mode="basic" name="file" [auto]="true" [customUpload]="true" [showUploadButton]="false"
+    [showCancelButton]="false" chooseLabel="Seleccionar archivo" [disabled]="!!uploadedFile"
     (onSelect)="onFileSelect($event)">
   </p-fileUpload>
 

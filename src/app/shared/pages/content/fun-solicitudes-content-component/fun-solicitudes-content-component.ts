@@ -1,13 +1,15 @@
 /**
- * Componente solicitudes Funcionario
- * Author: Julian David Camacho Erazo  {@literal <jdacamacho@unicauca.edu.co>}
+ * Componente de solicitudes para funcionarios.
+ * Permite listar, filtrar, paginar y actualizar solicitudes asignadas a un funcionario,
+ * además de mostrar información detallada y anexos de cada solicitud.
+ * 
+ * @autor Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
  */
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { CardMainComponent } from '../../../card-main-component/card-main-component';
 import { TableGenericComponent } from '../../../table-generic-component/table-generic-component';
 import { ButtonComponent } from '../../../buttons/button-component/button-component';
-import { ViewChild, TemplateRef } from '@angular/core';
 import { SolicitudesService } from '../../../../core/services/solicitudes-service';
 import { Paginator } from '../../../paginator/paginator';
 import { BarraBusquedaComponent } from '../../../search/barra-busqueda-component/barra-busqueda-component';
@@ -26,8 +28,17 @@ import { EnviarSolicitudUsuarioPublicoComponent } from '../../../../core/usuario
 
 @Component({
   selector: 'app-fun-solicitudes-content-component',
-  imports: [CommonModule, CardMainComponent, ButtonComponent, Paginator, BarraBusquedaComponent,
-    GenericDialogInfoComponent,AnexosViewComponent, InputTextComponent, InputSelectComponent, GenericDialogFormComponent,
+  imports: [
+    CommonModule,
+    CardMainComponent,
+    ButtonComponent,
+    Paginator,
+    BarraBusquedaComponent,
+    GenericDialogInfoComponent,
+    AnexosViewComponent,
+    InputTextComponent,
+    InputSelectComponent,
+    GenericDialogFormComponent,
     InputTextTareaComponent,
     EnviarSolicitudUsuarioPublicoComponent
   ],
@@ -35,44 +46,61 @@ import { EnviarSolicitudUsuarioPublicoComponent } from '../../../../core/usuario
   styleUrl: './fun-solicitudes-content-component.css'
 })
 export class FunSolicitudesContentComponent implements OnInit {
-  // Flags de visibilidad de diálogos
+  /** Flag para mostrar el diálogo de información de solicitud */
   solicitudInfoDialogVisible = false;
+
+  /** Flag para indicar si el diálogo usa un componente */
   dialogUsaComponente: boolean = false;
-  // Flag de visibilidad del diálogo
+
+  /** Flag de visibilidad del diálogo de actualización */
   actualizarDialogVisible = false;
+
+  /** Lista de anexos de la solicitud seleccionada */
   solicitudAnexos: any[] = [];
 
-  // Objeto seleccionado para edición o información
+  /** Objeto seleccionado para mostrar información de la solicitud */
   selectedSolicitudInfo: any = null;
 
-  tableComponent = TableGenericComponent; // Componente de tabla
-  pretitleComponentComponent = ButtonComponent; // Componente pre-title
+  /** Componente de tabla genérica */
+  tableComponent = TableGenericComponent;
 
+  /** Componente pre-title */
+  pretitleComponentComponent = ButtonComponent;
+
+  /** Datos paginados */
   paginatedData: any[] = [];
 
-  // Objeto temporal para la solicitud que se va a actualizar
+  /** Objeto temporal para actualizar solicitud */
   solicitudUpdate: any = {};
+
+  /** Filtro de búsqueda */
   solicitudFiltro: string = '';
 
-  // Objeto temporal para la actualización
+  /** Objeto temporal para la actualización de solicitud */
   solicitudActualizar: any = {};
 
-  // Flag para mostrar el diálogo
+  /** Flag para mostrar el diálogo de actualización */
   actualizarSolicitudDialogVisible = false;
+
+  /** Flag para mostrar el diálogo de enviar solicitud */
   enviarSolicitudVisible = false;
 
-  // Paginación
+  /** Paginación */
   currentPage = 1;
   pageSize = 5;
   totalPages = 1;
   totalElements = 0;
 
+  /** Usuario actual */
   usuario: any;
+
+  /** Botones del card principal */
   buttonsCard: any[] = [];
 
+  /** Constantes de estados de solicitud */
   estadosSolicitud = ESTADOS_SOLICITUD;
 
-  // Header con filtro incrustado
+  /** Header con filtro incrustado */
   @ViewChild('headerSolicitud') headerSolicitud!: TemplateRef<any>;
 
   @ViewChild('inputNombreActualizar') inputNombreActualizar!: InputTextComponent;
@@ -80,7 +108,7 @@ export class FunSolicitudesContentComponent implements OnInit {
   @ViewChild('inputDescripcionActualizar') inputDescripcionActualizar!: InputTextComponent;
   @ViewChild('inputConsecutivoActualizar') inputConsecutivoActualizar!: InputTextComponent;
 
-
+  /** Encabezados de la tabla */
   headers: any[] = [
     { title: 'Solicitud', headerTemplate: null },
     { title: 'Estado', headerTemplate: null }
@@ -93,6 +121,7 @@ export class FunSolicitudesContentComponent implements OnInit {
     private authService: AuthService
   ) {}
 
+  /** Inicializa el componente */
   ngOnInit(): void {
     this.buttonsCard = [
       {
@@ -100,16 +129,18 @@ export class FunSolicitudesContentComponent implements OnInit {
         color: '#1E257B',
         width: '20px',
         height: '20px',
-        onClick: () => this.onRealizarSolicitud()  
+        onClick: () => this.onRealizarSolicitud()
       }
     ];
-    
+
     this.authService.usuario$.subscribe(user => {
       this.usuario = user;
     });
+
     this.loadSolicitudes();
   }
 
+  /** Inicializa headers de tabla después de renderizado */
   ngAfterViewInit(): void {
     this.headers = [
       { title: 'Solicitud', headerTemplate: this.headerSolicitud },
@@ -117,11 +148,15 @@ export class FunSolicitudesContentComponent implements OnInit {
     ];
   }
 
+  /** Abre el diálogo para realizar una nueva solicitud */
   onRealizarSolicitud(): void {
     this.enviarSolicitudVisible = true;
   }
 
-  // Carga solicitudes con paginación y filtros
+  /**
+   * Carga las solicitudes con paginación y filtros
+   * @param page Página a cargar (por defecto 1)
+   */
   loadSolicitudes(page: number = 1): void {
     const backendPage = page - 1;
 
@@ -142,8 +177,8 @@ export class FunSolicitudesContentComponent implements OnInit {
 
         this.paginatedData = content.map((s: any) => ({
           ...s,
-          Solicitud: s.nombre || s.titulo || s.asunto || '', 
-          Responsable: `${s.objFuncionario?.nombres} ${s.objFuncionario?.apellidos }`.trim(),
+          Solicitud: s.nombre || s.titulo || s.asunto || '',
+          Responsable: `${s.objFuncionario?.nombres} ${s.objFuncionario?.apellidos}`.trim(),
           Estado: s.estado || s.estadoSolicitud || ''
         }));
 
@@ -162,12 +197,12 @@ export class FunSolicitudesContentComponent implements OnInit {
   }
 
   /**
-   * Abre el diálogo de información de Solicitud
+   * Abre el diálogo de información detallada de una solicitud
+   * @param solicitud Solicitud a mostrar
    */
   protected verMasInfo(solicitud: SolicitudDTORespuesta): void {
     this.solicitudesService.getSolicitud(solicitud.uuidSolicitud).subscribe({
       next: (solicitudDetallada) => {
-
         const tieneAnexos = solicitudDetallada.anexos && solicitudDetallada.anexos.length > 0;
 
         this.selectedSolicitudInfo = {
@@ -178,14 +213,11 @@ export class FunSolicitudesContentComponent implements OnInit {
           Orden_del_Día: solicitudDetallada.ordenDelDia
             ? (solicitudDetallada.ordenDelDia.nombre || '')
             : 'Sin orden del día asignado',
-
           Tipo_de_Solicitud: solicitudDetallada.tipoSolicitud.nombre,
           Solicitante: solicitudDetallada.informacionSolicitante.nombres + " " +
-                      solicitudDetallada.informacionSolicitante.apellidos,
-
+                       solicitudDetallada.informacionSolicitante.apellidos,
           Identificacion: solicitudDetallada.informacionSolicitante.tipoDocumento + " " +
                           solicitudDetallada.informacionSolicitante.numeroDocumento,
-
           Contacto: solicitudDetallada.informacionSolicitante.correoElectronico + " / " +
                     solicitudDetallada.informacionSolicitante.telefono
         };
@@ -198,6 +230,10 @@ export class FunSolicitudesContentComponent implements OnInit {
     });
   }
 
+  /**
+   * Abre el modal de actualización de solicitud
+   * @param row Fila de la tabla con los datos de la solicitud
+   */
   abrirModalActualizarSolicitud(row: any): void {
     this.solicitudActualizar = {
       uuidSolicitud: row.uuidSolicitud,
@@ -210,6 +246,7 @@ export class FunSolicitudesContentComponent implements OnInit {
     this.actualizarSolicitudDialogVisible = true;
   }
 
+  /** Guarda los cambios realizados a la solicitud seleccionada */
   guardarSolicitudActualizada(): void {
     this.inputNombreActualizar.touched = true;
     this.inputEstadoActualizar.touched = true;
@@ -247,6 +284,7 @@ export class FunSolicitudesContentComponent implements OnInit {
       });
   }
 
+  /** Resetea los formularios de actualización */
   private resetFormulariosActualizar(): void {
     this.solicitudActualizar = {};
     this.inputNombreActualizar?.reset();
@@ -255,12 +293,20 @@ export class FunSolicitudesContentComponent implements OnInit {
     this.inputEstadoActualizar?.reset();
   }
 
+  /**
+   * Filtra las solicitudes según el valor ingresado
+   * @param value Texto de búsqueda
+   */
   buscarSolicitudes(value: string): void {
     this.solicitudFiltro = value ?? '';
     this.currentPage = 1;
     this.loadSolicitudes(1);
   }
 
+  /**
+   * Cambia la página actual y recarga las solicitudes
+   * @param page Número de página
+   */
   onPageChange(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.loadSolicitudes(page);

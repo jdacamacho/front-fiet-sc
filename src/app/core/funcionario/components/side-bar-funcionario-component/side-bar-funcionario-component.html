@@ -1,8 +1,6 @@
-<app-sidebar-component
-  [buttons]="[
+<app-sidebar-component [buttons]="[
     { label: '| Mi Usuario', imgUrl: 'buttons/usuario.svg', route: '/funcionario' },
     { label: '| Solicitudes', imgUrl: 'buttons/solicitudes.svg', route: 'fun/solicitudes' },
     { label: '| Respuestas', imgUrl: 'buttons/respuestas.svg', route: '/respuestas' },
-  ]"
-  (buttonClicked)="onSidebarButtonClick($event)">
+  ]" (buttonClicked)="onSidebarButtonClick($event)">
 </app-sidebar-component>

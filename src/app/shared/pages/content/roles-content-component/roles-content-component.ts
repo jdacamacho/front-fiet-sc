@@ -1,11 +1,11 @@
 /**
- * RolesContentComponent
- * Author: Julian David Camacho Erazo  {@literal <jdacamacho@unicauca.edu.co>}
- *
- * Componente que muestra la gestión de roles usando una tabla genérica,
- * botones de acción, paginación y modales para ver o actualizar información.
+ * Componente RolesContentComponent
+ * Gestiona la visualización, actualización y paginación de roles.
+ * Muestra una tabla genérica con botones de acción, modales para ver o actualizar roles,
+ * y soporte para ordenamiento por nombre y descripción.
+ * 
+ * @autor Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
  */
-
 import { Component, OnInit, ViewChild, TemplateRef, AfterViewInit } from '@angular/core';
 import { TableGenericComponent } from '../../../table-generic-component/table-generic-component';
 import { CommonModule } from '@angular/common';
@@ -21,56 +21,66 @@ import { RolDTOPeticion } from '../../../../core/models/Rol/DTORequest/RolDTOPet
 import { ToastService } from '../../../../core/services/toast-service';
 import { ErrorHandlerService } from '../../../../core/services/error-handler-service';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
-import { ESTADO_BOOLEANO } from '../../../../core/constantes/constantes';
-import { ACTIVO } from '../../../../core/constantes/constantes';
-import { INACTIVO } from '../../../../core/constantes/constantes';
+import { ESTADO_BOOLEANO, ACTIVO, INACTIVO } from '../../../../core/constantes/constantes';
 
 @Component({
   selector: 'app-roles-content-component',
-  imports: [CommonModule, CardMainComponent, Paginator, ButtonComponent,
-     GenericDialogInfoComponent, GenericDialogFormComponent, InputSelectComponent, InputTextTareaComponent],
+  imports: [
+    CommonModule, 
+    CardMainComponent, 
+    Paginator, 
+    ButtonComponent,
+    GenericDialogInfoComponent, 
+    GenericDialogFormComponent, 
+    InputSelectComponent, 
+    InputTextTareaComponent
+  ],
   templateUrl: './roles-content-component.html',
   styleUrl: './roles-content-component.css'
 })
 export class RolesContentComponent implements OnInit, AfterViewInit {
-  // Referencias a inputs y templates
+
+  /** Referencias a inputs de formularios y templates de headers */
   @ViewChild('inputDescripcion') inputDescripcion!: InputTextTareaComponent;
   @ViewChild('inputEstado') inputEstado!: InputSelectComponent;
   @ViewChild('botonNombre') botonNombre!: TemplateRef<any>;
   @ViewChild('botonDescripcion') botonDescripcion!: TemplateRef<any>;
 
-  // Flags de visibilidad de diálogos
+  /** Flags de visibilidad de diálogos */
   rolFormDialogVisible = false;
   rolInfoDialogVisible = false;
 
-  // Objeto seleccionado para edición o información
+  /** Objeto temporal para formularios y para mostrar información */
   selectedRolForm: any = {};
   selectedRolInfo: any = null;
 
-  // Paginación
+  /** Paginación */
   currentPage = 1;
   pageSize = 5;
 
+  /** Estados booleanos disponibles */
   estadosBooleano = ESTADO_BOOLEANO;
 
-  // Flag para controlar orden
+  /** Control de ordenamiento */
   private nombreOrdenAsc = true;
   private descripcionOrdenAsc = true;
 
-  // Componentes para uso en CardMainComponent
+  /** Componentes utilizados en CardMainComponent */
   tableComponent = TableGenericComponent;
   pretitleComponentComponent = ButtonComponent;
-  buttons = []; 
+  buttons: any[] = []; 
 
-  // Cabeceras y datos de la tabla
+  /** Cabeceras y datos de la tabla */
   headers = [
     {title: 'nombre', headerTemplate: this.botonNombre}, 
     {title: 'descripcion', headerTemplate: this.botonDescripcion}, 
-    {title: 'estado'}];
-
+    {title: 'estado'}
+  ];
   data: any[] = [];
 
-  constructor(private rolesService: RolesService, private toastService: ToastService,
+  constructor(
+    private rolesService: RolesService,
+    private toastService: ToastService,
     private errorHandlerService: ErrorHandlerService
   ) {}
 
@@ -78,41 +88,24 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
    * Ordena la tabla por el campo nombre
    */
   public ordenarPorNombre(): void {
-    this.data.sort((a, b) => {
-      if (this.nombreOrdenAsc) {
-        return a.nombre.localeCompare(b.nombre); 
-      } else {
-        return b.nombre.localeCompare(a.nombre); 
-      }
-    });
+    this.data.sort((a, b) => this.nombreOrdenAsc ? a.nombre.localeCompare(b.nombre) : b.nombre.localeCompare(a.nombre));
     this.nombreOrdenAsc = !this.nombreOrdenAsc;
   }
 
   /**
-   * Ordena la tabla por el campo nombre
+   * Ordena la tabla por el campo descripción
    */
   public ordenarPorDescripcion(): void {
-    this.data.sort((a, b) => {
-      if (this.descripcionOrdenAsc) {
-        return a.descripcion.localeCompare(b.descripcion); 
-      } else {
-        return b.descripcion.localeCompare(a.descripcion); 
-      }
-    });
+    this.data.sort((a, b) => this.descripcionOrdenAsc ? a.descripcion.localeCompare(b.descripcion) : b.descripcion.localeCompare(a.descripcion));
     this.descripcionOrdenAsc = !this.descripcionOrdenAsc;
   }
 
-  /**
-   * Inicializa la carga de roles
-   */
+  /** Inicializa la carga de roles */
   ngOnInit(): void {
     this.loadRoles();
   }
 
-  /**
-   * Se ejecuta después de que la vista se inicializa
-   * Se asigna la referencia del template del botón al header
-   */
+  /** Se ejecuta después de que la vista se inicializa, asigna templates a los headers */
   ngAfterViewInit(): void {
     this.headers = [
       { title: 'nombre', headerTemplate: this.botonNombre },
@@ -121,9 +114,7 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
     ];
   }
 
-  /**
-   * Carga los roles desde el servicio
-   */
+  /** Carga los roles desde el servicio */
   loadRoles(): void {
     this.rolesService.getRoles().subscribe({
       next: (roles: RolDTORespuesta[]) => {
@@ -140,40 +131,32 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
 
   /**
    * Abre el modal para actualizar un rol
+   * @param rol Objeto del rol a actualizar
    */
   protected abrirModalActualizarRol(rol: any): void {
-    this.selectedRolForm = { descripcion: '', estado: '' };
-    this.selectedRolForm = { ...rol };
+    this.selectedRolForm = { descripcion: '', estado: '', ...rol };
     this.rolFormDialogVisible = true;
   }
 
-  /**
-   * Guarda los cambios realizados a un rol
-   */
+  /** Guarda los cambios realizados a un rol */
   guardarRolActualizado(): void {
     if (!this.selectedRolForm.uuidRol) return;
 
-    // Marcar inputs como tocados para validación
     this.inputDescripcion.touched = true;
     this.inputEstado.touched = true;
 
     if (this.inputDescripcion.isInvalid() || this.inputEstado.isInvalid()) return; 
 
-    // Preparar datos a enviar
     const rolActualizado: RolDTOPeticion = {
       descripcion: this.selectedRolForm.descripcion,
-      estado: this.selectedRolForm.estado === ACTIVO ? true : false
+      estado: this.selectedRolForm.estado === ACTIVO
     };
 
-    // Llamada al servicio para actualizar
     this.rolesService.actualizarRol(this.selectedRolForm.uuidRol, rolActualizado).subscribe({
       next: (updatedRol) => {
         const index = this.data.findIndex(r => r.uuidRol === updatedRol.uuidRol);
         if (index !== -1) {
-          this.data[index] = {
-            ...updatedRol,
-            estado: updatedRol.estado ? ACTIVO : INACTIVO
-          };
+          this.data[index] = { ...updatedRol, estado: updatedRol.estado ? ACTIVO : INACTIVO };
         }
         this.rolFormDialogVisible = false;
         this.toastService.showSuccess('Éxito', 'Rol actualizado correctamente');
@@ -186,23 +169,20 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Abre el diálogo de información del rol
+   * Abre el diálogo de información de un rol
+   * @param rol Objeto del rol a visualizar
    */
   protected verMasInfo(rol: any): void {
     this.selectedRolInfo = rol;
     this.rolInfoDialogVisible = true;
   }
 
-  /**
-   * Devuelve el número total de páginas según pageSize
-   */
+  /** Devuelve el número total de páginas según pageSize */
   get totalPages(): number {
     return this.data.length ? Math.ceil(this.data.length / this.pageSize) : 1;
   }
 
-  /**
-   * Devuelve los datos paginados para la tabla
-   */
+  /** Devuelve los datos paginados para la tabla */
   get paginatedData() {
     const start = (this.currentPage - 1) * this.pageSize;
     return this.data.slice(start, start + this.pageSize);
@@ -210,6 +190,7 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
 
   /**
    * Actualiza la página actual al cambiar el paginador
+   * @param page Número de página seleccionado
    */
   onPageChange(page: number) {
     this.currentPage = page;

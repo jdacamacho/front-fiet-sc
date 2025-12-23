@@ -5,29 +5,19 @@
       <h2 class="title">Inicio de Sesión</h2>
 
       <div class="form-group">
-        <app-input-text-component
-          label="Nombre de Usuario"
-          placeholder="Escribe tu usuario"
-          [(value)]="username"
+        <app-input-text-component label="Nombre de Usuario" placeholder="Escribe tu usuario" [(value)]="username"
           [required]="true">
         </app-input-text-component>
       </div>
 
       <div class="form-group">
-        <app-input-password-component
-          label="Contraseña"
-          placeholder="Escribe tu contraseña"
-          [(value)]="password"
+        <app-input-password-component label="Contraseña" placeholder="Escribe tu contraseña" [(value)]="password"
           [required]="true">
         </app-input-password-component>
       </div>
 
       <div class="form-actions">
-        <app-simple-button-component
-          label="Iniciar Sesión"
-          color="#1E257B"
-          width="100%"
-          height="40px"
+        <app-simple-button-component label="Iniciar Sesión" color="#1E257B" width="100%" height="40px"
           (clicked)="onSubmit()">
         </app-simple-button-component>
       </div>

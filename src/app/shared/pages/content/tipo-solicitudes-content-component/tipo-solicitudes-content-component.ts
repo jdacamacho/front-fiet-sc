@@ -1,8 +1,3 @@
-/**
- * Componente tipoSolicitudContentComponent
- * Author: Julian David Camacho Erazo  {@literal <jdacamacho@unicauca.edu.co>}
- */
-
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { TableGenericComponent } from '../../../table-generic-component/table-generic-component';
 import { CommonModule } from '@angular/common';
@@ -28,6 +23,11 @@ import { RolesService } from '../../../../core/services/roles-service';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
 import { BOOLEANO, FORMATOS } from '../../../../core/constantes/constantes';
 
+/**
+ * Componente para gestionar tipos de solicitudes, incluyendo creación, actualización,
+ * visualización de información y gestión de anexos.
+ * Author: Julian David Camacho Erazo  {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-tipo-solicitudes-content-component',
   imports: [CommonModule, CardMainComponent, Paginator, BarraBusquedaComponent, ButtonComponent, 
@@ -38,19 +38,34 @@ import { BOOLEANO, FORMATOS } from '../../../../core/constantes/constantes';
   styleUrl: './tipo-solicitudes-content-component.css'
 })
 export class TipoSolicitudesContentComponent implements OnInit{
-  // Referencias a inputs y templates
-  // Formulario crear tipo solicitud
+  /** Referencia al input del nombre para crear tipo de solicitud */
   @ViewChild('inputNombreTS') inputNombreCrearTS!: InputTextComponent;
+
+  /** Referencia al input de descripción para crear tipo de solicitud */
   @ViewChild('inputDescripcionTS') inputDescripcionCrearTS!: InputTextTareaComponent;
+
+  /** Referencia al select de secciones para crear tipo de solicitud */
   @ViewChild('inputSeccionTS') inputSeccionCrearTS!: InputSelectComponent;
+
+  /** Referencia al select de perfil solicitante para crear tipo de solicitud */
   @ViewChild('inputPerfilSolicitanteTS') inputPerfilSolicitanteCrearTS!: InputSelectComponent;
+
+  /** Referencia al select de funcionario para crear tipo de solicitud */
   @ViewChild('inputFuncionarioTS') inputFuncionarioCrearTS!: InputSelectComponent;
+
+  /** Referencia al input de nombre del anexo (crear) */
   @ViewChild('inputTipoAnexoNombre') inputTipoAnexoNombre?: InputTextComponent;
+
+  /** Referencia al input de descripción del anexo (crear) */
   @ViewChild('inputTipoAnexoDescripcion') inputTipoAnexoDescripcion?: InputTextTareaComponent;
+
+  /** Referencia al select de formato del anexo (crear) */
   @ViewChild('inputTipoAnexoFormato') inputTipoAnexoFormato?: InputSelectComponent;
+
+  /** Referencia al select de obligatoriedad del anexo (crear) */
   @ViewChild('inputTipoAnexoObligatoriedad') inputTipoAnexoObligatoriedad?: InputSelectComponent;
-  // Referencias a inputs y templates
-  // Formulario actualizar tipo solicitud
+
+  // Inputs y templates para actualización
   @ViewChild('inputNombreTSUpdate') inputNombreUpdate?: InputTextComponent;
   @ViewChild('inputDescripcionTSUpdate') inputDescripcionUpdate?: InputTextTareaComponent;
   @ViewChild('inputSeccionTSUpdate') inputSeccionUpdate?: InputSelectComponent;
@@ -61,63 +76,105 @@ export class TipoSolicitudesContentComponent implements OnInit{
   @ViewChild('inputTipoAnexoFormatoUpdate') inputTipoAnexoFormatoUpdate?: InputSelectComponent;
   @ViewChild('inputTipoAnexoObligatoriedadUpdate') inputTipoAnexoObligatoriedadUpdate?: InputSelectComponent;
 
-  // Flags de visibilidad de diálogos
+  /** Indica si el diálogo de información está visible */
   tipoInfoDialogVisible = false;
+
+  /** Indica si el diálogo de upload está visible */
   tipoUploadDialogVisible = false;
+
+  /** Indica si el formulario para actualizar funcionario está visible */
   funcionarioFormActualizarDialogVisible= false;
 
-  // Objeto seleccionado para edición o información
+  /** Objeto seleccionado para mostrar información detallada */
   selectedTipoInfo: any = null;
+
+  /** Objeto seleccionado para actualizar funcionario */
   selectedTipoSolicitudActualizarFuncionarioForm: any = {};
 
-  // Archivo actual cargado
+  /** Archivo seleccionado para subir */
   archivoSeleccionado: File | null = null;
 
-  currentPage = 1; // Página actual
-  pageSize = 5;   // Tamaño de página
+  /** Página actual en la tabla */
+  currentPage = 1;
+
+  /** Tamaño de página para la tabla */
+  pageSize = 5;
+
+  /** Total de elementos para paginación */
   totalElements = 0;
+
+  /** Total de páginas para paginación */
   totalPages = 1;
+
+  /** Filtro por tipo de solicitud */
   tipoDeSolicitudFiltro: string = '';
+
+  /** Filtro por funcionario */
   funcionarioFiltro: string = '';
 
-  tableComponent = TableGenericComponent; // Componente de tabla
-  pretitleComponentComponent = ButtonComponent; // Componente pre-title
+  /** Componente de tabla genérica */
+  tableComponent = TableGenericComponent;
+
+  /** Componente de pretitle */
+  pretitleComponentComponent = ButtonComponent;
+
+  /** Botones mostrados en la tarjeta */
   buttonsCard: any[] = [];
+
+  /** Opciones de funcionarios para selects */
   funcionariosOptions: { label: string; value: string }[] = [];
 
-  //Dialogo con steps para crear y actualizar tipo de solicitud
+  /** Indica si el diálogo con steps para crear está visible */
   dialogoStepsVisible = false;
+
+  /** Indica si el diálogo para actualizar está visible */
   actualizarDialogVisible = false;
+
+  /** Fuerza la validación de anexos */
   forceAnexoValidation = false;
+
+  /** Steps para creación de tipo de solicitud */
   steps: { 
     title: string; 
     contentTemplate: TemplateRef<any>; 
     canContinue?: () => boolean; 
   }[] = [];
 
+  /** Steps para actualización de tipo de solicitud */
   stepsActualizar: {
     title: string;
     contentTemplate: TemplateRef<any>;
     canContinue?: () => boolean;
   }[] = [];
 
+  /** Lista de perfiles de solicitante */
   perfilesSolicitante: { label: string; value: string }[] = [];
 
+  /** Constantes de formatos permitidos */
   formatos = FORMATOS;
+
+  /** Constantes de booleano */
   booleano = BOOLEANO;
 
-  // Templates de los steps
+  /** Template del primer step (crear) */
   @ViewChild('step1', { static: true }) step1Template!: TemplateRef<any>;
+
+  /** Template del segundo step (crear) */
   @ViewChild('step2', { static: true }) step2Template!: TemplateRef<any>;
+
+  /** Template del primer step (actualizar) */
   @ViewChild('step1Update', { static: true }) step1UpdateTemplate!: TemplateRef<any>;
+
+  /** Template del segundo step (actualizar) */
   @ViewChild('step2Update', { static: true }) step2UpdateTemplate!: TemplateRef<any>;
 
-
+  /** Headers de la tabla */
   headers: any[] = [
     { title: 'Solicitud', headerTemplate: null },
     { title: 'Funcionario', headerTemplate: null }
   ];
 
+  /** Secciones disponibles para selección */
   secciones: { label: string; value: string }[] = [
     { label: 'Asuntos Decano', value: 'asuntos decano' },
     { label: 'Asuntos Pregrado', value: 'asuntos pregrado' },
@@ -129,26 +186,44 @@ export class TipoSolicitudesContentComponent implements OnInit{
     { label: 'Asuntos Varios', value: 'asuntos varios' }
   ];
 
+  /** Referencia al select de funcionario para actualizar */
   @ViewChild('inputFuncionario') inputFuncionario!: InputSelectComponent;
-  @ViewChild('busquedaTipoSolicitud') busquedaTipoSolicitud!: TemplateRef<any>; // Template búsqueda Responsable
-  @ViewChild('busquedaFuncionario') busquedaFuncionario!: TemplateRef<any>;             // Template búsqueda Fecha
 
-  // Datos para crear nuevo tipo de solicitud
+  /** Template de búsqueda de tipo de solicitud */
+  @ViewChild('busquedaTipoSolicitud') busquedaTipoSolicitud!: TemplateRef<any>;
+
+  /** Template de búsqueda de funcionario */
+  @ViewChild('busquedaFuncionario') busquedaFuncionario!: TemplateRef<any>;
+
+  /** Datos para crear nuevo tipo de solicitud */
   nuevoTipoSolicitud: any = {};
+
+  /** Datos para crear nuevo anexo */
   nuevoTipoAnexo: any = {};
+
+  /** Datos paginados mostrados en la tabla */
   paginatedData: any[] = [];
+
+  /** Lista de anexos (crear) */
   tiposAnexos: any[] = []; 
-  // Datos para actualizar tipo de solicitud
+
+  /** Datos para actualizar tipo de solicitud */
   nuevoTipoSolicitudUpdate: any = {};
+
+  /** Datos para actualizar anexo */
   nuevoTipoAnexoUpdate: any = {};
+
+  /** Lista de anexos (actualizar) */
   tiposAnexosUpdate: any[] = [];
+
+  /** Fuerza validación de anexos (actualizar) */
   forceAnexoValidationUpdate = false;
 
   constructor(private tipoSolicitudesService: TipoSolicitudService, private toastService: ToastService,
     private errorHandlerService: ErrorHandlerService, private usuariosService: UsuariosService,
     private rolesService: RolesService
   ) {}
-  
+
   ngOnInit(): void {
     this.loadTiposSolicitudes();
     this.loadFuncionarios();
@@ -189,13 +264,13 @@ export class TipoSolicitudesContentComponent implements OnInit{
     ];
   }
 
-  // Abre el diálogo para crear un nuevo Tipo de Solicitud
+  /** Abre el diálogo para crear un nuevo Tipo de Solicitud */
   abrirDialogCrearTipoSolicitud(): void {
     this.resetFormulariosCrear();
     this.dialogoStepsVisible = true;
   }
 
-  // Carga la lista de funcionarios para el filtro y selección
+  /** Carga la lista de funcionarios para selección y filtros */
   loadFuncionarios(): void {
     this.usuariosService.getFuncionarios().subscribe({
       next: (respuesta: UsuarioLivianoDTORespuesta[]) => {
@@ -211,13 +286,13 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
-  // Carga los tipos de solicitudes con paginación y filtros
+  /** Carga los tipos de solicitudes con paginación y filtros */
   loadTiposSolicitudes(page: number = 1): void {
     const backendPage = page - 1; 
 
     const observable =
       this.tipoDeSolicitudFiltro.trim() !== '' || this.funcionarioFiltro.trim() !== ''
-        ? this.tipoSolicitudesService.getTiposSolicitudFiltrado (this.tipoDeSolicitudFiltro, this.funcionarioFiltro, backendPage, this.pageSize)
+        ? this.tipoSolicitudesService.getTiposSolicitudFiltrado(this.tipoDeSolicitudFiltro, this.funcionarioFiltro, backendPage, this.pageSize)
         : this.tipoSolicitudesService.getTiposSolicitudPaginado(backendPage, this.pageSize);
 
     observable.subscribe({
@@ -243,6 +318,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
+  /** Carga los perfiles de solicitante desde el backend */
   loadPerfilesSolicitante(): void {
     this.rolesService.getRoles().subscribe({
       next: (perfiles: any[]) => {
@@ -258,7 +334,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
-  // Validaciones para avanzar en los steps
+  /** Verifica si se puede continuar al siguiente step (crear, paso 1) */
   canContinueStep1(): boolean {
     return !!(
       this.nuevoTipoSolicitud.nombre?.trim() &&
@@ -267,12 +343,12 @@ export class TipoSolicitudesContentComponent implements OnInit{
     );
   }
 
-  // Validaciones para avanzar en los steps
+  /** Verifica si se puede continuar al siguiente step (crear, paso 2) */
   canContinueStep2(): boolean {
     return this.tiposAnexos.length > 0;
   }
 
-  // Validaciones para avanzar en los steps
+  /** Verifica si se puede continuar al siguiente step (actualizar, paso 1) */
   canContinueStep1Update(): boolean {
     return !!(
       this.nuevoTipoSolicitudUpdate.nombre?.trim() &&
@@ -281,12 +357,12 @@ export class TipoSolicitudesContentComponent implements OnInit{
     );
   }
 
-  // Validaciones para avanzar en los steps
+  /** Verifica si se puede continuar al siguiente step (actualizar, paso 2) */
   canContinueStep2Update(): boolean {
     return this.tiposAnexosUpdate.length > 0;
   }
 
-  // Métodos para agregar y eliminar tipos de anexos (actualizar)
+  /** Agrega un nuevo anexo (actualizar) */
   agregarTipoAnexoUpdate() {
     this.forceAnexoValidationUpdate = true;
 
@@ -315,18 +391,19 @@ export class TipoSolicitudesContentComponent implements OnInit{
     this.forceAnexoValidationUpdate = false;
   }
 
+  /** Elimina un anexo por índice (actualizar) */
   eliminarTipoAnexoUpdate(index: number) {
     this.tiposAnexosUpdate.splice(index, 1);
   }
 
-  // Métodos para agregar y eliminar tipos de anexos (crear)
+  /** Agrega un nuevo anexo (crear) */
   agregarTipoAnexo() {
     this.forceAnexoValidation = true; 
 
     if (
-    !this.nuevoTipoAnexo.nombre?.trim() ||
-    !this.nuevoTipoAnexo.formato ||
-    this.nuevoTipoAnexo.obligatoriedad == null || this.nuevoTipoAnexo.obligatoriedad === undefined
+      !this.nuevoTipoAnexo.nombre?.trim() ||
+      !this.nuevoTipoAnexo.formato ||
+      this.nuevoTipoAnexo.obligatoriedad == null || this.nuevoTipoAnexo.obligatoriedad === undefined
     ) {
       return; 
     }
@@ -346,11 +423,12 @@ export class TipoSolicitudesContentComponent implements OnInit{
     this.forceAnexoValidation = false; 
   }
 
+  /** Elimina un anexo por índice (crear) */
   eliminarTipoAnexo(index: number) {
     this.tiposAnexos.splice(index, 1);
   }
 
-  // Guarda el nuevo tipo de solicitud
+  /** Guarda un nuevo tipo de solicitud */
   protected guardarTipoSolicitud(): void {
     if (!this.canContinueStep1() || !this.canContinueStep2()) {
       this.toastService.showError(
@@ -393,7 +471,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
-  // Resetea los formularios de creación
+  /** Resetea los formularios de creación */
   private resetFormulariosCrear(): void {
     this.nuevoTipoSolicitud = {
       nombre: '',
@@ -422,7 +500,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     this.inputTipoAnexoObligatoriedad?.reset();
   }
 
-  // Guarda la actualización del tipo de solicitud
+  /** Guarda la actualización de un tipo de solicitud */
   protected actualizarTipoSolicitud(): void {
     if (!this.canContinueStep1Update() || !this.canContinueStep2Update()) {
       this.toastService.showError('No se puede actualizar', 'Por favor completa los pasos antes de continuar.');
@@ -459,7 +537,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
-  // Resetea los formularios de actualización
+  /** Resetea los formularios de actualización */
   private resetFormulariosActualizar(): void {
     this.nuevoTipoSolicitudUpdate = {};
     this.nuevoTipoAnexoUpdate = {};
@@ -476,7 +554,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     this.inputTipoAnexoObligatoriedadUpdate?.reset();
   }
 
-  // Guarda el funcionario asignado al tipo de solicitud
+  /** Guarda el funcionario asignado a un tipo de solicitud */
   protected guardarFuncionarioTipoSolicitud(): void {
     this.inputFuncionario.touched = true;
 
@@ -512,9 +590,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
-  /**
-   * Abre el diálogo de información del Tipo de Solicitud
-   */
+  /** Abre el diálogo de información del Tipo de Solicitud */
   protected verMasInfo(tipoSolicitud: TipoSolicitudDTORespuesta): void {
     this.tipoSolicitudesService.getTipoSolicitud(tipoSolicitud.uuidTipoSolicitud).subscribe({
       next: (tipoSolicitudDetallado: TipoSolicitudDTORespuesta) => {
@@ -541,7 +617,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
-  // Abre el diálogo para actualizar un Tipo de Solicitud
+  /** Abre el diálogo para actualizar un tipo de solicitud */
   protected abrirModalActualizarTipoSolicitud(row: any): void {
     this.tipoSolicitudesService.getTipoSolicitud(row.uuidTipoSolicitud).subscribe({
       next: (tipoSolicitud) => {
@@ -577,7 +653,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
-  // Abre el formulario para actualizar el funcionario encargado del tipo de solicitud
+  /** Abre el diálogo para actualizar el funcionario encargado */
   protected abrirModalActualizarFuncionarioTipoSolicitud(tipoSolicitud: any): void {
     this.selectedTipoSolicitudActualizarFuncionarioForm = { ...tipoSolicitud };
 
@@ -591,12 +667,13 @@ export class TipoSolicitudesContentComponent implements OnInit{
     this.funcionarioFormActualizarDialogVisible = true;
   }
 
+  /** Abre el diálogo de upload de archivos */
   protected abrirDialogoUpload(): void {
     this.archivoSeleccionado = null; 
     this.tipoUploadDialogVisible = true;
   }
 
-  // Guarda el archivo cargado para crear tipos de solicitud
+  /** Guarda un archivo seleccionado para crear tipos de solicitud */
   protected guardarArchivo(file: File): void {
     if (!file) {
       this.toastService.showError('Error', 'Debe seleccionar un archivo antes de continuar');
@@ -629,6 +706,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     });
   }
 
+  /** Filtra la tabla por tipo de solicitud */
   onBuscarTipoSolicitud(tipoSolicitud: string): void {
     this.tipoDeSolicitudFiltro = tipoSolicitud;
     this.currentPage = 1;
@@ -638,6 +716,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     this.loadTiposSolicitudes(1);
   }
 
+  /** Filtra la tabla por funcionario */
   onBuscarFuncionario(funcionario: string): void {
     this.funcionarioFiltro = funcionario;
     this.currentPage = 1;
@@ -647,6 +726,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
     this.loadTiposSolicitudes(1);
   }
 
+  /** Cambia la página actual en la tabla */
   onPageChange(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.loadTiposSolicitudes(page);

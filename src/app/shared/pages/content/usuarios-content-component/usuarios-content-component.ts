@@ -20,19 +20,40 @@ import { InputPasswordComponent } from '../../../inputs/input-password-component
 import { GenericDialogUploadFileComponent } from '../../../generic-dialog-upload-file-component/generic-dialog-upload-file-component';
 import { TIPOS_DOCUMENTO } from '../../../../core/constantes/constantes';
 import { ESTADO_BOOLEANO } from '../../../../core/constantes/constantes';
-import {ACTIVO} from '../../../../core/constantes/constantes';
-import {INACTIVO} from '../../../../core/constantes/constantes';
+import { ACTIVO, INACTIVO } from '../../../../core/constantes/constantes';
 
+/**
+ * Componente principal para la gestión de usuarios:
+ * - Listado paginado de usuarios
+ * - Creación y actualización de usuarios
+ * - Visualización de información detallada
+ * - Subida masiva desde archivo
+ * Author: Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-usuarios-content-component',
-  imports: [CommonModule, CardMainComponent, Paginator, ButtonComponent, BarraBusquedaComponent,
-    GenericDialogInfoComponent, GenericDialogFormComponent, InputTextComponent, InputSelectComponent, InputPasswordComponent,
-    GenericDialogUploadFileComponent],
+  imports: [
+    CommonModule,
+    CardMainComponent,
+    Paginator,
+    ButtonComponent,
+    BarraBusquedaComponent,
+    GenericDialogInfoComponent,
+    GenericDialogFormComponent,
+    InputTextComponent,
+    InputSelectComponent,
+    InputPasswordComponent,
+    GenericDialogUploadFileComponent
+  ],
   templateUrl: './usuarios-content-component.html',
   styleUrl: './usuarios-content-component.css'
 })
-export class UsuariosContentComponent implements OnInit, AfterViewInit{
+export class UsuariosContentComponent implements OnInit, AfterViewInit {
+  
+  // ============================
   // Referencias a inputs y templates
+  // ============================
+
   // Formulario crear usuario
   @ViewChild('inputNombres') inputNombres!: InputTextComponent;
   @ViewChild('inputApellidos') inputApellidos!: InputTextComponent;
@@ -44,6 +65,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
   @ViewChild('inputPassword') inputPassword!: InputPasswordComponent;
   @ViewChild('inputTipoUsuario') inputTipoUsuario!: InputSelectComponent;
   @ViewChild('inputRoles') inputRoles!: InputSelectComponent;
+
   // Formulario actualización usuario
   @ViewChild('inputNombresActualizar') inputNombresActualizar!: InputTextComponent;
   @ViewChild('inputApellidosActualizar') inputApellidosActualizar!: InputTextComponent;
@@ -54,31 +76,26 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
   @ViewChild('inputCorreoElectronicoActualizar') inputCorreoElectronicoActualizar!: InputTextComponent;
   @ViewChild('inputUsernameActualizar') inputUsernameActualizar!: InputSelectComponent;
   @ViewChild('inputTipoUsuarioActualizar') inputTipoUsuarioActualizar!: InputSelectComponent;
-  // busqueda tabla
-  @ViewChild('busquedaNombre') busquedaNombre!: TemplateRef<any>; // Template búsqueda nombre de usuario
 
-  // Flags de visibilidad de diálogos
+  // Template búsqueda de usuario
+  @ViewChild('busquedaNombre') busquedaNombre!: TemplateRef<any>;
+
   usuarioInfoDialogVisible = false;
   usuarioFormActualizarDialogVisible = false;
   usuarioFormDialogVisible = false;
   usuarioUploadDialogVisible = false;
 
-  // Archivo actual cargado
   archivoSeleccionado: File | null = null;
-
-  // Objeto seleccionado para edición o información
   selectedUsuarioInfo: any = null;
   selectedUsuarioActualizarForm: any = {};
   selectedUsuarioForm: any = {};
   busquedaActual: string = '';
 
-  // Paginación
   currentPage = 1;
   pageSize = 5;
   totalElements = 0;
   totalPages = 1;
 
-  // Componentes para uso en CardMainComponent
   tableComponent = TableGenericComponent;
   pretitleComponentComponent = ButtonComponent;
 
@@ -99,13 +116,16 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
   roles: any[] = [];
   rolesOptions: { label: string; value: any }[] = [];
 
-
-  constructor(private usuariosService: UsuariosService, private toastService: ToastService,
-    private errorHandlerService: ErrorHandlerService, private rolesService:RolesService
+  constructor(
+    private usuariosService: UsuariosService,
+    private toastService: ToastService,
+    private errorHandlerService: ErrorHandlerService,
+    private rolesService: RolesService
   ) { }
 
   /**
-   * Inicializa la carga de roles
+   * Inicializa la carga de usuarios, tipos de usuario y roles.
+   * Configura los botones del CardMainComponent.
    */
   ngOnInit(): void {
     this.loadUsuarios();
@@ -130,6 +150,17 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
     ];
   }
 
+  /**
+   * Después de inicializar la vista, asigna el template de búsqueda al header de la tabla.
+   */
+  ngAfterViewInit(): void {
+    this.headers = [
+      { title: 'nombre', headerTemplate: this.busquedaNombre },
+      { title: 'estado' }
+    ];
+  }
+
+  /** Carga los tipos de usuario desde el backend */
   private loadTiposUsuario(): void {
     this.usuariosService.getTiposUsuario().subscribe({
       next: (tipos: any[]) => {
@@ -145,6 +176,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
     });
   }
 
+  /** Carga los roles disponibles desde el backend */
   private loadRoles(): void {
     this.rolesService.getRoles().subscribe({
       next: (roles: any[]) => {
@@ -160,9 +192,9 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
     });
   }
 
+  /** Carga los usuarios paginados, con opción de filtrar por nombre */
   private cargarUsuarios(page: number = 1, busqueda: string = ''): void {
     const backendPage = page - 1;
-
     const observable = busqueda && busqueda.trim()
       ? this.usuariosService.getUsuariosFiltrados(busqueda, backendPage, this.pageSize)
       : this.usuariosService.getUsuariosPaginado(backendPage, this.pageSize);
@@ -194,8 +226,9 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
   }
 
   /**
- * Filtra los usuarios por nombre completo usando el endpoint del backend.
- */
+   * Filtra los usuarios por nombre completo usando el endpoint del backend.
+   * @param nombreCompleto Nombre o parte del nombre a filtrar
+   */
   onBuscarUsuarios(nombreCompleto: string): void {
     this.currentPage = 1;
     this.paginatedData = [];
@@ -204,57 +237,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
     this.cargarUsuarios(1, nombreCompleto);
   }
 
-  /**
-   * Se ejecuta después de que la vista se inicializa
-   * Se asigna la referencia del template del botón al header
-   */
-  ngAfterViewInit(): void {
-    this.headers = [
-      { title: 'nombre', headerTemplate: this.busquedaNombre },
-      { title: 'estado' }
-    ];
-  }
-
-  protected abrirDialogoUpload(): void {
-    this.archivoSeleccionado = null; 
-    this.usuarioUploadDialogVisible = true;
-  }
-
-  protected guardarArchivo(file: File): void {
-    if (!file) {
-      this.toastService.showError('Error', 'Debe seleccionar un archivo antes de continuar');
-      return;
-    }
-
-    const extension = file.name.split('.').pop()?.toLowerCase();
-    const extensionesPermitidas = ['csv', 'xls', 'xlsx'];
-
-    if (!extension || !extensionesPermitidas.includes(extension)) {
-      this.toastService.showError('Error', 'Solo se permiten archivos CSV o Excel (.csv, .xls, .xlsx)');
-      return;
-    }
-
-    this.toastService.showInfo('Procesando', 'Su archivo se está procesando...');
-
-    this.usuariosService.crearUsuariosDesdeArchivo(file).subscribe({
-      next: (respuesta) => {
-        this.toastService.showSuccess(
-          'Archivo cargado',
-          `Se subieron ${respuesta.length} registros al sistema. Para más detalles consulte el historial.`
-        );
-        this.usuarioUploadDialogVisible = false;
-        this.loadUsuarios();
-      },
-      error: (err) => {
-        this.usuarioUploadDialogVisible = false;
-        this.errorHandlerService.handleError(err, 'Error creando usuarios');
-      }
-    });
-  }
-
-  /**
-   * Carga los usuarios desde el servicio
-   */
+  /** Carga los usuarios paginados sin filtro */
   loadUsuarios(page: number = 1): void {
     const backendPage = page - 1;
     this.usuariosService.getUsuariosPaginado(backendPage, this.pageSize).subscribe({
@@ -280,6 +263,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
     });
   }
 
+  /** Abre el formulario para crear un nuevo usuario */
   protected crearUsuario(): void {
     this.selectedUsuarioForm = {};
     this.inputNombres.reset();
@@ -295,6 +279,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
     this.usuarioFormDialogVisible = true; 
   }
 
+  /** Guarda un nuevo usuario en el backend */
   protected guardarNuevoUsuario(): void {
     this.inputNombres.touched = true;
     this.inputApellidos.touched = true;
@@ -323,8 +308,6 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
       return;
     }
 
-    
-
     const peticion: UsuarioDTOPeticion = {
       nombres: this.inputNombres.value,
       apellidos: this.inputApellidos.value,
@@ -352,12 +335,9 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
         this.errorHandlerService.handleError(err, 'Error creando usuario');
       }
     });
-
   }
 
-  /**
-   * Abre el modal para actualizar un usuario
-   */
+  /** Abre el modal para actualizar un usuario */
   protected abrirModalActualizarUsuario(usuario: any): void {
     this.usuariosService.getUsuario(usuario.uuidUsuario).subscribe({
       next: (usuarioDetallado: UsuarioDTORespuesta) => {
@@ -376,15 +356,11 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
         };
         this.usuarioFormActualizarDialogVisible = true;
       },
-      error: (err) => {
-        console.error('Error cargando usuario', err);
-      }
+      error: (err) => console.error('Error cargando usuario', err)
     });
   }
 
-  /**
-   * Guarda los cambios realizados a un usuario
-   */
+  /** Guarda los cambios realizados a un usuario */
   protected guardarUsuarioActualizado(): void {
     this.inputNombresActualizar.touched = true;
     this.inputApellidosActualizar.touched = true;
@@ -438,9 +414,7 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
       });
   }
 
-   /**
-   * Abre el diálogo de información del usuario
-   */
+  /** Abre el diálogo de información detallada de un usuario */
   protected verMasInfo(usuario: any): void {
     this.usuariosService.getUsuario(usuario.uuidUsuario).subscribe({
       next: (usuarioDetallado: UsuarioDTORespuesta) => {
@@ -458,17 +432,53 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit{
         };
         this.usuarioInfoDialogVisible = true;
       },
-      error: (err) => {
-        console.error('Error cargando usuario', err);
-      }
+      error: (err) => console.error('Error cargando usuario', err)
     });
   }
 
-  /**
-   * Actualiza la página actual al cambiar el paginador
-   */
+  /** Actualiza la página actual al cambiar el paginador */
   onPageChange(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.cargarUsuarios(page, this.busquedaActual);
+  }
+
+
+  /** Abre el diálogo para subir archivo de usuarios */
+  protected abrirDialogoUpload(): void {
+    this.archivoSeleccionado = null; 
+    this.usuarioUploadDialogVisible = true;
+  }
+
+  /** Guarda y procesa el archivo seleccionado para crear usuarios masivamente */
+  protected guardarArchivo(file: File): void {
+    if (!file) {
+      this.toastService.showError('Error', 'Debe seleccionar un archivo antes de continuar');
+      return;
+    }
+
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    const extensionesPermitidas = ['csv', 'xls', 'xlsx'];
+
+    if (!extension || !extensionesPermitidas.includes(extension)) {
+      this.toastService.showError('Error', 'Solo se permiten archivos CSV o Excel (.csv, .xls, .xlsx)');
+      return;
+    }
+
+    this.toastService.showInfo('Procesando', 'Su archivo se está procesando...');
+
+    this.usuariosService.crearUsuariosDesdeArchivo(file).subscribe({
+      next: (respuesta) => {
+        this.toastService.showSuccess(
+          'Archivo cargado',
+          `Se subieron ${respuesta.length} registros al sistema. Para más detalles consulte el historial.`
+        );
+        this.usuarioUploadDialogVisible = false;
+        this.loadUsuarios();
+      },
+      error: (err) => {
+        this.usuarioUploadDialogVisible = false;
+        this.errorHandlerService.handleError(err, 'Error creando usuarios');
+      }
+    });
   }
 }

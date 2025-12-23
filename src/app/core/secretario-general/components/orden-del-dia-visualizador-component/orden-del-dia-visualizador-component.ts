@@ -18,6 +18,12 @@ import { ToastService } from '../../../services/toast-service';
 import { ErrorHandlerService } from '../../../services/error-handler-service';
 import { SimpleButtonGroupComponent } from '../../../../shared/buttons/simple-button-group-component/simple-button-group-component';
 
+/**
+ * Componente visualizador del Orden del Día.
+ * Permite consultar, agregar, remover y exportar solicitudes asociadas a un orden del día.
+ *
+ * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-orden-del-dia-visualizador-component',
   imports: [
@@ -36,20 +42,70 @@ import { SimpleButtonGroupComponent } from '../../../../shared/buttons/simple-bu
   styleUrl: './orden-del-dia-visualizador-component.css',
 })
 export class OrdenDelDiaVisualizadorComponent {
+
+  /**
+   * Título principal del componente.
+   */
   title: string = 'Orden del Día';
+
+  /**
+   * Secciones configuradas para el orden del día.
+   */
   seccionesOrdenDia = SECCIONES_ORDEN_DIA;
+
+  /**
+   * Listado general de solicitudes cargadas.
+   */
   solicitudes: any[] = [];
+
+  /**
+   * Indica si las solicitudes están siendo cargadas.
+   */
   loadingSolicitudes = false;
+
+  /**
+   * Controla la visibilidad del diálogo de información de la solicitud.
+   */
   solicitudInfoVisible = false;
+
+  /**
+   * Información seleccionada de la solicitud (no utilizada actualmente).
+   */
   solicitudInfoSeleccionada: any = null;
+
+  /**
+   * Información detallada de la solicitud seleccionada.
+   */
   selectedSolicitudInfo: any = null;
+
+  /**
+   * Listado de anexos de la solicitud seleccionada.
+   */
   solicitudAnexos: any[] = [];
+
+  /**
+   * Indica si el diálogo utiliza un componente adicional.
+   */
   dialogUsaComponente = false;
+
+  /**
+   * Opciones disponibles de solicitudes para agregar al orden del día.
+   */
   solicitudesDisponiblesOpciones: { label: string; value: string }[] = [];
+
+  /**
+   * UUID de la solicitud seleccionada para ser agregada.
+   */
   solicitudSeleccionadaParaAgregar: string | null = null;
 
+  /**
+   * Referencia al componente select de solicitudes.
+   */
   @ViewChild('inputSolicitudAgregar') inputSolicitudAgregar!: InputSelectComponent;
 
+  /**
+   * Solicitudes agrupadas por sección del orden del día.
+   */
   solicitudesPorSeccion: Record<string, SolicitudDTORespuesta[]> = SECCIONES_ORDEN_DIA.reduce(
     (acc, s) => {
       acc[s.label] = [];
@@ -58,9 +114,20 @@ export class OrdenDelDiaVisualizadorComponent {
     {} as Record<string, SolicitudDTORespuesta[]>
   );
 
+  /**
+   * Controla la visibilidad externa del componente.
+   */
   @Input() visible: boolean = false;
+
+  /**
+   * Orden del día actual.
+   */
   private _orden!: OrdenDelDiaDTORespuesta;
 
+  /**
+   * Asigna el orden del día y carga sus solicitudes.
+   * @param value Orden del día recibido
+   */
   @Input()
   set orden(value: OrdenDelDiaDTORespuesta) {
     if (value?.uuidOrdenDelDia) {
@@ -69,10 +136,16 @@ export class OrdenDelDiaVisualizadorComponent {
     }
   }
 
+  /**
+   * Retorna el orden del día actual.
+   */
   get orden(): OrdenDelDiaDTORespuesta {
     return this._orden;
   }
 
+  /**
+   * Evento que notifica el cambio de visibilidad del componente.
+   */
   @Output() visibleChange = new EventEmitter<boolean>();
 
   constructor(
@@ -81,6 +154,9 @@ export class OrdenDelDiaVisualizadorComponent {
     private handlerError: ErrorHandlerService
   ) {}
 
+  /**
+   * Inicializa las secciones del orden del día.
+   */
   private inicializarSecciones(): void {
     this.solicitudesPorSeccion = this.seccionesOrdenDia.reduce((acc, s) => {
       acc[s.label] = [];
@@ -88,6 +164,9 @@ export class OrdenDelDiaVisualizadorComponent {
     }, {} as Record<string, SolicitudDTORespuesta[]>);
   }
 
+  /**
+   * Carga las solicitudes asociadas al orden del día.
+   */
   cargarSolicitudes(): void {
     this.loadingSolicitudes = true;
     this.solicitudes = [];
@@ -107,6 +186,9 @@ export class OrdenDelDiaVisualizadorComponent {
     });
   }
 
+  /**
+   * Carga las solicitudes disponibles para agregar al orden del día.
+   */
   cargarSolicitudesDisponibles(): void {
     this.solicitudesService.getSolicitudesPorEstado(PENDIENTE_AL_ORDEN_DEL_DIA).subscribe({
       next: (data) => {
@@ -121,16 +203,23 @@ export class OrdenDelDiaVisualizadorComponent {
     });
   }
 
+  /**
+   * Agrupa las solicitudes según la sección a la que pertenecen.
+   */
   agruparSolicitudesPorSeccion(): void {
     this.inicializarSecciones();
 
     for (const solicitud of this.solicitudes) {
       const seccion = solicitud.tipoSolicitud?.seccion;
-      if (seccion && this.solicitudesPorSeccion[seccion]) 
+      if (seccion && this.solicitudesPorSeccion[seccion])
         this.solicitudesPorSeccion[seccion] = [...this.solicitudesPorSeccion[seccion], solicitud];
     }
   }
 
+  /**
+   * Consulta y muestra la información detallada de una solicitud.
+   * @param solicitud Solicitud seleccionada
+   */
   verSolicitud(solicitud: SolicitudDTORespuesta): void {
     this.solicitudesService.getSolicitud(solicitud.uuidSolicitud).subscribe({
       next: (solicitudDetallada) => {
@@ -141,23 +230,18 @@ export class OrdenDelDiaVisualizadorComponent {
           Descripción: solicitudDetallada.descripcion,
           Estado: solicitudDetallada.estado,
           Consecutivo: solicitudDetallada.consecutivo || 'Sin consecutivo',
-
           Orden_del_Día: solicitudDetallada.ordenDelDia
             ? solicitudDetallada.ordenDelDia.nombre
             : 'Sin orden del día',
-
           Tipo_de_Solicitud: solicitudDetallada.tipoSolicitud?.nombre,
-
           Solicitante:
             solicitudDetallada.informacionSolicitante?.nombres +
             ' ' +
             solicitudDetallada.informacionSolicitante?.apellidos,
-
           Identificación:
             solicitudDetallada.informacionSolicitante?.tipoDocumento +
             ' ' +
             solicitudDetallada.informacionSolicitante?.numeroDocumento,
-
           Contacto:
             solicitudDetallada.informacionSolicitante?.correoElectronico +
             ' / ' +
@@ -171,10 +255,18 @@ export class OrdenDelDiaVisualizadorComponent {
     });
   }
 
+  /**
+   * Método pendiente para modificar una solicitud.
+   * @param solicitud Solicitud a modificar
+   */
   modificarSolicitud(solicitud: SolicitudDTORespuesta): void {
     console.log('Modificar solicitud (pendiente):', solicitud);
   }
 
+  /**
+   * Remueve una solicitud del orden del día.
+   * @param solicitud Solicitud a remover
+   */
   removerSolicitud(solicitud: SolicitudDTORespuesta): void {
     const peticion: SolicitudActualizarDTOPeticion = {
       consecutivo: solicitud.consecutivo || '',
@@ -204,10 +296,17 @@ export class OrdenDelDiaVisualizadorComponent {
     });
   }
 
+  /**
+   * Captura la solicitud seleccionada desde el select.
+   * @param uuidSolicitud Identificador de la solicitud
+   */
   onSolicitudSeleccionada(uuidSolicitud: string): void {
     this.solicitudSeleccionadaParaAgregar = uuidSolicitud;
   }
 
+  /**
+   * Agrega la solicitud seleccionada al orden del día.
+   */
   agregarSolicitudSeleccionada(): void {
     if (!this.solicitudSeleccionadaParaAgregar) return;
 
@@ -227,6 +326,9 @@ export class OrdenDelDiaVisualizadorComponent {
     });
   }
 
+  /**
+   * Descarga los anexos asociados al orden del día.
+   */
   descargarAnexos(): void {
     if (!this.orden) return;
     const uuidOrden = this.orden.uuidOrdenDelDia;
@@ -247,14 +349,14 @@ export class OrdenDelDiaVisualizadorComponent {
         window.URL.revokeObjectURL(url);
       },
       error: (err) => {
-        this.toastService.showError(
-          'Error',
-          'El orden del día no tiene anexos para descargar.'
-        );
+        this.toastService.showError('Error', 'El orden del día no tiene anexos para descargar.');
       },
     });
   }
 
+  /**
+   * Exporta el orden del día en formato Word.
+   */
   exportarOrdenDelDia(): void {
     if (!this.orden) return;
 
@@ -278,14 +380,15 @@ export class OrdenDelDiaVisualizadorComponent {
       },
       error: (err) => {
         console.log(err);
-        this.toastService.showError(
-          'Error',
-          'No se pudo exportar el Orden del Día'
-        );
-      }
+        this.toastService.showError('Error', 'No se pudo exportar el Orden del Día');
+      },
     });
   }
 
+  /**
+   * Registra una solicitud dentro del orden del día.
+   * @param solicitud Solicitud a registrar
+   */
   registrarSolicitudesEnOrdenDelDia(solicitud: SolicitudDTORespuesta): void {
     const peticion: SolicitudActualizarDTOPeticion = {
       consecutivo: solicitud.consecutivo || '',
@@ -309,6 +412,9 @@ export class OrdenDelDiaVisualizadorComponent {
     });
   }
 
+  /**
+   * Cierra el componente y notifica al componente padre.
+   */
   close() {
     this.visibleChange.emit(false);
   }

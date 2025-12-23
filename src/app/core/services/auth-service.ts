@@ -8,17 +8,41 @@ import { UsuarioDTORespuesta } from '../models/Usuario/DTOResponse/UsuarioDTORes
 import { environment } from '../../../enviroments/environment';
 import { UsuariosService } from './usuarios-service';
 
+/**
+ * Servicio de autenticación del sistema.
+ * Se encarga de manejar el inicio y cierre de sesión,
+ * así como la persistencia y obtención del usuario autenticado.
+ *
+ * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
+  /**
+   * URL base para las operaciones de sesión.
+   */
   private url = `${environment.apiUrl}/sesiones`;
 
+  /**
+   * Subject que mantiene el estado del usuario autenticado.
+   */
   private usuarioSubject = new BehaviorSubject<UsuarioDTORespuesta | null>(null);
+
+  /**
+   * Observable público del usuario autenticado.
+   */
   public usuario$ = this.usuarioSubject.asObservable();
 
+  /**
+   * Subject que indica si el usuario ya fue cargado.
+   */
   private usuarioCargadoSubject = new BehaviorSubject<boolean>(false);
+
+  /**
+   * Observable público que indica si el usuario ya fue inicializado.
+   */
   public usuarioCargado$ = this.usuarioCargadoSubject.asObservable();
 
   constructor(
@@ -26,6 +50,12 @@ export class AuthService {
     private usuariosService: UsuariosService
   ) {}
 
+  /**
+   * Inicializa el usuario autenticado a partir del almacenamiento local.
+   * Verifica si existe una sesión activa y carga la información del usuario.
+   *
+   * @returns Observable con el usuario autenticado o null
+   */
   inicializarUsuario(): Observable<UsuarioDTORespuesta | null> {
 
     if (typeof window === 'undefined') {
@@ -54,7 +84,13 @@ export class AuthService {
     );
   }
 
-
+  /**
+   * Realiza el inicio de sesión del usuario.
+   * Guarda el token y el identificador del usuario en el almacenamiento local.
+   *
+   * @param credentials Credenciales de inicio de sesión
+   * @returns Observable con la información del usuario autenticado
+   */
   login(credentials: SesionDTOPeticion): Observable<UsuarioDTORespuesta> {
     return this.http.post<UsuarioTokenizadoDTORespuesta>(this.url, credentials).pipe(
       tap(tokenizado => {
@@ -68,13 +104,21 @@ export class AuthService {
     );
   }
 
-
+  /**
+   * Cierra la sesión del usuario actual.
+   * Elimina la información almacenada y limpia el estado del usuario.
+   */
   logout(): void {
     this.usuarioSubject.next(null);
     localStorage.removeItem('currentUser');
     localStorage.removeItem('authToken');
   }
 
+  /**
+   * Obtiene el usuario autenticado actualmente.
+   *
+   * @returns Usuario autenticado o null
+   */
   getUsuarioActual(): UsuarioDTORespuesta | null {
     return this.usuarioSubject.getValue();
   }

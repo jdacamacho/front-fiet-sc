@@ -6,13 +6,13 @@
     </li>
 
     @for (item of breadcrumbs; track item) {
-      <li class="breadcrumb-item">
-        @if (item.url) {
-          <a [href]="item.url" class="breadcrumb-link">{{ item.label }}</a>
-        } @else {
-          <span>{{ item.label }}</span>
-        }
-      </li>
+    <li class="breadcrumb-item">
+      @if (item.url) {
+      <a [href]="item.url" class="breadcrumb-link">{{ item.label }}</a>
+      } @else {
+      <span>{{ item.label }}</span>
+      }
+    </li>
     }
   </ol>
 </nav>

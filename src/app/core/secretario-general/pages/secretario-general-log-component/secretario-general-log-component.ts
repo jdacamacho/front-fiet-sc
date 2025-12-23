@@ -6,6 +6,12 @@ import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb-co
 import { PageComponent } from '../../../../shared/pages/page-component/page-component';
 import { LogsComponent } from '../../../../shared/pages/logs-component/logs-component';
 
+/**
+ * Componente de visualización de registros (logs) para el usuario Secretario General.
+ * Permite acceder y consultar los registros del sistema.
+ *
+ * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-secretario-general-log-component',
   imports: [CommonModule, PageComponent],
@@ -13,8 +19,24 @@ import { LogsComponent } from '../../../../shared/pages/logs-component/logs-comp
   styleUrl: './secretario-general-log-component.css'
 })
 export class SecretarioGeneralLogComponent {
+
+  /**
+   * Componente de barra lateral del Secretario General.
+   */
   sidebar = SideBarSecretarioGeneralComponent;
+
+  /**
+   * Componente de encabezado principal.
+   */
   header = HeaderMainComponent;
+
+  /**
+   * Componente de navegación tipo breadcrumb.
+   */
   breadcrumb = BreadcrumbComponent;
+
+  /**
+   * Componente principal que muestra los registros del sistema.
+   */
   main = LogsComponent
 }

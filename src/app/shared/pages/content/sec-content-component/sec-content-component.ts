@@ -1,13 +1,15 @@
 /**
- * Componente solcitudes secretario general
- * Author: Julian David Camacho Erazo  {@literal <jdacamacho@unicauca.edu.co>}
+ * Componente SecContentComponent
+ * Gestiona las solicitudes desde la perspectiva del Secretario General.
+ * Permite ver, actualizar y filtrar solicitudes, además de manejar paginación y anexos.
+ * 
+ * Author: Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
  */
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { CardMainComponent } from '../../../card-main-component/card-main-component';
 import { TableGenericComponent } from '../../../table-generic-component/table-generic-component';
 import { ButtonComponent } from '../../../buttons/button-component/button-component';
-import { ViewChild, TemplateRef } from '@angular/core';
 import { SolicitudesService } from '../../../../core/services/solicitudes-service';
 import { Paginator } from '../../../paginator/paginator';
 import { BarraBusquedaComponent } from '../../../search/barra-busqueda-component/barra-busqueda-component';
@@ -25,60 +27,73 @@ import { ESTADOS_SOLICITUD } from '../../../../core/constantes/constantes';
 
 @Component({
   selector: 'app-sec-content-component',
-  imports: [CommonModule, CardMainComponent, ButtonComponent, Paginator, BarraBusquedaComponent,
-    GenericDialogInfoComponent,AnexosViewComponent, InputTextComponent, InputSelectComponent, GenericDialogFormComponent,
+  imports: [
+    CommonModule,
+    CardMainComponent,
+    ButtonComponent,
+    Paginator,
+    BarraBusquedaComponent,
+    GenericDialogInfoComponent,
+    AnexosViewComponent,
+    InputTextComponent,
+    InputSelectComponent,
+    GenericDialogFormComponent,
     InputTextTareaComponent
   ],
   templateUrl: './sec-content-component.html',
   styleUrl: './sec-content-component.css'
 })
-export class SecContentComponent implements OnInit{
-  // Flags de visibilidad de diálogos
+export class SecContentComponent implements OnInit {
+
+  /** Flags de visibilidad de diálogos */
   solicitudInfoDialogVisible = false;
   dialogUsaComponente: boolean = false;
-  // Flag de visibilidad del diálogo
   actualizarDialogVisible = false;
   solicitudAnexos: any[] = [];
 
-  // Objeto seleccionado para edición o información
+  /** Objeto seleccionado para mostrar información */
   selectedSolicitudInfo: any = null;
 
-  tableComponent = TableGenericComponent; // Componente de tabla
-  pretitleComponentComponent = ButtonComponent; // Componente pre-title
+  /** Componentes de CardMain */
+  tableComponent = TableGenericComponent;
+  pretitleComponentComponent = ButtonComponent;
 
+  /** Datos paginados */
   paginatedData: any[] = [];
 
-  // Objeto temporal para la solicitud que se va a actualizar
+  /** Objeto temporal para solicitud que se va a actualizar */
   solicitudUpdate: any = {};
   solicitudFiltro: string = '';
 
-  // Objeto temporal para la actualización
+  /** Objeto temporal para actualizar solicitud */
   solicitudActualizar: any = {};
 
-  // Flag para mostrar el diálogo
+  /** Flag para mostrar diálogo de actualización */
   actualizarSolicitudDialogVisible = false;
 
-  // Lista de funcionarios para el select
+  /** Lista de funcionarios para select */
   funcionariosOptions: { label: string; value: string }[] = [];
 
+  /** Estados posibles de la solicitud */
   estadosSolicitud = ESTADOS_SOLICITUD;
 
-  // Paginación
+  /** Paginación */
   currentPage = 1;
   pageSize = 5;
   totalPages = 1;
   totalElements = 0;
 
-  // Header con filtro incrustado
+  /** Header con filtro incrustado */
   @ViewChild('headerSolicitud') headerSolicitud!: TemplateRef<any>;
 
+  /** Inputs de actualización */
   @ViewChild('inputNombreActualizar') inputNombreActualizar!: InputTextComponent;
   @ViewChild('inputEstadoActualizar') inputEstadoActualizar!: InputSelectComponent;
   @ViewChild('inputFuncionarioActualizar') inputFuncionarioActualizar!: InputSelectComponent;
   @ViewChild('inputDescripcionActualizar') inputDescripcionActualizar!: InputTextComponent;
   @ViewChild('inputConsecutivoActualizar') inputConsecutivoActualizar!: InputTextComponent;
 
-
+  /** Cabeceras de tabla */
   headers: any[] = [
     { title: 'Solicitud', headerTemplate: null },
     { title: 'Responsable', headerTemplate: null },
@@ -92,11 +107,13 @@ export class SecContentComponent implements OnInit{
     private errorHandlerService: ErrorHandlerService
   ) {}
 
+  /** Inicializa la carga de solicitudes y funcionarios */
   ngOnInit(): void {
     this.loadSolicitudes();
     this.loadFuncionarios();
   }
 
+  /** Asigna templates de headers después de inicializar la vista */
   ngAfterViewInit(): void {
     this.headers = [
       { title: 'Solicitud', headerTemplate: this.headerSolicitud },
@@ -105,7 +122,10 @@ export class SecContentComponent implements OnInit{
     ];
   }
 
-  // Carga solicitudes con paginación y filtros
+  /**
+   * Carga solicitudes desde el servicio con paginación y filtro por nombre
+   * @param page Número de página (1 por defecto)
+   */
   loadSolicitudes(page: number = 1): void {
     const backendPage = page - 1;
 
@@ -126,8 +146,8 @@ export class SecContentComponent implements OnInit{
 
         this.paginatedData = content.map((s: any) => ({
           ...s,
-          Solicitud: s.nombre, 
-          Responsable: `${s.objFuncionario?.nombres} ${s.objFuncionario?.apellidos }`.trim(),
+          Solicitud: s.nombre,
+          Responsable: `${s.objFuncionario?.nombres} ${s.objFuncionario?.apellidos}`.trim(),
           Estado: s.estado
         }));
 
@@ -145,6 +165,7 @@ export class SecContentComponent implements OnInit{
     });
   }
 
+  /** Carga la lista de funcionarios para el select */
   loadFuncionarios(): void {
     this.usuariosService.getFuncionarios().subscribe({
       next: (respuesta: any[]) => {
@@ -161,12 +182,12 @@ export class SecContentComponent implements OnInit{
   }
 
   /**
-   * Abre el diálogo de información de Solicitud
+   * Abre el diálogo de información de una solicitud
+   * @param solicitud Solicitud seleccionada
    */
   protected verMasInfo(solicitud: SolicitudDTORespuesta): void {
     this.solicitudesService.getSolicitud(solicitud.uuidSolicitud).subscribe({
       next: (solicitudDetallada) => {
-
         const tieneAnexos = solicitudDetallada.anexos && solicitudDetallada.anexos.length > 0;
 
         this.selectedSolicitudInfo = {
@@ -177,26 +198,23 @@ export class SecContentComponent implements OnInit{
           Orden_del_Día: solicitudDetallada.ordenDelDia
             ? (solicitudDetallada.ordenDelDia.nombre || '')
             : 'Sin orden del día asignado',
-
           Tipo_de_Solicitud: solicitudDetallada.tipoSolicitud.nombre,
           Solicitante: solicitudDetallada.informacionSolicitante.nombres + " " +
                       solicitudDetallada.informacionSolicitante.apellidos,
-
           Identificacion: solicitudDetallada.informacionSolicitante.tipoDocumento + " " +
                           solicitudDetallada.informacionSolicitante.numeroDocumento,
-
           Contacto: solicitudDetallada.informacionSolicitante.correoElectronico + " / " +
                     solicitudDetallada.informacionSolicitante.telefono
         };
 
         this.solicitudAnexos = solicitudDetallada.anexos || [];
         this.dialogUsaComponente = tieneAnexos;
-
         this.solicitudInfoDialogVisible = true;
       }
     });
   }
 
+  /** Abre el modal para actualizar una solicitud */
   abrirModalActualizarSolicitud(row: any): void {
     this.solicitudActualizar = {
       uuidSolicitud: row.uuidSolicitud,
@@ -210,12 +228,12 @@ export class SecContentComponent implements OnInit{
     this.actualizarSolicitudDialogVisible = true;
   }
 
+  /** Guarda los cambios realizados a la solicitud */
   guardarSolicitudActualizada(): void {
     this.inputNombreActualizar.touched = true;
     this.inputEstadoActualizar.touched = true;
     this.inputFuncionarioActualizar.touched = true;
 
-    // Validar los campos obligatorios
     if (
       this.inputNombreActualizar.isInvalid() ||
       this.inputEstadoActualizar.isInvalid() ||
@@ -251,6 +269,7 @@ export class SecContentComponent implements OnInit{
       });
   }
 
+  /** Reinicia los formularios de actualización */
   private resetFormulariosActualizar(): void {
     this.solicitudActualizar = {};
     this.inputNombreActualizar?.reset();
@@ -260,15 +279,22 @@ export class SecContentComponent implements OnInit{
     this.inputFuncionarioActualizar?.reset();
   }
 
+  /**
+   * Filtra las solicitudes por nombre
+   * @param value Texto de búsqueda
+   */
   buscarSolicitudes(value: string): void {
     this.solicitudFiltro = value ?? '';
     this.currentPage = 1;
     this.loadSolicitudes(1);
   }
 
+  /**
+   * Cambia la página actual de la tabla
+   * @param page Número de página seleccionado
+   */
   onPageChange(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.loadSolicitudes(page);
   }
-
 }

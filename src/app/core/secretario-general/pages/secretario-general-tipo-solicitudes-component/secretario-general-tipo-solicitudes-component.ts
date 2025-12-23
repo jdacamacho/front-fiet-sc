@@ -6,6 +6,12 @@ import { BreadcrumbComponent } from '../../../../shared/breadcrumb/breadcrumb-co
 import { PageComponent } from '../../../../shared/pages/page-component/page-component';
 import { TipoSolicitudesComponent } from '../../../../shared/pages/tipo-solicitudes-component/tipo-solicitudes-component';
 
+/**
+ * Componente principal para la gestión de tipos de solicitudes
+ * del usuario Secretario General.
+ *
+ * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-secretario-general-tipo-solicitudes-component',
   imports: [CommonModule, PageComponent],
@@ -13,8 +19,24 @@ import { TipoSolicitudesComponent } from '../../../../shared/pages/tipo-solicitu
   styleUrl: './secretario-general-tipo-solicitudes-component.css'
 })
 export class SecretarioGeneralTipoSolicitudesComponent {
+
+  /**
+   * Componente de barra lateral del Secretario General.
+   */
   sidebar = SideBarSecretarioGeneralComponent;
+
+  /**
+   * Componente de encabezado principal.
+   */
   header = HeaderMainComponent;
+
+  /**
+   * Componente de navegación tipo breadcrumb.
+   */
   breadcrumb = BreadcrumbComponent;
+
+  /**
+   * Componente principal que gestiona los tipos de solicitudes.
+   */
   main = TipoSolicitudesComponent;
 }
