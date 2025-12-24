@@ -7,19 +7,13 @@
   </ng-template>
 
   <div class="dialog-content">
-    <app-upload-component
-      [uploadedFile]="uploadedFile"
-      (fileSelected)="onFileSelected($event)"
+    <app-upload-component [uploadedFile]="uploadedFile" (fileSelected)="onFileSelected($event)"
       (fileRemoved)="onFileRemoved()">
     </app-upload-component>
   </div>
 
   <ng-template pTemplate="footer">
-    <app-simple-button-component
-      label="Cargar archivo"
-      width="120px"
-      height="35px"
-      (clicked)="onUpload()">
+    <app-simple-button-component label="Cargar archivo" width="120px" height="35px" (clicked)="onUpload()">
     </app-simple-button-component>
   </ng-template>
 </p-dialog>

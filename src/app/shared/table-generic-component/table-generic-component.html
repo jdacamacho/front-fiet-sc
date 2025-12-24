@@ -4,8 +4,7 @@
       <th *ngFor="let header of headers">
         <div style="display: flex; align-items: center; justify-content: space-between;">
           <span>{{ header.title }}</span>
-          <ng-container *ngIf="header.headerTemplate"
-                        [ngTemplateOutlet]="header.headerTemplate">
+          <ng-container *ngIf="header.headerTemplate" [ngTemplateOutlet]="header.headerTemplate">
           </ng-container>
         </div>
       </th>

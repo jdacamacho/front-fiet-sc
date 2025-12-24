@@ -1,7 +1,5 @@
 <div class="d-flex align-items-center">
-  <p-avatar 
-    [label]="avatarLabel" 
-    class="avatar-custom me-3">
+  <p-avatar [label]="avatarLabel" class="avatar-custom me-3">
   </p-avatar>
 
   <div class="d-flex flex-column">
@@ -15,7 +13,9 @@
         <li *ngFor="let role of roles">
           <a class="dropdown-item" href="#">{{ role }}</a>
         </li>
-        <li><hr class="dropdown-divider"></li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
         <li>
           <a class="dropdown-item" href="#" (click)="cerrarSesion()">Cerrar sesión</a>
         </li>

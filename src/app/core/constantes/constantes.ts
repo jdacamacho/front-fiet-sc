@@ -1,3 +1,32 @@
+/**
+ * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
+
+export const ROLES_FIET: string[] = [
+  'Secretario General',
+  'Funcionario',
+  'Secretaria Decanatura FIET',
+  'Coordinador Pregrado',
+  'Coordinador Posgrados',
+  'Jefe de Departamento',
+  'Decano',
+  'Docente'
+];
+
+export const SECCIONES = [
+    { label: 'Asuntos Decano', value: 'asuntos decano' },
+    { label: 'Asuntos Pregrado', value: 'asuntos pregrado' },
+    { label: 'Asuntos Posgrados', value: 'asuntos posgrados' },
+    { label: 'Asuntos Delegados en Decano', value: 'asuntos delegados en decano' },
+    { label: 'Solicitud Comisión Académica al Interior del País', value: 'solicitud comisión académica al interior del país' },
+    { label: 'Solicitud Comisión Académica al Exterior al País', value: 'solicitud comisión académica al exterior al país' },
+    { label: 'Informe de Comisión Académica', value: 'informe de comisión académica' },
+    { label: 'Asuntos Varios', value: 'asuntos varios' }
+  ];
+
+/**
+ * Estados posibles de una solicitud.
+ */
 export const ESTADOS_SOLICITUD = [
   { label: 'SIN RESPONDER', value: 'SIN RESPONDER' },
   { label: 'RECHAZADO', value: 'RECHAZADO' },
@@ -5,34 +34,63 @@ export const ESTADOS_SOLICITUD = [
   { label: 'AGREGADO EN EL ORDEN DEL DÍA', value: 'AGREGADO EN EL ORDEN DEL DÍA' }
 ];
 
+/**
+ * Estado pendiente de inclusión en el orden del día.
+ */
 export const PENDIENTE_AL_ORDEN_DEL_DIA = 'PENDIENTE AL ORDEN DEL DÍA';
+
+/**
+ * Estado agregado al orden del día.
+ */
 export const AGREGADO_EN_EL_ORDEN_DEL_DIA = 'AGREGADO EN EL ORDEN DEL DÍA';
 
+/**
+ * Estado activo.
+ */
 export const ACTIVO = '✅ Activo';
+
+/**
+ * Estado inactivo.
+ */
 export const INACTIVO = '❌ Inactivo';
 
+/**
+ * Estados booleanos representados como texto.
+ */
 export const ESTADO_BOOLEANO = [
-    { label: '✅ Activo', value: '✅ Activo' },
-    { label: '❌ Inactivo', value: '❌ Inactivo' }
+  { label: '✅ Activo', value: '✅ Activo' },
+  { label: '❌ Inactivo', value: '❌ Inactivo' }
 ];
 
+/**
+ * Formatos permitidos para archivos.
+ */
 export const FORMATOS = [
-    { label: 'PDF', value: 'PDF' },
-    { label: 'DOCX', value: 'DOCX' },
-    { label: 'XLSX', value: 'XLSX' }
+  { label: 'PDF', value: 'PDF' },
+  { label: 'DOCX', value: 'DOCX' },
+  { label: 'XLSX', value: 'XLSX' }
 ];
 
+/**
+ * Valores booleanos para selección.
+ */
 export const BOOLEANO = [
-    { label: 'Sí', value: true },
-    { label: 'No', value: false }
+  { label: 'Sí', value: true },
+  { label: 'No', value: false }
 ];
 
+/**
+ * Tipos de documento de identificación.
+ */
 export const TIPOS_DOCUMENTO = [
-    { label: 'Cédula de ciudadanía', value: 'Cédula de ciudadanía' },
-    { label: 'Tarjeta de identidad', value: 'Tarjeta de identidad' },
-    { label: 'Cédula de extranjería', value: 'Cédula de extranjería' }
+  { label: 'Cédula de ciudadanía', value: 'Cédula de ciudadanía' },
+  { label: 'Tarjeta de identidad', value: 'Tarjeta de identidad' },
+  { label: 'Cédula de extranjería', value: 'Cédula de extranjería' }
 ];
 
+/**
+ * Secciones del orden del día.
+ */
 export const SECCIONES_ORDEN_DIA = [
   { id: 'decano', label: 'asuntos decano' },
   { id: 'pregrado', label: 'asuntos pregrado' },
@@ -43,4 +101,3 @@ export const SECCIONES_ORDEN_DIA = [
   { id: 'informe', label: 'informe de comisión académica' },
   { id: 'varios', label: 'asuntos varios' }
 ];
-

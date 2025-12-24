@@ -10,122 +10,247 @@ import { SolicitudDTOPeticion } from '../models/Solicitudes/DTORequest/Solicitud
 import { SolicitudActualizarDTOPeticion } from '../models/Solicitudes/DTORequest/SolicitudActualizarDTOPeticion';
 import { SolicitudPublicaDTOPeticion } from '../models/Solicitudes/DTORequest/SolicitudPublicaDTOPeticion';
 
+/**
+ * Servicio encargado de la gestión de solicitudes y órdenes del día.
+ * Proporciona métodos para crear, consultar, actualizar, buscar,
+ * exportar y descargar información relacionada.
+ *
+ * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class SolicitudesService {
 
+  /**
+   * URL base del servicio de solicitudes.
+   */
   private url = `${environment.apiUrl}/solicitudes`;
 
   constructor(private http: HttpClient) { }
 
+  /**
+   * Obtiene todas las órdenes del día.
+   */
   getOrdenesDelDia(): Observable<OrdenDelDiaDTORespuesta[]> {
     return this.http.get<OrdenDelDiaDTORespuesta[]>(`${this.url}/orden-del-dia`);
   }
 
-  getOrdenesDelDiaPaginado(pagina: number, tamanio: number): Observable<PaginacionRespuestaDTO<OrdenDelDiaDTORespuesta>> {
+  /**
+   * Obtiene las órdenes del día de forma paginada.
+   */
+  getOrdenesDelDiaPaginado(
+    pagina: number,
+    tamanio: number
+  ): Observable<PaginacionRespuestaDTO<OrdenDelDiaDTORespuesta>> {
     return this.http.get<PaginacionRespuestaDTO<OrdenDelDiaDTORespuesta>>(
       `${this.url}/orden-del-dia/paginado?pagina=${pagina}&tamanio=${tamanio}`
     );
   }
 
+  /**
+   * Obtiene la información de una orden del día específica.
+   */
   getOrdenDelDia(uuidOrdenDelDia: string): Observable<OrdenDelDiaDTORespuesta> {
-    return this.http.get<OrdenDelDiaDTORespuesta>(`${this.url}/orden-del-dia/${uuidOrdenDelDia}`);
+    return this.http.get<OrdenDelDiaDTORespuesta>(
+      `${this.url}/orden-del-dia/${uuidOrdenDelDia}`
+    );
   }
 
-  crearOrdenDelDia(peticion: OrdenDelDiaDTOPeticion): Observable<OrdenDelDiaDTORespuesta> {
-    return this.http.post<OrdenDelDiaDTORespuesta>(`${this.url}/orden-del-dia`, peticion);
+  /**
+   * Crea una nueva orden del día.
+   */
+  crearOrdenDelDia(
+    peticion: OrdenDelDiaDTOPeticion
+  ): Observable<OrdenDelDiaDTORespuesta> {
+    return this.http.post<OrdenDelDiaDTORespuesta>(
+      `${this.url}/orden-del-dia`,
+      peticion
+    );
   }
 
-  actualizarOrdenDelDia(uuidOrdenDelDia: string, peticion: OrdenDelDiaDTOPeticion): Observable<OrdenDelDiaDTORespuesta> {
-    return this.http.put<OrdenDelDiaDTORespuesta>(`${this.url}/orden-del-dia/${uuidOrdenDelDia}`, peticion);
+  /**
+   * Actualiza una orden del día existente.
+   */
+  actualizarOrdenDelDia(
+    uuidOrdenDelDia: string,
+    peticion: OrdenDelDiaDTOPeticion
+  ): Observable<OrdenDelDiaDTORespuesta> {
+    return this.http.put<OrdenDelDiaDTORespuesta>(
+      `${this.url}/orden-del-dia/${uuidOrdenDelDia}`,
+      peticion
+    );
   }
 
-  buscarOrdenesDelDia(filtro: string, pagina: number, tamanio: number):
-    Observable<PaginacionRespuestaDTO<OrdenDelDiaDTORespuesta>> {
-
+  /**
+   * Busca órdenes del día por un filtro de texto.
+   */
+  buscarOrdenesDelDia(
+    filtro: string,
+    pagina: number,
+    tamanio: number
+  ): Observable<PaginacionRespuestaDTO<OrdenDelDiaDTORespuesta>> {
     return this.http.get<PaginacionRespuestaDTO<OrdenDelDiaDTORespuesta>>(
       `${this.url}/orden-del-dia/buscar?filtro=${filtro}&pagina=${pagina}&tamanio=${tamanio}`
     );
   }
 
-  getSolicitudesPorOrdenDelDia(uuidOrdenDelDia: string): Observable<SolicitudDTORespuesta[]> {
-    return this.http.get<SolicitudDTORespuesta[]>(`${this.url}/orden-del-dia/${uuidOrdenDelDia}/solicitudes`);
+  /**
+   * Obtiene las solicitudes asociadas a una orden del día.
+   */
+  getSolicitudesPorOrdenDelDia(
+    uuidOrdenDelDia: string
+  ): Observable<SolicitudDTORespuesta[]> {
+    return this.http.get<SolicitudDTORespuesta[]>(
+      `${this.url}/orden-del-dia/${uuidOrdenDelDia}/solicitudes`
+    );
   }
 
+  /**
+   * Obtiene todas las solicitudes.
+   */
   getSolicitudes(): Observable<SolicitudDTORespuesta[]> {
     return this.http.get<SolicitudDTORespuesta[]>(`${this.url}`);
   }
 
-  getSolicitudesPaginado(pagina: number, tamanio: number):
-    Observable<PaginacionRespuestaDTO<SolicitudDTORespuesta>> {
-
+  /**
+   * Obtiene las solicitudes de forma paginada.
+   */
+  getSolicitudesPaginado(
+    pagina: number,
+    tamanio: number
+  ): Observable<PaginacionRespuestaDTO<SolicitudDTORespuesta>> {
     return this.http.get<PaginacionRespuestaDTO<SolicitudDTORespuesta>>(
       `${this.url}/paginado?pagina=${pagina}&tamanio=${tamanio}`
     );
   }
 
+  /**
+   * Obtiene la información de una solicitud específica.
+   */
   getSolicitud(uuidSolicitud: string): Observable<SolicitudDTORespuesta> {
     return this.http.get<SolicitudDTORespuesta>(`${this.url}/${uuidSolicitud}`);
   }
 
-  enviarSolicitud(peticion: SolicitudDTOPeticion, archivos: File[]): Observable<SolicitudDTORespuesta> {
+  /**
+   * Envía una nueva solicitud con archivos adjuntos.
+   */
+  enviarSolicitud(
+    peticion: SolicitudDTOPeticion,
+    archivos: File[]
+  ): Observable<SolicitudDTORespuesta> {
     const formData = new FormData();
-    formData.append("solicitud", new Blob([JSON.stringify(peticion)], { type: 'application/json' }));
+    formData.append(
+      'solicitud',
+      new Blob([JSON.stringify(peticion)], { type: 'application/json' })
+    );
 
     archivos.forEach(file => formData.append('archivos', file));
 
     return this.http.post<SolicitudDTORespuesta>(`${this.url}`, formData);
   }
 
-  enviarSolicitudPublica(peticion: SolicitudPublicaDTOPeticion, archivos: File[]): Observable<SolicitudDTORespuesta> {
+  /**
+   * Envía una solicitud pública con archivos adjuntos.
+   */
+  enviarSolicitudPublica(
+    peticion: SolicitudPublicaDTOPeticion,
+    archivos: File[]
+  ): Observable<SolicitudDTORespuesta> {
     const formData = new FormData();
-    formData.append("solicitud", new Blob([JSON.stringify(peticion)], { type: 'application/json' }));
+    formData.append(
+      'solicitud',
+      new Blob([JSON.stringify(peticion)], { type: 'application/json' })
+    );
 
     archivos.forEach(file => formData.append('archivos', file));
 
-    return this.http.post<SolicitudDTORespuesta>(`${this.url}/public`, formData);
+    return this.http.post<SolicitudDTORespuesta>(
+      `${this.url}/public`,
+      formData
+    );
   }
 
-  actualizarSolicitud(uuidSolicitud: string, peticion: SolicitudActualizarDTOPeticion):
-    Observable<SolicitudDTORespuesta> {
-
-    return this.http.put<SolicitudDTORespuesta>(`${this.url}/${uuidSolicitud}`, peticion);
+  /**
+   * Actualiza una solicitud existente.
+   */
+  actualizarSolicitud(
+    uuidSolicitud: string,
+    peticion: SolicitudActualizarDTOPeticion
+  ): Observable<SolicitudDTORespuesta> {
+    return this.http.put<SolicitudDTORespuesta>(
+      `${this.url}/${uuidSolicitud}`,
+      peticion
+    );
   }
 
-  getSolicitudesPorFuncionario(uuidFuncionario: string, pagina: number, tamanio: number):
-    Observable<PaginacionRespuestaDTO<SolicitudDTORespuesta>> {
-
+  /**
+   * Obtiene las solicitudes asociadas a un funcionario.
+   */
+  getSolicitudesPorFuncionario(
+    uuidFuncionario: string,
+    pagina: number,
+    tamanio: number
+  ): Observable<PaginacionRespuestaDTO<SolicitudDTORespuesta>> {
     return this.http.get<PaginacionRespuestaDTO<SolicitudDTORespuesta>>(
       `${this.url}/funcionario/${uuidFuncionario}?pagina=${pagina}&tamanio=${tamanio}`
     );
   }
 
+  /**
+   * Obtiene las solicitudes por estado.
+   */
   getSolicitudesPorEstado(estado: string): Observable<SolicitudDTORespuesta[]> {
-    return this.http.get<SolicitudDTORespuesta[]>(`${this.url}/estado?estado=${estado}`);
+    return this.http.get<SolicitudDTORespuesta[]>(
+      `${this.url}/estado?estado=${estado}`
+    );
   }
 
-  buscarSolicitudesPorNombre(filtro: string, pagina: number, tamanio: number):
-    Observable<PaginacionRespuestaDTO<SolicitudDTORespuesta>> {
-
+  /**
+   * Busca solicitudes por nombre.
+   */
+  buscarSolicitudesPorNombre(
+    filtro: string,
+    pagina: number,
+    tamanio: number
+  ): Observable<PaginacionRespuestaDTO<SolicitudDTORespuesta>> {
     return this.http.get<PaginacionRespuestaDTO<SolicitudDTORespuesta>>(
       `${this.url}/buscar?filtro=${filtro}&pagina=${pagina}&tamanio=${tamanio}`
     );
   }
 
-  buscarSolicitudesPorNombreYFuncionario(uuidFuncionario: string, filtro: string, pagina: number,tamanio: number): Observable<PaginacionRespuestaDTO<SolicitudDTORespuesta>> {
+  /**
+   * Busca solicitudes por nombre y funcionario.
+   */
+  buscarSolicitudesPorNombreYFuncionario(
+    uuidFuncionario: string,
+    filtro: string,
+    pagina: number,
+    tamanio: number
+  ): Observable<PaginacionRespuestaDTO<SolicitudDTORespuesta>> {
     return this.http.get<PaginacionRespuestaDTO<SolicitudDTORespuesta>>(
       `${this.url}/fun/buscar/?uuidFuncionario=${uuidFuncionario}&filtro=${filtro}&pagina=${pagina}&tamanio=${tamanio}`
     );
   }
 
-  getOrdenesDelDiaPorEstado(estado: boolean): Observable<OrdenDelDiaDTORespuesta[]> {
+  /**
+   * Obtiene órdenes del día según su estado.
+   */
+  getOrdenesDelDiaPorEstado(
+    estado: boolean
+  ): Observable<OrdenDelDiaDTORespuesta[]> {
     return this.http.get<OrdenDelDiaDTORespuesta[]>(
       `${this.url}/orden-del-dia/estado?estado=${estado}`
     );
   }
 
-  descargarAnexosOrdenDelDia(uuidOrden: string, nombreOrden: string): Observable<Blob> {
+  /**
+   * Descarga los anexos asociados a una orden del día.
+   */
+  descargarAnexosOrdenDelDia(
+    uuidOrden: string,
+    nombreOrden: string
+  ): Observable<Blob> {
     const params = { uuidOrden, nombreOrden };
     return this.http.get(`${this.url}/anexos/download`, {
       params,
@@ -133,6 +258,9 @@ export class SolicitudesService {
     });
   }
 
+  /**
+   * Exporta una orden del día en formato descargable.
+   */
   exportarOrdenDelDia(uuidOrden: string): Observable<Blob> {
     return this.http.get(
       `${this.url}/exportar`,
@@ -142,5 +270,4 @@ export class SolicitudesService {
       }
     );
   }
-
 }

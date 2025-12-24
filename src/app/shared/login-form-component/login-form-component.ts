@@ -7,23 +7,53 @@ import { AuthService } from '../../core/services/auth-service';
 import { SesionDTOPeticion } from '../../core/models/Sesión/DTORequest/SesionDTOPeticion';
 import { Router } from '@angular/router';
 import { ErrorHandlerService } from '../../core/services/error-handler-service';
+import { ROLES_FIET } from '../../core/constantes/constantes';
 
+/**
+ * Componente de formulario de login.
+ * Permite ingresar usuario y contraseña, autenticar al usuario y redirigir según rol.
+ * 
+ * @autor Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-login-form-component',
-    imports: [CommonModule, InputTextComponent, InputPasswordComponent, SimpleButtonComponent],
+  imports: [CommonModule, InputTextComponent, InputPasswordComponent, SimpleButtonComponent],
   templateUrl: './login-form-component.html',
   styleUrl: './login-form-component.css'
 })
 export class LoginFormComponent {
+  /**
+   * Nombre de usuario ingresado.
+   */
   username = '';
+
+  /**
+   * Contraseña ingresada.
+   */
   password = '';
-  usuariosFiet: string[] = ['Coordinador Pregrado', 'Coordinador Posgrados', 'Jefe de Departamento', 'Decano', 'Docente']; 
+
+  /**
+   * Lista de roles que pertenecen a usuarios FIET para redirección.
+   */
+  usuariosFiet: string[] = ROLES_FIET; 
+
+  /**
+   * Constructor del componente.
+   * 
+   * @param authService Servicio de autenticación para login de usuarios.
+   * @param errorHandlerService Servicio para manejar errores.
+   * @param router Router para navegación según rol.
+   */
   constructor(
     private authService: AuthService,
     private errorHandlerService: ErrorHandlerService,
     private router: Router
   ) {}
 
+  /**
+   * Envía el formulario de login.
+   * Realiza la autenticación usando `AuthService` y redirige según los roles del usuario.
+   */
   onSubmit(): void {
     const request: SesionDTOPeticion = { username: this.username, password: this.password };
 

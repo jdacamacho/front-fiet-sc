@@ -11,6 +11,11 @@ import { TipoSolicitudDTORespuesta } from '../../../../core/models/TipoSolicitud
 import { AuthService } from '../../../../core/services/auth-service';
 import { EnviarSolicitudUsuarioFietComponent } from '../../../../core/usuario fiet/components/enviar-solicitud-usuario-fiet-component/enviar-solicitud-usuario-fiet-component';
 
+/**
+ * Componente que maneja las solicitudes privadas de un usuario Fiet.
+ * Permite filtrar por tipo de solicitud, ver información detallada y enviar nuevas solicitudes.
+ * Author: Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-usuario-fiet-solicitudes-privadas-content-component',
   imports: [
@@ -26,9 +31,14 @@ import { EnviarSolicitudUsuarioFietComponent } from '../../../../core/usuario fi
   styleUrls: ['./usuario-fiet-solicitudes-privadas-content-component.css']
 })
 export class UsuarioFietSolicitudesPrivadasContentComponent implements OnInit, AfterViewInit {
+  
+  /** Componente de tabla genérica para mostrar solicitudes */
   tableComponent = TableGenericComponent;
+
+  /** Componente de pretitle (botón) */
   pretitleComponentComponent = ButtonComponent;
 
+  /** Botones mostrados en la tarjeta principal */
   buttonsCard: any[] = [
     {
       imgUrl: 'buttons/campana.svg',
@@ -41,29 +51,51 @@ export class UsuarioFietSolicitudesPrivadasContentComponent implements OnInit, A
     }
   ];
 
+  /** Encabezados de la tabla */
   headers: any[] = [
     { title: 'Solicitud', headerTemplate: null }
   ];
 
+  /** Datos paginados mostrados en la tabla */
   paginatedData: any[] = [];
+
+  /** Total de elementos para la paginación */
   totalElements = 0;
+
+  /** Total de páginas para la paginación */
   totalPages = 1;
+
+  /** Página actual */
   currentPage = 1;
+
+  /** Tamaño de página */
   pageSize = 5;
 
+  /** Filtro por tipo de solicitud */
   tipoDeSolicitudFiltro: string = '';
+
+  /** Usuario actual */
   usuario: any;
 
+  /** Template de búsqueda de tipo de solicitud */
   @ViewChild('busquedaTipoSolicitud') busquedaTipoSolicitud!: TemplateRef<any>;
+
+  /** Template de acciones en la tabla */
   @ViewChild('actionTemplate') actionTemplate!: TemplateRef<any>;
 
+  /** Indica si el diálogo de enviar solicitud está visible */
   enviarSolicitudVisible = false;
+
+  /** Indica si el diálogo de información está visible */
   tipoInfoDialogVisible = false;
+
+  /** Objeto seleccionado para mostrar información detallada */
   selectedTipoInfo: any = null;
 
   constructor(private tipoSolicitudesService: TipoSolicitudService, 
               private authService: AuthService) {}
 
+  /** Inicializa el componente y obtiene el usuario actual */
   ngOnInit(): void {
     this.authService.usuario$.subscribe(user => {
       this.usuario = user;
@@ -71,15 +103,20 @@ export class UsuarioFietSolicitudesPrivadasContentComponent implements OnInit, A
     this.loadTiposSolicitudes();
   }
 
+  /** Inicializa templates de encabezado de la tabla después de renderizar */
   ngAfterViewInit(): void {
     this.headers = [
       { title: 'Solicitud', headerTemplate: this.busquedaTipoSolicitud },
     ];
   }
 
+  /**
+   * Carga los tipos de solicitudes del usuario actual
+   * @param page Número de página (por defecto 1)
+   */
   loadTiposSolicitudes(page: number = 1): void {
     const backendPage = page - 1; 
-    let perfilSolicitante = this.usuario?.roles[0].nombre;
+    const perfilSolicitante = this.usuario?.roles[0].nombre;
 
     const observable =
       this.tipoDeSolicitudFiltro.trim() !== ''
@@ -88,13 +125,14 @@ export class UsuarioFietSolicitudesPrivadasContentComponent implements OnInit, A
 
     observable.subscribe({
       next: (respuesta) => {
-        if (respuesta.content.length === 0) {
+        if (!respuesta.content.length) {
           this.paginatedData = [];
           this.totalElements = 0;
           this.totalPages = 1;
           this.currentPage = 1;
           return;
         }
+
         this.paginatedData = (respuesta.content || []).map((tipoSolicitud:any) => ({
           ...tipoSolicitud,
           Solicitud: tipoSolicitud.nombre,
@@ -105,7 +143,7 @@ export class UsuarioFietSolicitudesPrivadasContentComponent implements OnInit, A
         this.totalPages = this.totalElements > 0 ? Math.ceil(this.totalElements / this.pageSize) : 1;
         this.currentPage = Math.min(page, this.totalPages);
       },
-      error: (err) => {
+      error: () => {
         this.paginatedData = [];
         this.totalElements = 0;
         this.totalPages = 1;
@@ -114,17 +152,29 @@ export class UsuarioFietSolicitudesPrivadasContentComponent implements OnInit, A
     });
   }
 
+  /**
+   * Filtra la tabla por tipo de solicitud
+   * @param filtro Texto del filtro
+   */
   onBuscarTipoSolicitud(filtro: string): void {
     this.tipoDeSolicitudFiltro = filtro;
     this.currentPage = 1;
     this.loadTiposSolicitudes(1);
   }
 
+  /**
+   * Cambia la página actual en la tabla
+   * @param page Número de página
+   */
   onPageChange(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.loadTiposSolicitudes(page);
   }
 
+  /**
+   * Muestra información detallada de un tipo de solicitud
+   * @param tipoSolicitud Tipo de solicitud a mostrar
+   */
   protected verMasInfo(tipoSolicitud: TipoSolicitudDTORespuesta): void {
     this.tipoSolicitudesService.getTipoSolicitud(tipoSolicitud.uuidTipoSolicitud).subscribe({
       next: (tipoSolicitudDetallado: TipoSolicitudDTORespuesta) => {

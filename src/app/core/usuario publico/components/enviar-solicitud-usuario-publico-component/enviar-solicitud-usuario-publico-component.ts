@@ -13,6 +13,13 @@ import { TipoSolicitudDTORespuesta } from '../../../models/TipoSolicitud/DTOResp
 import { SolicitudPublicaDTOPeticion } from '../../../models/Solicitudes/DTORequest/SolicitudPublicaDTOPeticion';
 import { TIPOS_DOCUMENTO } from '../../../constantes/constantes';
 
+/**
+ * Componente encargado de permitir a un usuario público
+ * diligenciar y enviar una solicitud mediante un formulario
+ * dividido en varios pasos.
+ *
+ * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-enviar-solicitud-usuario-publico-component',
   standalone: true,
@@ -29,9 +36,20 @@ import { TIPOS_DOCUMENTO } from '../../../constantes/constantes';
 })
 export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
 
+  /**
+   * Controla la visibilidad del diálogo.
+   */
   @Input() visible = false;
+
+  /**
+   * Emite el cambio de visibilidad del componente.
+   */
   @Output() visibleChange = new EventEmitter<boolean>();
 
+  /**
+   * Modelo que almacena la información completa
+   * de la solicitud pública a enviar.
+   */
   solicitudPublica: SolicitudPublicaDTOPeticion = {
     nombre: '',
     descripcion: '',
@@ -47,6 +65,9 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
     }
   };
 
+  /**
+   * Configuración de los pasos del formulario.
+   */
   steps: {
     title: string;
     contentTemplate: TemplateRef<any>;
@@ -57,7 +78,7 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
   @ViewChild('step2', { static: true }) step2Template!: TemplateRef<any>;
   @ViewChild('step3', { static: true }) step3Template!: TemplateRef<any>;
 
-  // Step 1
+  /** Controles del paso 1 */
   @ViewChild('inputTipoDocumento') inputTipoDocumento!: InputSelectComponent;
   @ViewChild('inputNumeroDocumento') inputNumeroDocumento!: InputTextComponent;
   @ViewChild('inputNombres') inputNombres!: InputTextComponent;
@@ -65,20 +86,42 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
   @ViewChild('inputCorreo') inputCorreo!: InputTextComponent;
   @ViewChild('inputTelefono') inputTelefono!: InputTextComponent;
 
-  // Step 2
+  /** Controles del paso 2 */
   @ViewChild('inputNombreSolicitud') inputNombreSolicitud!: InputTextComponent;
   @ViewChild('inputDescripcionSolicitud') inputDescripcionSolicitud!: InputTextTareaComponent;
   @ViewChild('inputTipoSolicitud') inputTipoSolicitud!: InputSelectComponent;
 
-  // Step 3 – Anexos (muchos)
+  /** Controles del paso 3 (anexos) */
   @ViewChildren('inputAnexo') inputAnexos!: QueryList<InputAnexoUploadComponent>;
 
+  /**
+   * Opciones para el selector de tipos de solicitud.
+   */
   tiposSolicitudOptions: { label: string; value: string }[] = [];
+
+  /**
+   * Lista completa de tipos de solicitud disponibles.
+   */
   tiposSolicitud: TipoSolicitudDTORespuesta[] = [];
+
+  /**
+   * Tipo de solicitud seleccionado actualmente.
+   */
   tipoSolicitudSeleccionado: TipoSolicitudDTORespuesta | null = null;
 
+  /**
+   * Archivos anexos cargados por el usuario.
+   */
   archivosAnexos: File[] = [];
+
+  /**
+   * Información de los anexos asociados a la solicitud.
+   */
   anexosSolicitud: { nombre: string }[] = [];
+
+  /**
+   * Tipos de documento disponibles.
+   */
   tiposDocumento = TIPOS_DOCUMENTO;
 
   constructor(
@@ -88,6 +131,10 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
     private errorHandlerService: ErrorHandlerService
   ) {}
 
+  /**
+   * Inicializa el componente, configura los pasos
+   * del formulario y carga los tipos de solicitud.
+   */
   ngOnInit(): void {
     this.steps = [
       {
@@ -109,6 +156,10 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
     this.cargarTiposSolicitudPublicos();
   }
 
+  /**
+   * Valida si se puede continuar desde el paso 1.
+   * @returns true si todos los campos obligatorios están completos
+   */
   canContinueStep1(): boolean {
     const i = this.solicitudPublica.informacionSolicitante;
     return !!(
@@ -121,6 +172,10 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
     );
   }
 
+  /**
+   * Valida si se puede continuar desde el paso 2.
+   * @returns true si la información mínima de la solicitud es válida
+   */
   canContinueStep2(): boolean {
     return !!(
       this.solicitudPublica.nombre?.trim() &&
@@ -128,6 +183,10 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
     );
   }
 
+  /**
+   * Obtiene los tipos de solicitud disponibles
+   * para el perfil de solicitante público.
+   */
   cargarTiposSolicitudPublicos(): void {
     this.tipoSolicitudService.getTiposSolicitudPorPerfil('Solicitante Publico')
       .subscribe(res => {
@@ -139,21 +198,39 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
       });
   }
 
+  /**
+   * Maneja el cambio del tipo de solicitud seleccionado.
+   * @param uuid identificador del tipo de solicitud
+   */
   onTipoSolicitudChange(uuid: string): void {
     this.tipoSolicitudSeleccionado =
       this.tiposSolicitud.find(t => t.uuidTipoSolicitud === uuid) || null;
   }
 
+  /**
+   * Registra un archivo anexo cargado.
+   * @param file archivo cargado
+   * @param index posición del anexo
+   * @param nombre nombre del tipo de anexo
+   */
   onArchivoCargado(file: File, index: number, nombre: string): void {
     this.archivosAnexos[index] = file;
     this.anexosSolicitud[index] = { nombre };
   }
 
+  /**
+   * Elimina un archivo anexo.
+   * @param index índice del anexo a remover
+   */
   onArchivoRemovido(index: number): void {
     this.archivosAnexos.splice(index, 1);
     this.anexosSolicitud.splice(index, 1);
   }
 
+  /**
+   * Envía la solicitud pública junto con sus anexos.
+   * Realiza validaciones de obligatoriedad antes del envío.
+   */
   enviarSolicitud(): void {
     if (!this.tipoSolicitudSeleccionado) return;
 
@@ -175,10 +252,10 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
       }
     });
 
-     this.solicitudesService
+    this.solicitudesService
       .enviarSolicitudPublica(this.solicitudPublica, archivosOrdenados)
       .subscribe({
-        next: res => {
+        next: () => {
           this.toastService.showSuccess('Éxito', 'Solicitud enviada correctamente');
           this.cerrar();
         },
@@ -188,12 +265,19 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
       });
   }
 
+  /**
+   * Cierra el diálogo y limpia el formulario.
+   */
   cerrar(): void {
     this.visible = false;
     this.visibleChange.emit(false);
     this.resetFormulario();
   }
 
+  /**
+   * Restaura el formulario a su estado inicial
+   * y reinicia todos los controles.
+   */
   private resetFormulario(): void {
     this.solicitudPublica = {
       nombre: '',
@@ -213,7 +297,6 @@ export class EnviarSolicitudUsuarioPublicoComponent implements OnInit {
     this.archivosAnexos = [];
     this.anexosSolicitud = [];
     this.tipoSolicitudSeleccionado = null;
-
 
     this.inputTipoDocumento?.reset();
     this.inputNumeroDocumento?.reset();

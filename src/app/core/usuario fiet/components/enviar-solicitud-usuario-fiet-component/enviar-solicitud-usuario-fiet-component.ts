@@ -13,6 +13,13 @@ import { InputAnexoUploadComponent } from '../../../../shared/inputs/input-anexo
 import { ToastService } from '../../../services/toast-service';
 import { ErrorHandlerService } from '../../../services/error-handler-service';
 
+/**
+ * Componente encargado de permitir a los usuarios FIET
+ * enviar solicitudes con información básica y anexos requeridos.
+ * Implementa un formulario por pasos.
+ *
+ * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-enviar-solicitud-usuario-fiet-component',
   standalone: true,
@@ -29,9 +36,19 @@ import { ErrorHandlerService } from '../../../services/error-handler-service';
 })
 export class EnviarSolicitudUsuarioFietComponent implements OnInit {
 
+  /**
+   * Controla la visibilidad del diálogo.
+   */
   @Input() visible = false;
+
+  /**
+   * Emite cambios en la visibilidad del diálogo.
+   */
   @Output() visibleChange = new EventEmitter<boolean>();
 
+  /**
+   * Modelo que almacena la información de la nueva solicitud.
+   */
   nuevaSolicitud: SolicitudDTOPeticion = {
     consecutivo: '',
     nombre: '',
@@ -41,26 +58,63 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
     uuidOrdenDelDia: ''
   };
 
+  /**
+   * Definición de los pasos del formulario.
+   */
   steps: {
     title: string;
     contentTemplate: TemplateRef<any>;
     canContinue?: () => boolean;
   }[] = [];
 
+  /**
+   * Plantilla del primer paso.
+   */
   @ViewChild('step1', { static: true }) step1Template!: TemplateRef<any>;
-  @ViewChild('step2', { static: true }) step2Template!: TemplateRef<any>;
-  
 
+  /**
+   * Plantilla del segundo paso.
+   */
+  @ViewChild('step2', { static: true }) step2Template!: TemplateRef<any>;
+
+  /**
+   * Opciones de tipos de solicitud para el selector.
+   */
   tiposSolicitudOptions: { label: string; value: string }[] = [];
+
+  /**
+   * Opciones de órdenes del día para el selector.
+   */
   ordenesDelDiaOptions: { label: string; value: string }[] = [];
 
-  tipoSolicitudSeleccionado: TipoSolicitudDTORespuesta | null = null; 
+  /**
+   * Tipo de solicitud actualmente seleccionado.
+   */
+  tipoSolicitudSeleccionado: TipoSolicitudDTORespuesta | null = null;
+
+  /**
+   * Lista de tipos de solicitud disponibles.
+   */
   tiposSolicitud: TipoSolicitudDTORespuesta[] = [];
 
+  /**
+   * Información del usuario autenticado.
+   */
   usuario: any;
 
+  /**
+   * Archivos anexos cargados por el usuario.
+   */
   archivosAnexos: File[] = [];
+
+  /**
+   * Metadatos de los anexos de la solicitud.
+   */
   anexosSolicitud: { nombre: string }[] = [];
+
+  /**
+   * Mapa de archivos asociados a cada tipo de anexo.
+   */
   archivosPorTipo: Record<string, File> = {};
 
   constructor(
@@ -71,6 +125,10 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
     private errorHandlerService: ErrorHandlerService
   ) {}
 
+  /**
+   * Inicializa los pasos del formulario y carga
+   * los datos necesarios según el usuario autenticado.
+   */
   ngOnInit(): void {
     this.steps = [
       {
@@ -93,6 +151,9 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
     });
   }
 
+  /**
+   * Valida si se puede continuar al segundo paso del formulario.
+   */
   canContinueStep1(): boolean {
     return !!(
       this.nuevaSolicitud.nombre?.trim() &&
@@ -101,6 +162,11 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
     );
   }
 
+  /**
+   * Carga los tipos de solicitud disponibles según el perfil del usuario.
+   *
+   * @param perfil Perfil del usuario
+   */
   cargarTiposSolicitud(perfil: string): void {
     this.tipoSolicitudService.getTiposSolicitudPorPerfil(perfil).subscribe(res => {
       this.tiposSolicitud = res;
@@ -112,11 +178,19 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
     });
   }
 
+  /**
+   * Maneja el cambio del tipo de solicitud seleccionado.
+   *
+   * @param uuid Identificador del tipo de solicitud
+   */
   onTipoSolicitudChange(uuid: string): void {
     this.tipoSolicitudSeleccionado =
       this.tiposSolicitud.find(t => t.uuidTipoSolicitud === uuid) || null;
   }
 
+  /**
+   * Carga las órdenes del día activas.
+   */
   cargarOrdenesDelDia(): void {
     this.solicitudesService.getOrdenesDelDiaPorEstado(true).subscribe(res => {
       this.ordenesDelDiaOptions = res.map(o => ({
@@ -126,9 +200,11 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
     });
   }
 
+  /**
+   * Envía la solicitud junto con sus anexos al backend.
+   */
   enviarSolicitud(): void {
-    if (!this.tipoSolicitudSeleccionado)
-      return;
+    if (!this.tipoSolicitudSeleccionado) return;
 
     for (let i = 0; i < this.tipoSolicitudSeleccionado.anexos.length; i++) {
       const tipoAnexo = this.tipoSolicitudSeleccionado.anexos[i];
@@ -149,25 +225,29 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
       }
     });
 
-    this.solicitudesService
-      .enviarSolicitud(this.nuevaSolicitud, archivosOrdenados)
-      .subscribe({
-        next: res => {
-          this.toastService.showSuccess('Éxito', 'Solicitud enviada correctamente');
-          this.cerrar();
-        },
-        error: err => {
-          this.errorHandlerService.handleError(err, 'Error enviando la solicitud');
-        }
-      });
+    this.solicitudesService.enviarSolicitud(this.nuevaSolicitud, archivosOrdenados).subscribe({
+      next: () => {
+        this.toastService.showSuccess('Éxito', 'Solicitud enviada correctamente');
+        this.cerrar();
+      },
+      error: err => {
+        this.errorHandlerService.handleError(err, 'Error enviando la solicitud');
+      }
+    });
   }
 
+  /**
+   * Cierra el diálogo y limpia el formulario.
+   */
   cerrar(): void {
     this.visible = false;
     this.visibleChange.emit(false);
     this.resetFormulario();
   }
 
+  /**
+   * Restablece los valores del formulario.
+   */
   private resetFormulario(): void {
     this.nuevaSolicitud = {
       consecutivo: '',
@@ -183,14 +263,26 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
     this.tipoSolicitudSeleccionado = null;
   }
 
+  /**
+   * Maneja la carga de un archivo anexo.
+   *
+   * @param file Archivo cargado
+   * @param index Índice del anexo
+   * @param nombre Nombre del anexo
+   */
   onArchivoCargado(file: File, index: number, nombre: string): void {
     this.archivosAnexos[index] = file;
     this.anexosSolicitud[index] = { nombre };
   }
 
+  /**
+   * Elimina un archivo anexo cargado.
+   *
+   * @param index Índice del anexo
+   */
   onArchivoRemovido(index: number): void {
     this.archivosAnexos.splice(index, 1);
     this.anexosSolicitud.splice(index, 1);
   }
-  
+
 }

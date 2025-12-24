@@ -3,6 +3,12 @@ import { Component } from '@angular/core';
 import { ContentComponent } from '../content/content-component/content-component';
 import { FunSolicitudesContentComponent } from '../content/fun-solicitudes-content-component/fun-solicitudes-content-component';
 
+/**
+ * Componente de funcionalidad de solicitudes para funcionarios.
+ * Permite mostrar el contenido específico de solicitudes mediante un componente hijo.
+ * 
+ * @autor Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-fun-solicitudes-component',
   imports: [CommonModule, ContentComponent],
@@ -10,5 +16,8 @@ import { FunSolicitudesContentComponent } from '../content/fun-solicitudes-conte
   styleUrl: './fun-solicitudes-component.css'
 })
 export class FunSolicitudesComponent {
-  content = FunSolicitudesContentComponent
+  /**
+   * Componente de contenido que se mostrará dentro del componente principal.
+   */
+  content = FunSolicitudesContentComponent;
 }
