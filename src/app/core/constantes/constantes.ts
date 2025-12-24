@@ -30,7 +30,7 @@ export const SECCIONES = [
 export const ESTADOS_SOLICITUD = [
   { label: 'SIN RESPONDER', value: 'SIN RESPONDER' },
   { label: 'RECHAZADO', value: 'RECHAZADO' },
-  { label: 'PENDIENTE AL ORDEN DEL DÍA', value: 'PENDIENTE AL OREN DEL DÍA' },
+  { label: 'PENDIENTE AL ORDEN DEL DÍA', value: 'PENDIENTE AL ORDEN DEL DÍA' },
   { label: 'AGREGADO EN EL ORDEN DEL DÍA', value: 'AGREGADO EN EL ORDEN DEL DÍA' }
 ];
 
