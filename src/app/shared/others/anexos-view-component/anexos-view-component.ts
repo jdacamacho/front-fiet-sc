@@ -9,6 +9,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
  * 
  * @autor Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
  */
+import { environment } from '../../../../enviroments/environment';
+
 @Component({
   selector: 'app-anexos-view-component',
   imports: [CommonModule],
@@ -34,7 +36,8 @@ export class AnexosViewComponent {
       'Authorization': `Bearer ${this.getToken()}`
     });
 
-    this.http.get(anexo.urlAnexo, { responseType: 'blob', headers }).subscribe({
+    const url = `${environment.domain}${anexo.urlAnexo.replace(/^\/+/, '')}`;
+    this.http.get(url, { responseType: 'blob', headers }).subscribe({
       next: (blob) => {
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
