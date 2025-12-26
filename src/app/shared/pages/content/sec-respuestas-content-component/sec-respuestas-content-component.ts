@@ -10,6 +10,13 @@ import { GenericDialogInfoComponent } from '../../../generic-dialog-info-compone
 import { DialogGestionRespuestaComponent } from '../../../dialog-gestion-respuesta-component/dialog-gestion-respuesta-component';
 import { DescargarRespuestaComponent } from '../../../descargar-respuesta-component/descargar-respuesta-component';
 
+/**
+ * Componente encargado de gestionar y mostrar las respuestas de solicitudes.
+ * Permite paginar, buscar, visualizar detalles y gestionar la carga de respuestas.
+ *
+ * @author Julian David Camacho Erazo
+ * {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-sec-respuestas-content-component',
   standalone: true,
@@ -21,41 +28,68 @@ import { DescargarRespuestaComponent } from '../../../descargar-respuesta-compon
     ButtonComponent,
     GenericDialogInfoComponent,
     DialogGestionRespuestaComponent,
-    DescargarRespuestaComponent
+    DescargarRespuestaComponent,
   ],
   templateUrl: './sec-respuestas-content-component.html',
   styleUrl: './sec-respuestas-content-component.css',
 })
 export class SecRespuestasContentComponent implements OnInit, AfterViewInit {
+  /** Template para la búsqueda de solicitudes */
   @ViewChild('busquedaSolicitud') busquedaSolicitud!: TemplateRef<any>;
 
+  /** Componente de tabla genérica */
   tableComponent = TableGenericComponent;
+
+  /** Componente del botón en la cabecera */
   pretitleComponentComponent = ButtonComponent;
 
+  /** Controla la visibilidad del diálogo de gestión */
   dialogGestionVisible = false;
+
+  /** UUID de la respuesta seleccionada para gestión */
   selectedRespuestaUuid!: string;
 
+  /** Encabezados de la tabla */
   headers = [{ title: 'solicitud', headerTemplate: this.busquedaSolicitud }, { title: 'estado' }];
+
+  /** Datos paginados de las respuestas */
   paginatedData: any[] = [];
 
+  /** Página actual */
   currentPage = 1;
+
+  /** Tamaño de página para la paginación */
   pageSize = 5;
+
+  /** Total de elementos obtenidos */
   totalElements = 0;
+
+  /** Total de páginas calculadas */
   totalPages = 1;
+
+  /** Búsqueda actual realizada */
   busquedaActual = '';
 
+  /** Controla la visibilidad del diálogo de información detallada */
   respuestaInfoDialogVisible = false;
+
+  /** Respuesta seleccionada para mostrar información detallada */
   selectedRespuestaInfo: any = null;
 
+  /** URL del archivo de respuesta descargable */
   respuestaUrl: string | null = null;
+
+  /** Nombre del archivo de respuesta descargable */
   nombreArchivoRespuesta: string | null = null;
 
   constructor(private respuestasService: RespuestasService) {}
 
+  /** Inicializa la carga de respuestas al iniciar el componente */
   ngOnInit(): void {
     this.cargarRespuestas();
   }
 
+  /** Configura los encabezados de la tabla después de inicializar la vista */
   ngAfterViewInit(): void {
     this.headers = [
       { title: 'solicitud', headerTemplate: this.busquedaSolicitud },
@@ -63,6 +97,11 @@ export class SecRespuestasContentComponent implements OnInit, AfterViewInit {
     ];
   }
 
+  /**
+   * Carga las respuestas desde el servicio con soporte para paginación y búsqueda.
+   * @param page Página a cargar (por defecto 1)
+   * @param busqueda Término de búsqueda para filtrar solicitudes
+   */
   cargarRespuestas(page: number = 1, busqueda: string = ''): void {
     const backendPage = page - 1;
 
@@ -107,19 +146,29 @@ export class SecRespuestasContentComponent implements OnInit, AfterViewInit {
     });
   }
 
-  /** Buscar por nombre de solicitud */
+  /**
+   * Busca respuestas filtrando por el nombre de la solicitud.
+   * Reinicia la paginación.
+   * @param nombre Nombre de la solicitud a buscar
+   */
   onBuscarSolicitud(nombre: string): void {
     this.currentPage = 1;
     this.cargarRespuestas(1, nombre);
   }
 
-  /** Cambio de página */
+  /**
+   * Cambia la página actual y carga los datos correspondientes.
+   * @param page Número de página a mostrar
+   */
   onPageChange(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.cargarRespuestas(page, this.busquedaActual);
   }
 
-  /** Ver información detallada */
+  /**
+   * Muestra información detallada de la respuesta seleccionada en un diálogo.
+   * @param respuesta Respuesta seleccionada
+   */
   verMasInfo(respuesta: any): void {
     this.respuestasService.getRespuesta(respuesta.uuidRespuesta).subscribe({
       next: (detalle) => {
@@ -146,7 +195,6 @@ export class SecRespuestasContentComponent implements OnInit, AfterViewInit {
           this.respuestaUrl = detalle.urlRespuesta;
           const partes = detalle.urlRespuesta.split('/');
           this.nombreArchivoRespuesta = partes.pop() ?? null;
-
         } else {
           this.respuestaUrl = null;
           this.nombreArchivoRespuesta = null;
@@ -158,7 +206,10 @@ export class SecRespuestasContentComponent implements OnInit, AfterViewInit {
     });
   }
 
-  /** Ver información detallada */
+  /**
+   * Abre el diálogo para cargar o gestionar la respuesta seleccionada.
+   * @param row Fila de la tabla correspondiente a la respuesta
+   */
   abrirCargarRespuesta(row: any): void {
     this.selectedRespuestaUuid = row.uuidRespuesta;
     this.dialogGestionVisible = true;

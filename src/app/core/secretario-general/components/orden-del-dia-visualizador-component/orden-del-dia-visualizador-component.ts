@@ -299,6 +299,10 @@ export class OrdenDelDiaVisualizadorComponent {
     });
   }
 
+  /**
+   * Abre el formulario para agregar o modificar la información de la respuesta
+   * @param solicitud solicitud a asignar o modificar respuesta.
+   */
   abrirFormularioRespuesta(solicitud: SolicitudDTORespuesta) {
     this.inputTipoRespuesta.reset();
     this.inputConsecutivo.reset();

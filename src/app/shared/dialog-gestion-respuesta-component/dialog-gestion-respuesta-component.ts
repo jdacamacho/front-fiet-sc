@@ -12,11 +12,18 @@ import { RespuestaDTORespuesta } from '../../core/models/Respuesta/DTOResponse/R
 import { SolicitudDTORespuesta } from '../../core/models/Solicitudes/DTOResponse/SolicitudDTORespuesta';
 import { SolicitudActualizarDTOPeticion } from '../../core/models/Solicitudes/DTORequest/SolicitudActualizarDTOPeticion';
 import { AGREGADO_EN_EL_ORDEN_DEL_DIA, RESPONDIDA } from '../../core/constantes/constantes';
-import { switchMap } from 'rxjs';
-import { of } from 'rxjs';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs';
+import { switchMap, of, Observable, map } from 'rxjs';
 
+/**
+ * Componente de diálogo para la gestión de respuestas.
+ * Permite cargar, eliminar y visualizar respuestas de solicitudes.
+ * Actualiza automáticamente el estado de la solicitud asociada según las acciones realizadas.
+ * 
+ * Soporta notificación de éxito y manejo de errores mediante servicios dedicados.
+ * 
+ * @author Julian David Camacho Erazo
+ * {@literal <jdacamacho@unicauca.edu.co>}
+ */
 @Component({
   selector: 'app-dialog-gestion-respuesta-component',
   imports: [
@@ -29,16 +36,33 @@ import { map } from 'rxjs';
   templateUrl: './dialog-gestion-respuesta-component.html',
   styleUrl: './dialog-gestion-respuesta-component.css'
 })
-export class DialogGestionRespuestaComponent implements OnChanges{
+export class DialogGestionRespuestaComponent implements OnChanges {
+
+  /** Indica si el diálogo es visible */
   @Input() visible = false;
+
+  /** UUID de la respuesta a gestionar */
   @Input() uuidRespuesta!: string;
 
+  /** Evento que emite cambios de visibilidad */
   @Output() visibleChange = new EventEmitter<boolean>();
+
+  /** Evento que se emite cuando se modifica una respuesta */
   @Output() respuestaModificada = new EventEmitter<void>();
 
+  /** Respuesta cargada actualmente */
   respuesta: any = null;
+
+  /** Indica si el componente está cargando datos */
   cargando = false;
 
+  /**
+   * Constructor del componente
+   * @param respuestasService Servicio para operaciones sobre respuestas
+   * @param solicitudesService Servicio para operaciones sobre solicitudes
+   * @param toastService Servicio para mostrar mensajes emergentes
+   * @param errorHandlerService Servicio para manejo de errores
+   */
   constructor(
     private respuestasService: RespuestasService,
     private solicitudesService: SolicitudesService,
@@ -46,12 +70,14 @@ export class DialogGestionRespuestaComponent implements OnChanges{
     private errorHandlerService: ErrorHandlerService  
   ) {}
 
+  /** Detecta cambios en las propiedades de entrada y carga la respuesta si el diálogo está visible */
   ngOnChanges(): void {
     if (this.visible && this.uuidRespuesta) {
       this.cargarRespuesta();
     }
   }
 
+  /** Carga la respuesta asociada al UUID proporcionado */
   private cargarRespuesta(): void {
     this.cargando = true;
     this.respuestasService.getRespuesta(this.uuidRespuesta).subscribe({
@@ -66,12 +92,17 @@ export class DialogGestionRespuestaComponent implements OnChanges{
     });
   }
 
+  /** Cierra el diálogo y emite el cambio de visibilidad */
   cerrar(): void {
     this.visible = false;
     this.visibleChange.emit(false);
   }
 
-  /** Se ejecuta cuando se sube un archivo */
+  /**
+   * Maneja la carga de un archivo de respuesta.
+   * Actualiza el estado de la solicitud a RESPONDIDA y notifica éxito.
+   * @param file Archivo seleccionado
+   */
   onArchivoSeleccionado(file: File): void {
     this.respuestasService.responderSolicitud(this.uuidRespuesta, file)
       .pipe(
@@ -81,7 +112,7 @@ export class DialogGestionRespuestaComponent implements OnChanges{
         next: () => {
           this.cargarRespuesta();
           this.toastService.showSuccess('Éxito', 'Se ha respondido a la solicitud');
-          this.respuestaModificada.emit(); // ahora se emite después de actualizar el estado
+          this.respuestaModificada.emit();
         },
         error: err => {
           this.errorHandlerService.handleError(err, 'Error Cargando Respuesta', 'No se pudo cargar la respuesta');
@@ -89,7 +120,10 @@ export class DialogGestionRespuestaComponent implements OnChanges{
       });
   }
 
-  /** Se ejecuta cuando se elimina el archivo */
+  /**
+   * Maneja la eliminación de un archivo de respuesta.
+   * Actualiza el estado de la solicitud a AGREGADO_EN_EL_ORDEN_DEL_DIA y notifica éxito.
+   */
   onArchivoEliminado(): void {
     this.respuestasService.eliminarArchivoRespuesta(this.uuidRespuesta)
       .pipe(
@@ -99,7 +133,7 @@ export class DialogGestionRespuestaComponent implements OnChanges{
         next: () => {
           this.cargarRespuesta();
           this.toastService.showSuccess('Éxito', 'Se ha eliminado la respuesta');
-          this.respuestaModificada.emit(); // se emite después de actualizar
+          this.respuestaModificada.emit();
         },
         error: err => {
           this.errorHandlerService.handleError(err, 'Error Eliminando Respuesta', 'No se pudo eliminar la respuesta');
@@ -107,7 +141,12 @@ export class DialogGestionRespuestaComponent implements OnChanges{
       });
   }
 
-  /** Actualiza el estado de la solicitud asociada a una respuesta */
+  /**
+   * Actualiza el estado de la solicitud asociada a una respuesta.
+   * @param uuidRespuesta UUID de la respuesta
+   * @param nuevoEstado Nuevo estado de la solicitud
+   * @returns Observable<void> que indica la finalización de la operación
+   */
   private actualizarEstadoSolicitud(uuidRespuesta: string, nuevoEstado: string): Observable<void> {
     return this.respuestasService.getRespuesta(uuidRespuesta).pipe(
       switchMap((resp: RespuestaDTORespuesta) => {
@@ -128,8 +167,7 @@ export class DialogGestionRespuestaComponent implements OnChanges{
           })
         );
       }),
-      map(() => void 0) // <-- esto fuerza que el Observable sea void
+      map(() => void 0) 
     );
   }
-
 }
