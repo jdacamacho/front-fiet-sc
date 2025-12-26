@@ -145,7 +145,10 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
     this.inputDescripcion.touched = true;
     this.inputEstado.touched = true;
 
-    if (this.inputDescripcion.isInvalid() || this.inputEstado.isInvalid()) return; 
+    if (this.inputDescripcion.isInvalid() || this.inputEstado.isInvalid()){
+      this.toastService.showError('Error', 'Completa todos los campos requeridos.');
+      return;
+    }
 
     const rolActualizado: RolDTOPeticion = {
       descripcion: this.selectedRolForm.descripcion,
@@ -162,7 +165,6 @@ export class RolesContentComponent implements OnInit, AfterViewInit {
         this.toastService.showSuccess('Éxito', 'Rol actualizado correctamente');
       },
       error: (err) => {
-        this.rolFormDialogVisible = false;
         this.errorHandlerService.handleError(err, 'Error Actualizando el Rol', 'No se pudo actualizar el Rol');
       }
     });

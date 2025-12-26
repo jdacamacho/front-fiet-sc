@@ -3,7 +3,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { SimpleButtonComponent } from '../../../../shared/buttons/simple-button-component/simple-button-component';
-import { SECCIONES_ORDEN_DIA } from '../../../constantes/constantes';
+import { SECCIONES_ORDEN_DIA, TIPOS_RESPUESTAS } from '../../../constantes/constantes';
 import { OrdenDelDiaDTORespuesta } from '../../../models/Solicitudes/DTOResponse/OrdenDelDiaDTORespuesta';
 import { SolicitudesService } from '../../../services/solicitudes-service';
 import { SolicitudDTORespuesta } from '../../../models/Solicitudes/DTOResponse/SolicitudDTORespuesta';
@@ -17,6 +17,11 @@ import { AGREGADO_EN_EL_ORDEN_DEL_DIA } from '../../../constantes/constantes';
 import { ToastService } from '../../../services/toast-service';
 import { ErrorHandlerService } from '../../../services/error-handler-service';
 import { SimpleButtonGroupComponent } from '../../../../shared/buttons/simple-button-group-component/simple-button-group-component';
+import { RespuestaDTOPeticion } from '../../../models/Respuesta/DTORequest/RespuestaDTOPeticion';
+import { InputTextComponent } from '../../../../shared/inputs/input-text-component/input-text-component';
+import { InputTextTareaComponent } from '../../../../shared/inputs/input-text-tarea-component/input-text-tarea-component';
+import { RespuestasService } from '../../../services/respuesta-service';
+import { GenericDialogFormComponent } from '../../../../shared/generic-dialog-form-component/generic-dialog-form-component';
 
 /**
  * Componente visualizador del Orden del Día.
@@ -37,7 +42,10 @@ import { SimpleButtonGroupComponent } from '../../../../shared/buttons/simple-bu
     InputSelectComponent,
     ButtonComponent,
     SimpleButtonGroupComponent,
-  ],
+    GenericDialogFormComponent,
+    InputTextComponent,
+    InputTextTareaComponent
+],
   templateUrl: './orden-del-dia-visualizador-component.html',
   styleUrl: './orden-del-dia-visualizador-component.css',
 })
@@ -68,8 +76,18 @@ export class OrdenDelDiaVisualizadorComponent {
    */
   solicitudInfoVisible = false;
 
+  // Diálogo de edición de solicitud / asignar respuesta
+  respuestaFormDialogVisible = false;
+
+  selectedRespuestaForm: RespuestaDTOPeticion = {
+    tipoRespuesta: '',
+    consecutivoFiet: '',
+    respuestaConsejo: '',
+    indicaciones: ''
+  };
+
   /**
-   * Información seleccionada de la solicitud (no utilizada actualmente).
+   * Información seleccionada de la solicitud.
    */
   solicitudInfoSeleccionada: any = null;
 
@@ -98,10 +116,35 @@ export class OrdenDelDiaVisualizadorComponent {
    */
   solicitudSeleccionadaParaAgregar: string | null = null;
 
+  /** /
+  * Tipos de Respuesta.
+  */ 
+  tiposRespuesta = TIPOS_RESPUESTAS;
+
   /**
    * Referencia al componente select de solicitudes.
    */
   @ViewChild('inputSolicitudAgregar') inputSolicitudAgregar!: InputSelectComponent;
+
+  /**
+   * Referencia al componente select del tipo de respuesta.
+   */
+  @ViewChild('tipoRespuesta') inputTipoRespuesta!: InputSelectComponent;
+
+  /**
+   * Referencia al componente select del consecutivo fiet.
+   */
+  @ViewChild('consecutivoFiet') inputConsecutivo!: InputTextComponent;
+
+  /**
+   * Referencia al componente select del consecutivo fiet.
+   */
+  @ViewChild('respuestaConsejo') inputRespuestaConsejo!: InputTextTareaComponent;
+
+  /**
+   * Referencia al componente select del consecutivo fiet.
+   */
+  @ViewChild('indicaciones') inputIndicaciones!: InputTextTareaComponent;
 
   /**
    * Solicitudes agrupadas por sección del orden del día.
@@ -151,7 +194,8 @@ export class OrdenDelDiaVisualizadorComponent {
   constructor(
     private solicitudesService: SolicitudesService,
     private toastService: ToastService,
-    private handlerError: ErrorHandlerService
+    private handlerError: ErrorHandlerService,
+    private respuestaService: RespuestasService
   ) {}
 
   /**
@@ -255,12 +299,70 @@ export class OrdenDelDiaVisualizadorComponent {
     });
   }
 
+  abrirFormularioRespuesta(solicitud: SolicitudDTORespuesta) {
+    this.inputTipoRespuesta.reset();
+    this.inputConsecutivo.reset();
+    this.inputRespuestaConsejo.reset();
+
+    this.selectedRespuestaForm = {
+      tipoRespuesta: '',
+      consecutivoFiet: '',
+      respuestaConsejo: '',
+      indicaciones: ''
+    }; 
+
+    this.respuestaService.getRespuestaPorSolicitud(solicitud.uuidSolicitud).subscribe({
+      next: (res) => {
+        this.selectedRespuestaForm = {
+          tipoRespuesta: res.tipoRespuesta,
+          consecutivoFiet: res.consecutivoFiet,
+          respuestaConsejo: res.respuestaConsejo,
+          indicaciones: res.indicaciones
+        };
+
+        this.solicitudInfoSeleccionada = solicitud;
+      },
+      error: () => {
+        this.selectedRespuestaForm = {
+          tipoRespuesta: '',
+          consecutivoFiet: '',
+          respuestaConsejo: '',
+          indicaciones: ''
+        }; 
+
+        this.solicitudInfoSeleccionada = {};
+      },
+    });
+    this.respuestaFormDialogVisible = true;
+  }
+
   /**
    * Método pendiente para modificar una solicitud.
    * @param solicitud Solicitud a modificar
    */
-  modificarSolicitud(solicitud: SolicitudDTORespuesta): void {
-    console.log('Modificar solicitud (pendiente):', solicitud);
+  modificarSolicitud(): void {
+    this.inputTipoRespuesta.touched = true;
+    this.inputConsecutivo.touched = true;
+    this.inputRespuestaConsejo.touched = true;
+
+    if(
+      this.inputTipoRespuesta.isInvalid() ||
+      this.inputConsecutivo.isInvalid() || 
+      this.inputRespuestaConsejo.isInvalid()
+    ){
+      this.toastService.showError('Error', 'Completa todos los campos requeridos.');
+      return;
+    }
+
+    this.respuestaService.registrarRespuesta(this.solicitudInfoSeleccionada.uuidSolicitud , this.selectedRespuestaForm).subscribe({
+      next: (res) => {
+        this.toastService.showSuccess('Éxito', 'Respuesta guardada correctamente');
+        this.respuestaFormDialogVisible = false;
+      },
+      error: (err) => {
+        this.handlerError.handleError(err, 'Error al guardar la respuesta');
+      }
+    });
   }
 
   /**

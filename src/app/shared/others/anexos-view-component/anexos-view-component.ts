@@ -37,6 +37,7 @@ export class AnexosViewComponent {
     });
 
     const url = `${environment.domain}${anexo.urlAnexo.replace(/^\/+/, '')}`;
+    console.log(url)
     this.http.get(url, { responseType: 'blob', headers }).subscribe({
       next: (blob) => {
         const link = document.createElement('a');

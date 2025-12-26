@@ -104,7 +104,7 @@
                                 </app-button-component>
 
                                 <app-button-component imgUrl="buttons/edit.svg" width="18px" height="18px" color="white"
-                                    (clicked)="modificarSolicitud(solicitud)">
+                                    (clicked)="abrirFormularioRespuesta(solicitud)">
                                 </app-button-component>
 
                                 <app-button-component imgUrl="buttons/remove_selection.svg" width="18px" height="18px"
@@ -137,3 +137,41 @@
     </app-anexos-view-component>
 
 </app-generic-dialog-info-component>
+
+<app-generic-dialog-form-component
+    [(visible)]="respuestaFormDialogVisible"
+    [title]="'Asignar Respuesta'"
+    (save)="modificarSolicitud()">
+
+    <app-input-select-component
+        #tipoRespuesta
+        [(value)]="selectedRespuestaForm.tipoRespuesta"
+        [label]="'Tipo de Respuesta'"
+        [options]="tiposRespuesta"
+        [required]="true">
+    </app-input-select-component>
+
+    <app-input-text-component
+        #consecutivoFiet
+        [(value)]="selectedRespuestaForm.consecutivoFiet"
+        [label]="'Consecutivo FIET'"
+        [required]="true">
+    </app-input-text-component>
+
+    <app-input-text-tarea-component
+        #respuestaConsejo
+        [(value)]="selectedRespuestaForm.respuestaConsejo"
+        [label]="'Respuesta del Consejo'"
+        [required]="true">
+    </app-input-text-tarea-component>
+
+    <app-input-text-tarea-component
+        #indicaciones
+        [(value)]="selectedRespuestaForm.indicaciones"
+        [label]="'Indicaciones'"
+        [required]="false">
+    </app-input-text-tarea-component>
+
+</app-generic-dialog-form-component>
+
+

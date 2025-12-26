@@ -77,6 +77,12 @@ export const routes: Routes = [
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-ordel-del-dia/secretario-general-ordel-del-dia').then(m => m.SecretarioGeneralOrdelDelDia)
     },
     {
+        path: 'sec/respuestas',
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: ['Secretario General']},
+        loadComponent: () => import('./core/secretario-general/pages/secretario-general-respuestas-component/secretario-general-respuestas-component') .then(m => m.SecretarioGeneralRespuestasComponent)
+    },
+    {
         path: 'usuario-fiet/solicitudes',
         canActivate: [AuthGuard, RoleGuard],
         data: { roles: ['Coordinador Pregrado', 'Coordinador Posgrados', 'Jefe de Departamento', 'Decano', 'Docente']},

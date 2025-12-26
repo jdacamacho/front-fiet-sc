@@ -331,7 +331,6 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit {
         this.loadUsuarios();
       },
       error: (err) => {
-        this.usuarioFormDialogVisible = false;
         this.errorHandlerService.handleError(err, 'Error creando usuario');
       }
     });
@@ -408,7 +407,6 @@ export class UsuariosContentComponent implements OnInit, AfterViewInit {
           this.loadUsuarios(this.currentPage); 
         },
         error: (err) => {
-          this.usuarioFormActualizarDialogVisible = false;
           this.errorHandlerService.handleError(err, 'Error Actualizando el Usuario', 'No se pudo actualizar el usuario');
         }
       });
