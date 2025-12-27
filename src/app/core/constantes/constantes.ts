@@ -2,6 +2,9 @@
  * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
  */
 
+/**
+ * Roles permitidos en el sistema.
+ */
 export const ROLES_FIET: string[] = [
   'Secretario General',
   'Funcionario',
@@ -13,6 +16,10 @@ export const ROLES_FIET: string[] = [
   'Docente'
 ];
 
+
+/**
+ * Secciones del Orden del Día.
+ */
 export const SECCIONES = [
     { label: 'Asuntos Decano', value: 'asuntos decano' },
     { label: 'Asuntos Pregrado', value: 'asuntos pregrado' },
@@ -25,13 +32,22 @@ export const SECCIONES = [
   ];
 
 /**
+ * Tipos de Respuestas validas para las Solicitudes.
+ */
+export const TIPOS_RESPUESTAS = [
+  { label: 'Oficio', value: 'Oficio' },
+  { label: 'Resolución', value: 'Resolución' },
+]
+
+/**
  * Estados posibles de una solicitud.
  */
 export const ESTADOS_SOLICITUD = [
   { label: 'SIN RESPONDER', value: 'SIN RESPONDER' },
   { label: 'RECHAZADO', value: 'RECHAZADO' },
   { label: 'PENDIENTE AL ORDEN DEL DÍA', value: 'PENDIENTE AL ORDEN DEL DÍA' },
-  { label: 'AGREGADO EN EL ORDEN DEL DÍA', value: 'AGREGADO EN EL ORDEN DEL DÍA' }
+  { label: 'AGREGADO EN EL ORDEN DEL DÍA', value: 'AGREGADO EN EL ORDEN DEL DÍA' },
+  { label: 'RESPONDIDA', value: 'RESPONDIDA' }
 ];
 
 /**
@@ -43,6 +59,11 @@ export const PENDIENTE_AL_ORDEN_DEL_DIA = 'PENDIENTE AL ORDEN DEL DÍA';
  * Estado agregado al orden del día.
  */
 export const AGREGADO_EN_EL_ORDEN_DEL_DIA = 'AGREGADO EN EL ORDEN DEL DÍA';
+
+/**
+ * Estado de respondida una solicitud.
+ */
+export const RESPONDIDA = "RESPONDIDA";
 
 /**
  * Estado activo.

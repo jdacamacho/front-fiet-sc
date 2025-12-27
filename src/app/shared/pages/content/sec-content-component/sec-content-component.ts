@@ -191,6 +191,7 @@ export class SecContentComponent implements OnInit {
         const tieneAnexos = solicitudDetallada.anexos && solicitudDetallada.anexos.length > 0;
 
         this.selectedSolicitudInfo = {
+          Uuid_solicitud: solicitudDetallada.uuidSolicitud,
           Nombre: solicitudDetallada.nombre || 'N/A',
           Descripción: solicitudDetallada.descripcion,
           Estado: solicitudDetallada.estado,

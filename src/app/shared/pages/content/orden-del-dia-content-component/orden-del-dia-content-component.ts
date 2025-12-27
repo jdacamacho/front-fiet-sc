@@ -180,7 +180,13 @@ export class OrdenDelDiaContentComponent implements OnInit, AfterViewInit {
         this.currentPage = page;
         this.busquedaActual = filtro;
       },
-      error: err => console.error(err)
+      error: () => {
+        this.paginatedData = [];
+        this.totalElements = 0;
+        this.totalPages = 0;
+        this.currentPage = 1;
+        this.busquedaActual = filtro;
+      }
     });
   }
 
@@ -304,6 +310,7 @@ export class OrdenDelDiaContentComponent implements OnInit, AfterViewInit {
     this.solicitudesService.getOrdenDelDia(row.uuidOrdenDelDia).subscribe({
       next: (orden: OrdenDelDiaDTORespuesta) => {
         this.selectedOrdenInfo = {
+          Uuid: orden.uuidOrdenDelDia,
           Nombre: orden.nombre,
           Descripción: orden.descripcion,
           Ciudad: orden.ciudad,

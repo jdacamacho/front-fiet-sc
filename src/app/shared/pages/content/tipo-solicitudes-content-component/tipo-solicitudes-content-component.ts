@@ -592,6 +592,7 @@ export class TipoSolicitudesContentComponent implements OnInit{
           .join('\n');
 
         this.selectedTipoInfo = {
+          Uuid_tipo: tipoSolicitudDetallado.uuidTipoSolicitud,
           Nombre: tipoSolicitudDetallado.nombre,
           Descripción: tipoSolicitudDetallado.descripcion,
           Sección: tipoSolicitudDetallado.seccion,

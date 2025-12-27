@@ -59,11 +59,14 @@ export class LoginFormComponent {
 
     this.authService.login(request).subscribe({
       next: (userInfo) => {
+        console.log(userInfo)
         const roles = userInfo.roles.map(r => r.nombre);
         if (roles.includes('Secretario General')) 
-          this.router.navigate(['/secgeneral']);
+          this.router.navigate(['/sec-general']);
         else if (roles.includes('Funcionario'))
           this.router.navigate(['/funcionario']);
+        else if(roles.includes('Secretaria Decanatura FIET'))
+          this.router.navigate(['/sec-fiet']);
         else if (roles.some(r => this.usuariosFiet.includes(r))) 
           this.router.navigate(['/usuario-fiet']);
       },

@@ -52,15 +52,28 @@
         </div>
     </div>
 
-    <div class="button-group-container">
-        <app-simple-button-group-component label="Exportar" width="110px" height="35px" color="#1E257B"
-            imgUrl="buttons/export_orden.svg" (clicked)="exportarOrdenDelDia()">
-        </app-simple-button-group-component>
+    <div class="button-groups">
+        <div class="export-buttons">
+            <app-simple-button-group-component label="Exportar Orden del Día" width="250px" height="35px"
+                color="#1E257B" imgUrl="buttons/export_orden.svg" (clicked)="exportarOrdenDelDia()">
+            </app-simple-button-group-component>
 
-        <app-simple-button-group-component label="Descargar Anexos" width="160px" height="35px" color="#1E257B"
-            imgUrl="buttons/download.svg" (clicked)="descargarAnexos()">
-        </app-simple-button-group-component>
+            <app-simple-button-group-component label="Exportar con Respuestas" width="250px" height="35px"
+                color="#1E257B" imgUrl="buttons/reply.svg" (clicked)="exportarOrdenDelDiaConRespuestas()">
+            </app-simple-button-group-component>
+
+            <app-simple-button-group-component label="Exportar Desarrollo de la Reunión" width="250px" height="35px"
+                color="#1E257B" imgUrl="buttons/meeting.svg" (clicked)="exportarOrdenDelDiaMerge()">
+            </app-simple-button-group-component>
+        </div>
+
+        <div class="download-button">
+            <app-simple-button-group-component label="Descargar Anexos" width="160px" height="35px" color="#1E257B"
+                imgUrl="buttons/download.svg" (clicked)="descargarAnexos()">
+            </app-simple-button-group-component>
+        </div>
     </div>
+
 
     <app-input-select-component #inputSolicitudAgregar [(value)]="solicitudSeleccionadaParaAgregar"
         [label]="'Agregar Solicitud existente'" [options]="solicitudesDisponiblesOpciones" [required]="false"
@@ -104,7 +117,7 @@
                                 </app-button-component>
 
                                 <app-button-component imgUrl="buttons/edit.svg" width="18px" height="18px" color="white"
-                                    (clicked)="modificarSolicitud(solicitud)">
+                                    (clicked)="abrirFormularioRespuesta(solicitud)">
                                 </app-button-component>
 
                                 <app-button-component imgUrl="buttons/remove_selection.svg" width="18px" height="18px"
@@ -137,3 +150,24 @@
     </app-anexos-view-component>
 
 </app-generic-dialog-info-component>
+
+<app-generic-dialog-form-component [(visible)]="respuestaFormDialogVisible" [title]="'Asignar Respuesta'"
+    (save)="modificarSolicitud()">
+
+    <app-input-select-component #tipoRespuesta [(value)]="selectedRespuestaForm.tipoRespuesta"
+        [label]="'Tipo de Respuesta'" [options]="tiposRespuesta" [required]="true">
+    </app-input-select-component>
+
+    <app-input-text-component #consecutivoFiet [(value)]="selectedRespuestaForm.consecutivoFiet"
+        [label]="'Consecutivo FIET'" [required]="true">
+    </app-input-text-component>
+
+    <app-input-text-tarea-component #respuestaConsejo [(value)]="selectedRespuestaForm.respuestaConsejo"
+        [label]="'Respuesta del Consejo'" [required]="true">
+    </app-input-text-tarea-component>
+
+    <app-input-text-tarea-component #indicaciones [(value)]="selectedRespuestaForm.indicaciones"
+        [label]="'Indicaciones'" [required]="false">
+    </app-input-text-tarea-component>
+
+</app-generic-dialog-form-component>
