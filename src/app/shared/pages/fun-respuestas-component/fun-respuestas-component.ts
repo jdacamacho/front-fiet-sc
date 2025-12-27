@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ContentComponent } from '../content/content-component/content-component';
-import { SecRespuestasContentComponent } from '../content/sec-respuestas-content-component/sec-respuestas-content-component';
+import { FunRespuestasContentComponent } from '../content/fun-respuestas-content-component/fun-respuestas-content-component';
 
 /**
  * Componente de visualización de respuestas.
@@ -10,14 +10,14 @@ import { SecRespuestasContentComponent } from '../content/sec-respuestas-content
  * @autor Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
  */
 @Component({
-  selector: 'app-sec-respuestas-component',
+  selector: 'app-fun-respuestas-component',
   imports: [CommonModule, ContentComponent],
-  templateUrl: './sec-respuestas-component.html',
-  styleUrl: './sec-respuestas-component.css'
+  templateUrl: './fun-respuestas-component.html',
+  styleUrl: './fun-respuestas-component.css'
 })
-export class SecRespuestasComponent {
+export class FunRespuestasComponent {
   /**
    * Componente de contenido que se mostrará dentro del componente principal.
    */
-  content = SecRespuestasContentComponent;
+  content = FunRespuestasContentComponent;
 }

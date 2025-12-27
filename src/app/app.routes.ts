@@ -32,7 +32,12 @@ export const routes: Routes = [
         data: { roles: ['Funcionario']},
         loadComponent: () => import('./core/funcionario/pages/funcionario-home-component/funcionario-home-component').then(m => m.FuncionarioHomeComponent)
     },
-
+    {
+        path: 'sec-fiet',
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: ['Secretaria Decanatura FIET']},
+        loadComponent: () => import('./core/secretariaFiet/pages/secretaria-fiet-home-component/secretaria-fiet-home-component').then(m => m.SecretariaFietHomeComponent)
+    },
     // Vistas
     {
         path: 'roles',
@@ -81,6 +86,18 @@ export const routes: Routes = [
         canActivate: [AuthGuard, RoleGuard],
         data: { roles: ['Secretario General']},
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-respuestas-component/secretario-general-respuestas-component') .then(m => m.SecretarioGeneralRespuestasComponent)
+    },
+    {
+        path: 'fun/respuestas',
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: ['Funcionario']},
+        loadComponent: () => import('./core/funcionario/pages/funcionario-respuestas-component/funcionario-respuestas-component') .then(m => m.FuncionarioRespuestasComponent)
+    },
+    {
+        path: 'sec-fiet/respuestas',
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: ['Secretaria Decanatura FIET']},
+        loadComponent: () => import('./core/secretariaFiet/pages/secretaria-fiet-respuestas-component/secretaria-fiet-respuestas-component') .then(m => m.SecretariaFietRespuestasComponent)
     },
     {
         path: 'usuario-fiet/solicitudes',
