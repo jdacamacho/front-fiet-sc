@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../enviroments/environment';
+import { ErrorHandlerService } from '../../core/services/error-handler-service';
 
 /**
  * Componente para descargar y eliminar archivos de respuesta.
@@ -37,7 +38,10 @@ export class DescargarRespuestaComponent {
    * Constructor del componente.
    * @param http Cliente HTTP para descargar archivos
    */
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private errorHandleService: ErrorHandlerService
+  ) {}
 
   /**
    * Descarga el archivo de respuesta desde la URL proporcionada.
@@ -58,7 +62,9 @@ export class DescargarRespuestaComponent {
         link.click();
         window.URL.revokeObjectURL(link.href);
       },
-      error: err => console.error('Error descargando respuesta', err)
+      error: err => {
+        this.errorHandleService.handleError(err, 'Error', 'Error, obteniendo el recurso')
+      }
     });
   }
 

@@ -44,13 +44,12 @@ import { GenericDialogFormComponent } from '../../../../shared/generic-dialog-fo
     SimpleButtonGroupComponent,
     GenericDialogFormComponent,
     InputTextComponent,
-    InputTextTareaComponent
-],
+    InputTextTareaComponent,
+  ],
   templateUrl: './orden-del-dia-visualizador-component.html',
   styleUrl: './orden-del-dia-visualizador-component.css',
 })
 export class OrdenDelDiaVisualizadorComponent {
-
   /**
    * Título principal del componente.
    */
@@ -83,7 +82,7 @@ export class OrdenDelDiaVisualizadorComponent {
     tipoRespuesta: '',
     consecutivoFiet: '',
     respuestaConsejo: '',
-    indicaciones: ''
+    indicaciones: '',
   };
 
   /**
@@ -117,8 +116,8 @@ export class OrdenDelDiaVisualizadorComponent {
   solicitudSeleccionadaParaAgregar: string | null = null;
 
   /** /
-  * Tipos de Respuesta.
-  */ 
+   * Tipos de Respuesta.
+   */
   tiposRespuesta = TIPOS_RESPUESTAS;
 
   /**
@@ -312,8 +311,8 @@ export class OrdenDelDiaVisualizadorComponent {
       tipoRespuesta: '',
       consecutivoFiet: '',
       respuestaConsejo: '',
-      indicaciones: ''
-    }; 
+      indicaciones: '',
+    };
 
     this.respuestaService.getRespuestaPorSolicitud(solicitud.uuidSolicitud).subscribe({
       next: (res) => {
@@ -321,7 +320,7 @@ export class OrdenDelDiaVisualizadorComponent {
           tipoRespuesta: res.tipoRespuesta,
           consecutivoFiet: res.consecutivoFiet,
           respuestaConsejo: res.respuestaConsejo,
-          indicaciones: res.indicaciones
+          indicaciones: res.indicaciones,
         };
 
         this.solicitudInfoSeleccionada = solicitud;
@@ -331,8 +330,8 @@ export class OrdenDelDiaVisualizadorComponent {
           tipoRespuesta: '',
           consecutivoFiet: '',
           respuestaConsejo: '',
-          indicaciones: ''
-        }; 
+          indicaciones: '',
+        };
 
         this.solicitudInfoSeleccionada = {};
       },
@@ -349,24 +348,26 @@ export class OrdenDelDiaVisualizadorComponent {
     this.inputConsecutivo.touched = true;
     this.inputRespuestaConsejo.touched = true;
 
-    if(
+    if (
       this.inputTipoRespuesta.isInvalid() ||
-      this.inputConsecutivo.isInvalid() || 
+      this.inputConsecutivo.isInvalid() ||
       this.inputRespuestaConsejo.isInvalid()
-    ){
+    ) {
       this.toastService.showError('Error', 'Completa todos los campos requeridos.');
       return;
     }
 
-    this.respuestaService.registrarRespuesta(this.solicitudInfoSeleccionada.uuidSolicitud , this.selectedRespuestaForm).subscribe({
-      next: (res) => {
-        this.toastService.showSuccess('Éxito', 'Respuesta guardada correctamente');
-        this.respuestaFormDialogVisible = false;
-      },
-      error: (err) => {
-        this.handlerError.handleError(err, 'Error al guardar la respuesta');
-      }
-    });
+    this.respuestaService
+      .registrarRespuesta(this.solicitudInfoSeleccionada.uuidSolicitud, this.selectedRespuestaForm)
+      .subscribe({
+        next: (res) => {
+          this.toastService.showSuccess('Éxito', 'Respuesta guardada correctamente');
+          this.respuestaFormDialogVisible = false;
+        },
+        error: (err) => {
+          this.handlerError.handleError(err, 'Error al guardar la respuesta');
+        },
+      });
   }
 
   /**
@@ -487,6 +488,71 @@ export class OrdenDelDiaVisualizadorComponent {
       error: (err) => {
         console.log(err);
         this.toastService.showError('Error', 'No se pudo exportar el Orden del Día');
+      },
+    });
+  }
+
+  /**
+   * Exporta el orden del día con respuestas del consejo en formato Word.
+   */
+  exportarOrdenDelDiaConRespuestas(): void {
+    if (!this.orden) return;
+
+    const uuidOrden = this.orden.uuidOrdenDelDia;
+
+    this.solicitudesService.exportarOrdenDelDiaConRespuestas(uuidOrden).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+
+        const nombreOrden = (this.orden.nombre || 'Orden_Del_Dia_Respuestas')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-zA-Z0-9]/g, '_');
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${nombreOrden}.docx`;
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.log(err);
+        this.toastService.showError('Error', 'No se pudo exportar el Orden del Día con respuestas');
+      },
+    });
+  }
+
+  /**
+   * Exporta el orden del día en formato merge/reunión (nombre + descripción + respuestas) en Word.
+   */
+  exportarOrdenDelDiaMerge(): void {
+    if (!this.orden) return;
+
+    const uuidOrden = this.orden.uuidOrdenDelDia;
+
+    this.solicitudesService.exportarOrdenDelDiaMerge(uuidOrden).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+
+        const nombreOrden = (this.orden.nombre || 'Orden_Del_Dia_Reunion')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-zA-Z0-9]/g, '_');
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${nombreOrden}.docx`;
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.log(err);
+        this.toastService.showError(
+          'Error',
+          'No se pudo exportar el Orden del Día para la reunión'
+        );
       },
     });
   }

@@ -62,7 +62,7 @@ export class LoginFormComponent {
         console.log(userInfo)
         const roles = userInfo.roles.map(r => r.nombre);
         if (roles.includes('Secretario General')) 
-          this.router.navigate(['/secgeneral']);
+          this.router.navigate(['/sec-general']);
         else if (roles.includes('Funcionario'))
           this.router.navigate(['/funcionario']);
         else if(roles.includes('Secretaria Decanatura FIET'))

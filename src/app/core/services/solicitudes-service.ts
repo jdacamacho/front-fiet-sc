@@ -18,16 +18,15 @@ import { SolicitudPublicaDTOPeticion } from '../models/Solicitudes/DTORequest/So
  * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SolicitudesService {
-
   /**
    * URL base del servicio de solicitudes.
    */
   private url = `${environment.apiUrl}/solicitudes`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Obtiene todas las órdenes del día.
@@ -52,21 +51,14 @@ export class SolicitudesService {
    * Obtiene la información de una orden del día específica.
    */
   getOrdenDelDia(uuidOrdenDelDia: string): Observable<OrdenDelDiaDTORespuesta> {
-    return this.http.get<OrdenDelDiaDTORespuesta>(
-      `${this.url}/orden-del-dia/${uuidOrdenDelDia}`
-    );
+    return this.http.get<OrdenDelDiaDTORespuesta>(`${this.url}/orden-del-dia/${uuidOrdenDelDia}`);
   }
 
   /**
    * Crea una nueva orden del día.
    */
-  crearOrdenDelDia(
-    peticion: OrdenDelDiaDTOPeticion
-  ): Observable<OrdenDelDiaDTORespuesta> {
-    return this.http.post<OrdenDelDiaDTORespuesta>(
-      `${this.url}/orden-del-dia`,
-      peticion
-    );
+  crearOrdenDelDia(peticion: OrdenDelDiaDTOPeticion): Observable<OrdenDelDiaDTORespuesta> {
+    return this.http.post<OrdenDelDiaDTORespuesta>(`${this.url}/orden-del-dia`, peticion);
   }
 
   /**
@@ -98,9 +90,7 @@ export class SolicitudesService {
   /**
    * Obtiene las solicitudes asociadas a una orden del día.
    */
-  getSolicitudesPorOrdenDelDia(
-    uuidOrdenDelDia: string
-  ): Observable<SolicitudDTORespuesta[]> {
+  getSolicitudesPorOrdenDelDia(uuidOrdenDelDia: string): Observable<SolicitudDTORespuesta[]> {
     return this.http.get<SolicitudDTORespuesta[]>(
       `${this.url}/orden-del-dia/${uuidOrdenDelDia}/solicitudes`
     );
@@ -145,7 +135,7 @@ export class SolicitudesService {
       new Blob([JSON.stringify(peticion)], { type: 'application/json' })
     );
 
-    archivos.forEach(file => formData.append('archivos', file));
+    archivos.forEach((file) => formData.append('archivos', file));
 
     return this.http.post<SolicitudDTORespuesta>(`${this.url}`, formData);
   }
@@ -163,12 +153,9 @@ export class SolicitudesService {
       new Blob([JSON.stringify(peticion)], { type: 'application/json' })
     );
 
-    archivos.forEach(file => formData.append('archivos', file));
+    archivos.forEach((file) => formData.append('archivos', file));
 
-    return this.http.post<SolicitudDTORespuesta>(
-      `${this.url}/public`,
-      formData
-    );
+    return this.http.post<SolicitudDTORespuesta>(`${this.url}/public`, formData);
   }
 
   /**
@@ -178,10 +165,7 @@ export class SolicitudesService {
     uuidSolicitud: string,
     peticion: SolicitudActualizarDTOPeticion
   ): Observable<SolicitudDTORespuesta> {
-    return this.http.put<SolicitudDTORespuesta>(
-      `${this.url}/${uuidSolicitud}`,
-      peticion
-    );
+    return this.http.put<SolicitudDTORespuesta>(`${this.url}/${uuidSolicitud}`, peticion);
   }
 
   /**
@@ -201,9 +185,7 @@ export class SolicitudesService {
    * Obtiene las solicitudes por estado.
    */
   getSolicitudesPorEstado(estado: string): Observable<SolicitudDTORespuesta[]> {
-    return this.http.get<SolicitudDTORespuesta[]>(
-      `${this.url}/estado?estado=${estado}`
-    );
+    return this.http.get<SolicitudDTORespuesta[]>(`${this.url}/estado?estado=${estado}`);
   }
 
   /**
@@ -236,9 +218,7 @@ export class SolicitudesService {
   /**
    * Obtiene órdenes del día según su estado.
    */
-  getOrdenesDelDiaPorEstado(
-    estado: boolean
-  ): Observable<OrdenDelDiaDTORespuesta[]> {
+  getOrdenesDelDiaPorEstado(estado: boolean): Observable<OrdenDelDiaDTORespuesta[]> {
     return this.http.get<OrdenDelDiaDTORespuesta[]>(
       `${this.url}/orden-del-dia/estado?estado=${estado}`
     );
@@ -247,14 +227,11 @@ export class SolicitudesService {
   /**
    * Descarga los anexos asociados a una orden del día.
    */
-  descargarAnexosOrdenDelDia(
-    uuidOrden: string,
-    nombreOrden: string
-  ): Observable<Blob> {
+  descargarAnexosOrdenDelDia(uuidOrden: string, nombreOrden: string): Observable<Blob> {
     const params = { uuidOrden, nombreOrden };
     return this.http.get(`${this.url}/anexos/download`, {
       params,
-      responseType: 'blob'
+      responseType: 'blob',
     });
   }
 
@@ -262,12 +239,30 @@ export class SolicitudesService {
    * Exporta una orden del día en formato descargable.
    */
   exportarOrdenDelDia(uuidOrden: string): Observable<Blob> {
-    return this.http.get(
-      `${this.url}/exportar`,
-      {
-        params: { uuidOrden },
-        responseType: 'blob'
-      }
-    );
+    return this.http.get(`${this.url}/exportar`, {
+      params: { uuidOrden },
+      responseType: 'blob',
+    });
+  }
+
+  /**
+   * Exporta una orden del día con las respuestas del consejo.
+   */
+  exportarOrdenDelDiaConRespuestas(uuidOrden: string): Observable<Blob> {
+    return this.http.get(`${this.url}/exportar/respuestas`, {
+      params: { uuidOrden },
+      responseType: 'blob',
+    });
+  }
+
+  /**
+   * Exporta la orden del día en formato merge/reunión
+   * (nombre + descripción + respuestas en secciones).
+   */
+  exportarOrdenDelDiaMerge(uuidOrden: string): Observable<Blob> {
+    return this.http.get(`${this.url}/exportar/reunion`, {
+      params: { uuidOrden },
+      responseType: 'blob',
+    });
   }
 }

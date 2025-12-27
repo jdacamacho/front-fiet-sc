@@ -10,6 +10,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
  * @autor Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
  */
 import { environment } from '../../../../enviroments/environment';
+import { ErrorHandlerService } from '../../../core/services/error-handler-service';
 
 @Component({
   selector: 'app-anexos-view-component',
@@ -23,7 +24,10 @@ export class AnexosViewComponent {
    */
   @Input() anexos: AnexoDTORespuesta[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private errorHandlerService:ErrorHandlerService
+  ) {}
 
   /**
    * Descarga el anexo seleccionado.
@@ -46,7 +50,9 @@ export class AnexosViewComponent {
         link.click();
         window.URL.revokeObjectURL(link.href);
       },
-      error: (err) => console.error('Error descargando el archivo', err)
+      error: (err) => {
+        this.errorHandlerService.handleError(err, 'Error', "Error obteniendo el recurso");
+      }
     });
   }
 

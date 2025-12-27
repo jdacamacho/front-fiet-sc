@@ -173,6 +173,7 @@ export class SecRespuestasContentComponent implements OnInit, AfterViewInit {
     this.respuestasService.getRespuesta(respuesta.uuidRespuesta).subscribe({
       next: (detalle) => {
         this.selectedRespuestaInfo = {
+          Uuid_respuesta: detalle.uuidRespuesta,
           Solicitante:
             detalle.solicitud.informacionSolicitante.nombres +
             ' ' +

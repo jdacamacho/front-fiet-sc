@@ -310,6 +310,7 @@ export class OrdenDelDiaContentComponent implements OnInit, AfterViewInit {
     this.solicitudesService.getOrdenDelDia(row.uuidOrdenDelDia).subscribe({
       next: (orden: OrdenDelDiaDTORespuesta) => {
         this.selectedOrdenInfo = {
+          Uuid: orden.uuidOrdenDelDia,
           Nombre: orden.nombre,
           Descripción: orden.descripcion,
           Ciudad: orden.ciudad,
