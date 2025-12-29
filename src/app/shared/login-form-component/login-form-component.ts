@@ -8,6 +8,7 @@ import { SesionDTOPeticion } from '../../core/models/Sesión/DTORequest/SesionDT
 import { Router } from '@angular/router';
 import { ErrorHandlerService } from '../../core/services/error-handler-service';
 import { ROLES_FIET } from '../../core/constantes/constantes';
+import { ToastService } from '../../core/services/toast-service';
 
 /**
  * Componente de formulario de login.
@@ -47,7 +48,8 @@ export class LoginFormComponent {
   constructor(
     private authService: AuthService,
     private errorHandlerService: ErrorHandlerService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService 
   ) {}
 
   /**
@@ -66,6 +68,8 @@ export class LoginFormComponent {
           this.router.navigate(['/funcionario']);
         else if (roles.some(r => this.usuariosFiet.includes(r))) 
           this.router.navigate(['/usuario-fiet']);
+        else
+          this.toastService.showError('Error ingresando al sistema', 'El usuario no tiene un rol con vistas definidas en el sistema.');
       },
       error: (err) => this.errorHandlerService.handleError(err, "Error en Autenticación")
     });
