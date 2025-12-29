@@ -46,23 +46,17 @@ export class ToastService {
       background,
       iconColor,
       html: `
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="display:flex; flex-direction:column; margin-right:8px;">
-            <div style="color:${iconColor}; font-weight:bold; font-family:'Titillium Web', sans-serif; font-size:12px;">
-              ${title}
-            </div>
-            <div style="color:#3C3B3F; font-family:'Titillium Web', sans-serif; font-size:12px;">
-              ${message}
-            </div>
+      <div style="display:flex; justify-content:flex-start; align-items:center;">
+        <div style="display:flex; flex-direction:column;">
+          <div style="color:${iconColor}; font-weight:bold; font-family:'Titillium Web', sans-serif; font-size:12px;">
+            ${title}
           </div>
-          <button id="closeBtn" style="background:none; border:none; font-size:16px; cursor:pointer;">&times;</button>
+          <div style="color:#3C3B3F; font-family:'Titillium Web', sans-serif; font-size:12px;">
+            ${message}
+          </div>
         </div>
-      `,
-      didOpen: (toast) => {
-        toast.querySelector('#closeBtn')?.addEventListener('click', () => {
-          Swal.close();
-        });
-      },
+      </div>
+    `,
     });
   }
 
