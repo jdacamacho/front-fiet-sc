@@ -26,7 +26,7 @@ export const SECCIONES = [
     { label: 'Asuntos Posgrados', value: 'asuntos posgrados' },
     { label: 'Asuntos Delegados en Decano', value: 'asuntos delegados en decano' },
     { label: 'Solicitud Comisión Académica al Interior del País', value: 'solicitud comisión académica al interior del país' },
-    { label: 'Solicitud Comisión Académica al Exterior al País', value: 'solicitud comisión académica al exterior al país' },
+    { label: 'Solicitud Comisión Académica al Exterior del País', value: 'solicitud comisión académica al exterior del país' },
     { label: 'Informe de Comisión Académica', value: 'informe de comisión académica' },
     { label: 'Asuntos Varios', value: 'asuntos varios' }
   ];
