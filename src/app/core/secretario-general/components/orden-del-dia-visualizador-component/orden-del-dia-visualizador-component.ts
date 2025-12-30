@@ -303,6 +303,8 @@ export class OrdenDelDiaVisualizadorComponent {
    * @param solicitud solicitud a asignar o modificar respuesta.
    */
   abrirFormularioRespuesta(solicitud: SolicitudDTORespuesta) {
+    this.solicitudInfoSeleccionada = solicitud; // ← CLAVE
+
     this.inputTipoRespuesta.reset();
     this.inputConsecutivo.reset();
     this.inputRespuestaConsejo.reset();
@@ -322,20 +324,10 @@ export class OrdenDelDiaVisualizadorComponent {
           respuestaConsejo: res.respuestaConsejo,
           indicaciones: res.indicaciones,
         };
-
-        this.solicitudInfoSeleccionada = solicitud;
       },
-      error: () => {
-        this.selectedRespuestaForm = {
-          tipoRespuesta: '',
-          consecutivoFiet: '',
-          respuestaConsejo: '',
-          indicaciones: '',
-        };
-
-        this.solicitudInfoSeleccionada = {};
-      },
+      error: () => {},
     });
+
     this.respuestaFormDialogVisible = true;
   }
 
