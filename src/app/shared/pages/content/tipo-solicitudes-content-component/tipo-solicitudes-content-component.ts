@@ -455,8 +455,6 @@ export class TipoSolicitudesContentComponent implements OnInit{
         this.resetFormulariosCrear();
       },
       error: (err) => {
-        this.dialogoStepsVisible = false;
-        this.resetFormulariosCrear();
         this.errorHandlerService.handleError(err, 'Error creando el Tipo de Solicitud');
       }
     });
@@ -521,8 +519,6 @@ export class TipoSolicitudesContentComponent implements OnInit{
         this.resetFormulariosActualizar();
       },
       error: (err) => {
-        this.actualizarDialogVisible = false;
-        this.resetFormulariosActualizar();
         this.errorHandlerService.handleError(err, 'Error actualizando Tipo de Solicitud');
       }
     });
