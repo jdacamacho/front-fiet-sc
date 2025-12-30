@@ -61,7 +61,6 @@ export class LoginFormComponent {
 
     this.authService.login(request).subscribe({
       next: (userInfo) => {
-        console.log(userInfo)
         const roles = userInfo.roles.map(r => r.nombre);
         if (roles.includes('Secretario General')) 
           this.router.navigate(['/sec-general']);
