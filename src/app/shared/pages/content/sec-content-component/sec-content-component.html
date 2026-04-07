@@ -5,7 +5,16 @@
 </app-card-main-component>
 
 <ng-template #headerSolicitud>
-  <app-barra-busqueda-component placeholder="Buscar Solicitud" (valueChange)="buscarSolicitudes($event)">
+  <app-barra-busqueda-component 
+    placeholder="Buscar Solicitud" 
+    (valueChange)="buscarPorNombreSolicitud($event)">
+  </app-barra-busqueda-component>
+</ng-template>
+
+<ng-template #headerSolicitante>
+  <app-barra-busqueda-component 
+    placeholder="Buscar por solicitante" 
+    (valueChange)="buscarPorSolicitante($event)">
   </app-barra-busqueda-component>
 </ng-template>
 
