@@ -24,6 +24,7 @@ import { ErrorHandlerService } from '../../../../core/services/error-handler-ser
 import { GenericDialogFormComponent } from '../../../generic-dialog-form-component/generic-dialog-form-component';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
 import { ESTADOS_SOLICITUD } from '../../../../core/constantes/constantes';
+import { EnviarSolicitudComponent } from '../../../../core/secretario-general/components/enviar-solicitud-component/enviar-solicitud-component';
 
 @Component({
   selector: 'app-sec-content-component',
@@ -38,7 +39,8 @@ import { ESTADOS_SOLICITUD } from '../../../../core/constantes/constantes';
     InputTextComponent,
     InputSelectComponent,
     GenericDialogFormComponent,
-    InputTextTareaComponent
+    InputTextTareaComponent,
+    EnviarSolicitudComponent
   ],
   templateUrl: './sec-content-component.html',
   styleUrl: './sec-content-component.css'
@@ -72,6 +74,9 @@ export class SecContentComponent implements OnInit {
   /** Flag para mostrar diálogo de actualización */
   actualizarSolicitudDialogVisible = false;
 
+  /** Enviar solicitud botón componente */
+  enviarSolicitudVisible = false;
+
   /** Lista de funcionarios para select */
   funcionariosOptions: { label: string; value: string }[] = [];
 
@@ -100,6 +105,18 @@ export class SecContentComponent implements OnInit {
     { title: 'Solicitud', headerTemplate: null },
     { title: 'Solicitante', headerTemplate: null },
     { title: 'Estado', headerTemplate: null }
+  ];
+
+  buttonsCard: any[] = [
+    {
+      imgUrl: 'buttons/campana.svg',
+      color: '#1E257B',
+      width: '20px',
+      height: '20px',
+      onClick: () => {
+        this.enviarSolicitudVisible = true;
+      }
+    }
   ];
 
   constructor(

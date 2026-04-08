@@ -1,8 +1,14 @@
 <app-card-main-component [preTitleComponent]="pretitleComponentComponent"
   [preTitleInputs]="{ imgUrl: 'buttons/solicitudes.svg' }" [title]="'Gestión de Solicitudes'"
   [bodyComponent]="tableComponent"
-  [bodyInputs]="{ headers: headers, data: paginatedData, actionTemplate: actionTemplate }">
+  [bodyInputs]="{ headers: headers, data: paginatedData, actionTemplate: actionTemplate }"
+  [buttons]="buttonsCard">
 </app-card-main-component>
+
+<app-enviar-solicitud-component 
+  *ngIf="enviarSolicitudVisible" 
+  [(visible)]="enviarSolicitudVisible">
+</app-enviar-solicitud-component>
 
 <ng-template #headerSolicitud>
   <app-barra-busqueda-component 

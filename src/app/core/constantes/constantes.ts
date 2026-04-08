@@ -2,6 +2,8 @@
  * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
  */
 
+export const DECANO = "Decano";
+
 /**
  * Roles permitidos en el sistema.
  */
