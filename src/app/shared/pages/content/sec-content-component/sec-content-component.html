@@ -24,6 +24,13 @@
   </app-barra-busqueda-component>
 </ng-template>
 
+<ng-template #headerEstado>
+  <app-barra-busqueda-component 
+    placeholder="Buscar por Estado" 
+    (valueChange)="buscarPorEstado($event)">
+  </app-barra-busqueda-component>
+</ng-template>
+
 <ng-template #actionTemplate let-row>
   <div class="d-flex gap-2">
     <app-button-component imgUrl="buttons/edit.svg" color="white" width="18px" height="18px"

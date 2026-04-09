@@ -67,6 +67,7 @@ export class SecContentComponent implements OnInit {
   solicitudUpdate: any = {};
   filtroNombreSolicitud: string = '';
   filtroSolicitante: string = '';
+  filtroEstado: string = '';
 
   /** Objeto temporal para actualizar solicitud */
   solicitudActualizar: any = {};
@@ -92,6 +93,7 @@ export class SecContentComponent implements OnInit {
   /** Header con filtro incrustado */
   @ViewChild('headerSolicitud') headerSolicitud!: TemplateRef<any>;
   @ViewChild('headerSolicitante') headerSolicitante!: TemplateRef<any>;
+  @ViewChild('headerEstado') headerEstado!: TemplateRef<any>;
 
   /** Inputs de actualización */
   @ViewChild('inputNombreActualizar') inputNombreActualizar!: InputTextComponent;
@@ -137,7 +139,7 @@ export class SecContentComponent implements OnInit {
     this.headers = [
       { title: 'Solicitud', headerTemplate: this.headerSolicitud },
       { title: 'Solicitante', headerTemplate: this.headerSolicitante },
-      { title: 'Estado', headerTemplate: null }
+      { title: 'Estado', headerTemplate: this.headerEstado }
     ];
   }
 
@@ -151,6 +153,7 @@ export class SecContentComponent implements OnInit {
     const observable = this.solicitudesService.getSolicitudesPorFiltroSolicitante(
       this.filtroNombreSolicitud,
       this.filtroSolicitante,
+      this.filtroEstado,
       backendPage,
       this.pageSize
     );
@@ -310,6 +313,12 @@ export class SecContentComponent implements OnInit {
 
   buscarPorSolicitante(value: string): void {
     this.filtroSolicitante = value ?? '';
+    this.currentPage = 1;
+    this.loadSolicitudes(1);
+  }
+
+  buscarPorEstado(value: string): void {
+    this.filtroEstado = value ?? '';
     this.currentPage = 1;
     this.loadSolicitudes(1);
   }

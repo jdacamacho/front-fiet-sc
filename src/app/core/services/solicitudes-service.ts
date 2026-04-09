@@ -187,11 +187,12 @@ export class SolicitudesService {
   getSolicitudesPorFiltroSolicitante(
     nombreSolicitud: string,
     solicitante: string,
+    estado: string,
     pagina: number,
     tamanio: number
   ): Observable<PaginacionRespuestaDTO<SolicitudDTORespuesta>> {
     return this.http.get<PaginacionRespuestaDTO<SolicitudDTORespuesta>>(
-      `${this.url}/buscar/solicitante?solicitud=${nombreSolicitud}&solicitante=${solicitante}&pagina=${pagina}&tamanio=${tamanio}`
+      `${this.url}/buscar/solicitante?solicitud=${nombreSolicitud}&solicitante=${solicitante}&estado=${estado}&pagina=${pagina}&tamanio=${tamanio}`
     );
   }
 
