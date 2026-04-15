@@ -182,6 +182,21 @@ export class SolicitudesService {
   }
 
   /**
+   * Obtiene las solicitudes asociadas a un solicitante.
+   */
+  getSolicitudesPorFiltroSolicitante(
+    nombreSolicitud: string,
+    solicitante: string,
+    estado: string,
+    pagina: number,
+    tamanio: number
+  ): Observable<PaginacionRespuestaDTO<SolicitudDTORespuesta>> {
+    return this.http.get<PaginacionRespuestaDTO<SolicitudDTORespuesta>>(
+      `${this.url}/buscar/solicitante?solicitud=${nombreSolicitud}&solicitante=${solicitante}&estado=${estado}&pagina=${pagina}&tamanio=${tamanio}`
+    );
+  }
+
+  /**
    * Obtiene las solicitudes por estado.
    */
   getSolicitudesPorEstado(estado: string): Observable<SolicitudDTORespuesta[]> {

@@ -12,6 +12,7 @@ import { TipoSolicitudDTORespuesta } from '../../../models/TipoSolicitud/DTOResp
 import { InputAnexoUploadComponent } from '../../../../shared/inputs/input-anexo-upload-component/input-anexo-upload-component';
 import { ToastService } from '../../../services/toast-service';
 import { ErrorHandlerService } from '../../../services/error-handler-service';
+import { DECANO } from '../../../constantes/constantes';
 
 /**
  * Componente encargado de permitir a los usuarios FIET
@@ -21,8 +22,7 @@ import { ErrorHandlerService } from '../../../services/error-handler-service';
  * @author Julian David Camacho Erazo {@literal <jdacamacho@unicauca.edu.co>}
  */
 @Component({
-  selector: 'app-enviar-solicitud-usuario-fiet-component',
-  standalone: true,
+  selector: 'app-enviar-solicitud-component',
   imports: [
     CommonModule,
     GenericDialogStepsFormComponent,
@@ -31,12 +31,11 @@ import { ErrorHandlerService } from '../../../services/error-handler-service';
     InputSelectComponent,
     InputAnexoUploadComponent
   ],
-  templateUrl: './enviar-solicitud-usuario-fiet-component.html',
-  styleUrl: './enviar-solicitud-usuario-fiet-component.css'
+  templateUrl: './enviar-solicitud-component.html',
+  styleUrl: './enviar-solicitud-component.css'
 })
-export class EnviarSolicitudUsuarioFietComponent implements OnInit {
-
-  /**
+export class EnviarSolicitudComponent implements OnInit {
+/**
    * Controla la visibilidad del diálogo.
    */
   @Input() visible = false;
@@ -81,6 +80,11 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
    * Opciones de tipos de solicitud para el selector.
    */
   tiposSolicitudOptions: { label: string; value: string }[] = [];
+
+  /**
+   * Opciones de órdenes del día para el selector.
+   */
+  ordenesDelDiaOptions: { label: string; value: string }[] = [];
 
   /**
    * Tipo de solicitud actualmente seleccionado.
@@ -140,7 +144,8 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
     this.authService.usuario$.subscribe(user => {
       this.usuario = user;
       if (user) {
-        this.cargarTiposSolicitud(user.roles[0].nombre);
+        this.cargarTiposSolicitud(DECANO);
+        this.cargarOrdenesDelDia();
       }
     });
   }
@@ -179,6 +184,18 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
   onTipoSolicitudChange(uuid: string): void {
     this.tipoSolicitudSeleccionado =
       this.tiposSolicitud.find(t => t.uuidTipoSolicitud === uuid) || null;
+  }
+
+  /**
+   * Carga las órdenes del día activas.
+   */
+  cargarOrdenesDelDia(): void {
+    this.solicitudesService.getOrdenesDelDiaPorEstado(true).subscribe(res => {
+      this.ordenesDelDiaOptions = res.map(o => ({
+        label: o.nombre,
+        value: o.uuidOrdenDelDia
+      }));
+    });
   }
 
   /**
@@ -267,3 +284,5 @@ export class EnviarSolicitudUsuarioFietComponent implements OnInit {
   }
 
 }
+
+

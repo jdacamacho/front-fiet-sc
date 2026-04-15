@@ -17,6 +17,11 @@
     label="Tipo de Solicitud" [options]="tiposSolicitudOptions" [required]="true">
   </app-input-select-component>
 
+
+  <app-input-select-component [(value)]="nuevaSolicitud.uuidOrdenDelDia" label="Orden del Día"
+    [options]="ordenesDelDiaOptions" [required]="false">
+  </app-input-select-component>
+
 </ng-template>
 
 <ng-template #step2>

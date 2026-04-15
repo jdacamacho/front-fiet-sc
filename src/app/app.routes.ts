@@ -15,15 +15,15 @@ export const routes: Routes = [
     },
     // Rutas home
     {
-        path: 'sec-general',
+        path: 'admin',
         canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Secretario General']},
+        data: { roles: ['Secretario General', 'Decano']},
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-home-component/secretario-general-home-component').then(m => m.SecretarioGeneralHomeComponent)
     },
     {
         path: 'usuario-fiet',
         canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Coordinador Pregrado', 'Coordinador Posgrados', 'Jefe de Departamento', 'Decano', 'Docente']},
+        data: { roles: ['Coordinador Pregrado', 'Coordinador Posgrados', 'Jefe de Departamento', 'Docente']},
         loadComponent: () => import('./core/usuario fiet/pages/usuario-fiet-home-component/usuario-fiet-home-component').then(m => m.UsuarioFietHomeComponent)
     },
     {
@@ -40,33 +40,33 @@ export const routes: Routes = [
     },
     // Vistas
     {
-        path: 'sec-general/roles',
+        path: 'admin/roles',
         canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Secretario General']},
+        data: { roles: ['Secretario General', 'Decano']},
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-roles-component/secretario-general-roles-component').then(m => m.SecretarioGeneralRolesComponent)
     },
     {
-        path: 'sec-general/usuarios',
+        path: 'admin/usuarios',
         canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Secretario General']},
+        data: { roles: ['Secretario General', 'Decano']},
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-usuarios-component/secretario-general-usuarios-component').then(m => m.SecretarioGeneralUsuariosComponent)
     },
     {
-        path: 'sec-general/logs',
+        path: 'admin/logs',
         canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Secretario General']},
+        data: { roles: ['Secretario General', 'Decano']},
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-log-component/secretario-general-log-component').then(m => m.SecretarioGeneralLogComponent)
     },
     {
-        path: 'sec-general/tipos/solicitudes',
+        path: 'admin/tipos/solicitudes',
         canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Secretario General']},
+        data: { roles: ['Secretario General', 'Decano']},
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-tipo-solicitudes-component/secretario-general-tipo-solicitudes-component').then(m => m.SecretarioGeneralTipoSolicitudesComponent)
     },
     {
-        path: 'sec-general/solicitudes',
+        path: 'admin/solicitudes',
         canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Secretario General']},
+        data: { roles: ['Secretario General', 'Decano']},
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-solicitudes/secretario-general-solicitudes').then(m => m.SecretarioGeneralSolicitudes)
     },
     {
@@ -76,15 +76,15 @@ export const routes: Routes = [
         loadComponent: () => import('./core/funcionario/pages/funcionario-solicitudes/funcionario-solicitudes').then(m => m.FuncionarioSolicitudes)
     },
     {
-        path: 'sec-general/orden-del-dia',
+        path: 'admin/orden-del-dia',
         canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Secretario General']},
+        data: { roles: ['Secretario General', 'Decano']},
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-ordel-del-dia/secretario-general-ordel-del-dia').then(m => m.SecretarioGeneralOrdelDelDia)
     },
     {
-        path: 'sec-general/respuestas',
+        path: 'admin/respuestas',
         canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Secretario General']},
+        data: { roles: ['Secretario General', 'Decano']},
         loadComponent: () => import('./core/secretario-general/pages/secretario-general-respuestas-component/secretario-general-respuestas-component') .then(m => m.SecretarioGeneralRespuestasComponent)
     },
     {
@@ -102,7 +102,7 @@ export const routes: Routes = [
     {
         path: 'usuario-fiet/solicitudes',
         canActivate: [AuthGuard, RoleGuard],
-        data: { roles: ['Coordinador Pregrado', 'Coordinador Posgrados', 'Jefe de Departamento', 'Decano', 'Docente']},
+        data: { roles: ['Coordinador Pregrado', 'Coordinador Posgrados', 'Jefe de Departamento', 'Docente']},
         loadComponent: () => import('./core/usuario fiet/pages/usuariofiet-solicitudes-component/usuariofiet-solicitudes-component').then(m => m.UsuariofietSolicitudesComponent)
     },
     {

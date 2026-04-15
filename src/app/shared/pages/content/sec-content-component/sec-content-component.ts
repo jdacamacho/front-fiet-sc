@@ -24,6 +24,7 @@ import { ErrorHandlerService } from '../../../../core/services/error-handler-ser
 import { GenericDialogFormComponent } from '../../../generic-dialog-form-component/generic-dialog-form-component';
 import { InputTextTareaComponent } from '../../../inputs/input-text-tarea-component/input-text-tarea-component';
 import { ESTADOS_SOLICITUD } from '../../../../core/constantes/constantes';
+import { EnviarSolicitudComponent } from '../../../../core/secretario-general/components/enviar-solicitud-component/enviar-solicitud-component';
 
 @Component({
   selector: 'app-sec-content-component',
@@ -38,7 +39,8 @@ import { ESTADOS_SOLICITUD } from '../../../../core/constantes/constantes';
     InputTextComponent,
     InputSelectComponent,
     GenericDialogFormComponent,
-    InputTextTareaComponent
+    InputTextTareaComponent,
+    EnviarSolicitudComponent
   ],
   templateUrl: './sec-content-component.html',
   styleUrl: './sec-content-component.css'
@@ -63,13 +65,18 @@ export class SecContentComponent implements OnInit {
 
   /** Objeto temporal para solicitud que se va a actualizar */
   solicitudUpdate: any = {};
-  solicitudFiltro: string = '';
+  filtroNombreSolicitud: string = '';
+  filtroSolicitante: string = '';
+  filtroEstado: string = '';
 
   /** Objeto temporal para actualizar solicitud */
   solicitudActualizar: any = {};
 
   /** Flag para mostrar diálogo de actualización */
   actualizarSolicitudDialogVisible = false;
+
+  /** Enviar solicitud botón componente */
+  enviarSolicitudVisible = false;
 
   /** Lista de funcionarios para select */
   funcionariosOptions: { label: string; value: string }[] = [];
@@ -85,6 +92,8 @@ export class SecContentComponent implements OnInit {
 
   /** Header con filtro incrustado */
   @ViewChild('headerSolicitud') headerSolicitud!: TemplateRef<any>;
+  @ViewChild('headerSolicitante') headerSolicitante!: TemplateRef<any>;
+  @ViewChild('headerEstado') headerEstado!: TemplateRef<any>;
 
   /** Inputs de actualización */
   @ViewChild('inputNombreActualizar') inputNombreActualizar!: InputTextComponent;
@@ -96,8 +105,20 @@ export class SecContentComponent implements OnInit {
   /** Cabeceras de tabla */
   headers: any[] = [
     { title: 'Solicitud', headerTemplate: null },
-    { title: 'Responsable', headerTemplate: null },
+    { title: 'Solicitante', headerTemplate: null },
     { title: 'Estado', headerTemplate: null }
+  ];
+
+  buttonsCard: any[] = [
+    {
+      imgUrl: 'buttons/campana.svg',
+      color: '#1E257B',
+      width: '20px',
+      height: '20px',
+      onClick: () => {
+        this.enviarSolicitudVisible = true;
+      }
+    }
   ];
 
   constructor(
@@ -117,8 +138,8 @@ export class SecContentComponent implements OnInit {
   ngAfterViewInit(): void {
     this.headers = [
       { title: 'Solicitud', headerTemplate: this.headerSolicitud },
-      { title: 'Responsable', headerTemplate: null },
-      { title: 'Estado', headerTemplate: null }
+      { title: 'Solicitante', headerTemplate: this.headerSolicitante },
+      { title: 'Estado', headerTemplate: this.headerEstado }
     ];
   }
 
@@ -129,9 +150,13 @@ export class SecContentComponent implements OnInit {
   loadSolicitudes(page: number = 1): void {
     const backendPage = page - 1;
 
-    const observable = this.solicitudFiltro && this.solicitudFiltro.trim() !== ''
-      ? this.solicitudesService.buscarSolicitudesPorNombre(this.solicitudFiltro.trim(), backendPage, this.pageSize)
-      : this.solicitudesService.getSolicitudesPaginado(backendPage, this.pageSize);
+    const observable = this.solicitudesService.getSolicitudesPorFiltroSolicitante(
+      this.filtroNombreSolicitud,
+      this.filtroSolicitante,
+      this.filtroEstado,
+      backendPage,
+      this.pageSize
+    );
 
     observable.subscribe({
       next: (respuesta: any) => {
@@ -147,7 +172,7 @@ export class SecContentComponent implements OnInit {
         this.paginatedData = content.map((s: any) => ({
           ...s,
           Solicitud: s.nombre,
-          Responsable: `${s.objFuncionario?.nombres} ${s.objFuncionario?.apellidos}`.trim(),
+          Solicitante: `${s.informacionSolicitante?.nombres || ''} ${s.informacionSolicitante?.apellidos || ''}`.trim(),
           Estado: s.estado
         }));
 
@@ -280,12 +305,20 @@ export class SecContentComponent implements OnInit {
     this.inputFuncionarioActualizar?.reset();
   }
 
-  /**
-   * Filtra las solicitudes por nombre
-   * @param value Texto de búsqueda
-   */
-  buscarSolicitudes(value: string): void {
-    this.solicitudFiltro = value ?? '';
+  buscarPorNombreSolicitud(value: string): void {
+    this.filtroNombreSolicitud = value ?? '';
+    this.currentPage = 1;
+    this.loadSolicitudes(1);
+  }
+
+  buscarPorSolicitante(value: string): void {
+    this.filtroSolicitante = value ?? '';
+    this.currentPage = 1;
+    this.loadSolicitudes(1);
+  }
+
+  buscarPorEstado(value: string): void {
+    this.filtroEstado = value ?? '';
     this.currentPage = 1;
     this.loadSolicitudes(1);
   }
